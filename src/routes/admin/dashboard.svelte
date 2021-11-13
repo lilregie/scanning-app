@@ -2,15 +2,17 @@
 	import AdminLayout from '$lib/components/AdminLayout.svelte';
 	import CheckInList from '$lib/components/CheckInList.svelte';
 
-    import {generateLatestCheckIns} from "$lib/mocks/personMock"
+	import { chosenEvent } from '$lib/store';
+	import { get } from 'svelte/store';
 
-    let peopleList = generateLatestCheckIns(5);
+	let attendees = $chosenEvent?.attendees || [];
+	chosenEvent.subscribe((event) => console.log('Chosen Event', event));
 </script>
 
 <AdminLayout>
 	<div slot="left-bar" class="latest-check-ins-container">
-        <!-- Check in list with example data for now -->
-		<CheckInList bind:peopleList />
+		<!-- Check in list with example data for now -->
+		<CheckInList bind:peopleList={attendees} />
 		<a class="next-button lr-button expanded" href="/admin/checkin">Next</a>
 	</div>
 	<div slot="right-bar" class="graph-container">
