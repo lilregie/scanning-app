@@ -10,13 +10,14 @@
 		onclick: { action: 'onclick' },
 		color: {
 			control: 'select',
-			options: ['primary', 'secondary', 'success', 'warning', 'dark', 'light']
+			options: ['primary', 'secondary', 'success', 'warning']
 		},
 		size: {
 			control: 'select',
-			options: ['small', 'medium', 'large']
+			options: ['tiny', 'small', 'medium', 'large', 'expanded']
 		},
-		disabled: { control: 'boolean' }
+		disabled: { control: 'boolean' },
+		outline: { control: 'boolean' }
 	}}
 />
 

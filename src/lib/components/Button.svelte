@@ -1,15 +1,18 @@
 <script lang="ts">
-	export let color: 'primary' | 'secondary' | 'success' | 'warning' | 'dark' | 'light' = 'primary';
+	export let color: 'primary' | 'secondary' | 'success' | 'warning' = 'primary';
 	export let href: string | undefined = undefined;
-	export let size: 'small' | 'medium' | 'large' | 'expanded' = 'medium';
+	export let size: 'tiny' | 'small' | 'medium' | 'large' | 'expanded' = 'medium';
 	export let submit: boolean = true;
 	export let disabled: boolean = false;
+	export let outline: boolean = false;
 </script>
 
 {#if href}
-	<a on:click class="{color} {size}" {disabled} {href}> <slot>Submit</slot> </a>
+	<a on:click class="{color} {size}" class:outline {disabled} {href}>
+		<slot>Submit</slot>
+	</a>
 {:else}
-	<button on:click class="{color} {size}" {disabled} type={submit ? 'submit' : ''}>
+	<button on:click class="{color} {size}" class:outline {disabled} type={submit ? 'submit' : ''}>
 		<slot>Submit</slot>
 	</button>
 {/if}
@@ -59,235 +62,52 @@
 			margin-right: 0;
 		}
 
-		&:focus,
-		&:hover {
-			background-color: #b01d56;
-			color: #fefefe;
-		}
-
-		&.primary {
-			background-color: map-get($map: $theme-colors, $key: 'primary');
-			color: #fefefe;
-		}
-
-		&.primary:focus,
-		&.primary:hover {
-			background-color: #a61b51;
-			color: #fefefe;
-		}
-
-		&.secondary {
-			background-color: #474647;
-			color: #fefefe;
-		}
-
-		&.secondary:focus,
-		&.secondary:hover {
-			background-color: #393839;
-			color: #fefefe;
-		}
-
-		&.success {
-			background-color: #3adb76;
-			color: #fefefe;
-		}
-
-		&.success:focus,
-		&.success:hover {
-			background-color: #22bb5b;
-			color: #fefefe;
-		}
-
-		&.warning {
-			background-color: #ffae00;
-			color: #fefefe;
-		}
-
-		&.warning:focus,
-		&.warning:hover {
-			background-color: #cc8b00;
-			color: #fefefe;
-		}
-
-		&.alert {
-			background-color: #e96d47;
-			color: #fefefe;
-		}
-
-		&.alert:focus,
-		&.alert:hover {
-			background-color: #d9471a;
-			color: #fefefe;
-		}
-
-		&.light {
-			background-color: #fff;
-			color: #fefefe;
-		}
-
-		&.light:focus,
-		&.light:hover {
-			background-color: #ccc;
-			color: #fefefe;
-		}
-
-		&.light {
-			color: map-get($map: $theme-colors, $key: 'primary');
-			transition: all 0.25s ease-in-out;
-		}
-
-		&.light:focus,
-		&.light:hover {
-			color: map-get($map: $theme-colors, $key: 'primary');
-			background: #fefefe;
-			box-shadow: 1px 1px 20px rgba(0, 0, 0, 0.25);
-			transform: scale(1.04);
+		@each $name, $color in $theme-colors {
+			&.#{$name} {
+				background-color: $color;
+				color: #fefefe;
+				&:focus,
+				&:hover {
+					background-color: darken($color, $amount: 10%);
+					color: #fefefe;
+				}
+			}
 		}
 
 		&.outline {
-			border: 1px solid map-get($map: $theme-colors, $key: 'primary');
-			color: map-get($map: $theme-colors, $key: 'primary');
+			border: 1px solid;
 			border-width: 2px;
-		}
 
-		&.outline,
-		&.outline:focus,
-		&.outline:hover {
-			background-color: transparent;
-		}
+			&,
+			&:focus,
+			&:hover {
+				background-color: transparent;
+			}
 
-		&.outline:focus,
-		&.outline:hover {
-			border-color: #681133;
-			color: #681133;
-		}
+			&:focus,
+			&:hover {
+				border-color: #681133;
+				color: #681133;
+			}
 
-		&.outline.primary {
-			border: 1px solid map-get($map: $theme-colors, $key: 'primary');
-			color: map-get($map: $theme-colors, $key: 'primary');
-			border-width: 2px;
-		}
-
-		&.outline.primary:focus,
-		&.outline.primary:hover {
-			border-color: #681133;
-			color: #681133;
-		}
-
-		&.outline.primary:focus,
-		&.outline.primary:hover {
-			border-color: map-get($map: $theme-colors, $key: 'primary') !important;
-			color: map-get($map: $theme-colors, $key: 'primary') !important;
-			box-shadow: 0 0 10px rgba(207, 34, 101, 0.6);
-		}
-
-		&.outline.secondary {
-			border: 1px solid #474647;
-			color: #474647;
-			border-width: 2px;
-		}
-
-		&.outline.secondary:focus,
-		&.outline.secondary:hover {
-			border-color: #242324;
-			color: #242324;
-		}
-
-		&.outline.secondary:focus,
-		&.outline.secondary:hover {
-			border-color: #474647 !important;
-			color: #474647 !important;
-			box-shadow: 0 0 10px rgba(71, 70, 71, 0.6);
-		}
-
-		&.outline.success {
-			border: 1px solid #3adb76;
-			color: #3adb76;
-			border-width: 2px;
-		}
-
-		&.outline.success:focus,
-		&.outline.success:hover {
-			border-color: #157539;
-			color: #157539;
-		}
-
-		&.outline.success:focus,
-		&.outline.success:hover {
-			border-color: #3adb76 !important;
-			color: #3adb76 !important;
-			box-shadow: 0 0 10px rgba(58, 219, 118, 0.6);
-		}
-
-		&.outline.warning {
-			border: 1px solid #ffae00;
-			color: #ffae00;
-			border-width: 2px;
-		}
-
-		&.outline.warning:focus,
-		&.outline.warning:hover {
-			border-color: #805700;
-			color: #805700;
-		}
-
-		&.outline.warning:focus,
-		&.outline.warning:hover {
-			border-color: #ffae00 !important;
-			color: #ffae00 !important;
-			box-shadow: 0 0 10px rgba(255, 174, 0, 0.6);
-		}
-
-		&.outline.alert {
-			border: 1px solid #e96d47;
-			color: #e96d47;
-			border-width: 2px;
-		}
-
-		&.outline.alert:focus,
-		&.outline.alert:hover {
-			border-color: #882c10;
-			color: #882c10;
-		}
-
-		&.outline.alert:focus,
-		&.outline.alert:hover {
-			border-color: #e96d47 !important;
-			color: #e96d47 !important;
-			box-shadow: 0 0 10px rgba(233, 109, 71, 0.6);
-		}
-
-		&.outline.light {
-			border: 1px solid #fff;
-			color: #fff;
-			border-width: 2px;
-		}
-
-		&.outline.light:focus,
-		&.outline.light:hover {
-			border-color: gray;
-			color: gray;
-		}
-
-		&.outline.light:focus,
-		&.outline.light:hover {
-			border-color: #fff !important;
-			color: #fff !important;
-			box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+			@each $name, $color in $theme-colors {
+				&.#{$name} {
+					border: 1px solid $color;
+					color: $color;
+					border-width: 2px;
+					&:focus,
+					&:hover {
+						border-color: darken($color, $amount: 10%);
+						color: darken($color, $amount: 10%);
+					}
+				}
+			}
 		}
 
 		&.disabled,
 		&[disabled] {
 			opacity: 0.25;
 			cursor: not-allowed;
-		}
-
-		&.disabled:focus,
-		&.disabled:hover,
-		&[disabled]:focus,
-		&[disabled]:hover {
-			background-color: map-get($map: $theme-colors, $key: 'primary');
-			color: #fefefe;
 		}
 	}
 </style>
