@@ -1,26 +1,35 @@
+<script lang="ts">
+	import Card from './Card.svelte';
+</script>
+
 <div class="panel-container">
 	<div class="left-bar">
-		<slot name="left-bar" />
+		<Card expand={true}>
+			<slot name="left-bar" />
+		</Card>
 	</div>
 	<div class="right-bar">
 		<slot name="right-bar">
 			<div class="info-panel">
-				<slot name="info-panel" />
+				<Card expand={true}>
+					<slot name="info-panel" />
+				</Card>
 			</div>
 			<div class="list-panel">
-				<slot name="list-panel" />
+				<Card expand={true}>
+					<slot name="list-panel" />
+				</Card>
 			</div>
 		</slot>
 	</div>
 </div>
 
 <style lang="scss">
-	$item-spacing: 1em;
+	$item-spacing: 2rem;
 	$item-border-radius: 1rem;
-	$item-padding: 1em;
 
 	.panel-container {
-		padding: $item-spacing * 4;
+		padding: $item-spacing * 2;
 		box-sizing: border-box;
 		display: flex;
 		flex-direction: row;
@@ -28,35 +37,26 @@
 		flex-grow: 1;
 		width: 100vw;
 		min-height: 100vh;
+		row-gap: $item-spacing;
+		column-gap: $item-spacing;
 
 		.left-bar {
 			flex: 1;
-			margin-right: $item-spacing;
-			border-radius: $item-border-radius;
-			padding: $item-padding;
-			background-color: $background-foreground;
 		}
 		.right-bar {
 			flex: 1;
 			display: flex;
 			flex-direction: column;
 			align-items: stretch;
-			margin-left: $item-spacing;
+			row-gap: $item-spacing;
+			column-gap: $item-spacing;
 			border-radius: $item-border-radius;
 		}
 		.info-panel {
 			flex: 1;
-			margin-bottom: $item-spacing;
-			border-radius: $item-border-radius;
-			padding: $item-padding;
-			background-color: $background-foreground;
 		}
 		.list-panel {
 			flex: 1;
-			margin-top: $item-spacing;
-			border-radius: $item-border-radius;
-			padding: $item-padding;
-			background-color: $background-foreground;
 		}
 	}
 </style>
