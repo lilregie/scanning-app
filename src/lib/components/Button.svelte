@@ -8,11 +8,17 @@
 </script>
 
 {#if href}
-	<a on:click class="{color} {size}" class:outline {disabled} {href}>
+	<a on:click class="{color} {size}" class:outline disabled={disabled ? true : null} {href}>
 		<slot>Submit</slot>
 	</a>
 {:else}
-	<button on:click class="{color} {size}" class:outline {disabled} type={submit ? 'submit' : ''}>
+	<button
+		on:click
+		class="{color} {size}"
+		class:outline
+		disabled={disabled ? true : null}
+		type={submit ? 'submit' : ''}
+	>
 		<slot>Submit</slot>
 	</button>
 {/if}
@@ -22,6 +28,7 @@
 	button,
 	a {
 		display: inline-block;
+		box-sizing: border-box;
 		padding: 0.85em 1em;
 		margin: 0 0 1.875rem 0;
 		margin-bottom: 0;

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import AdminLayout from '$lib/components/AdminLayout.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import CheckInList from '$lib/components/CheckInList.svelte';
 
 	import { chosenEvent } from '$lib/store';
@@ -13,7 +14,7 @@
 	<div slot="left-bar" class="latest-check-ins-container">
 		<!-- Check in list with example data for now -->
 		<CheckInList bind:peopleList={attendees} />
-		<a class="next-button lr-button expanded" href="/admin/checkin">Next</a>
+		<Button href="/admin/checkin" size="expanded">Next</Button>
 	</div>
 	<div slot="right-bar" class="graph-container">
 		<h2>g r a p h</h2>
