@@ -13,6 +13,7 @@
 <slot />
 
 <style lang="scss">
+	@use '../lib/styles/vars.scss' as *;
 	:global(body) {
 		background-color: $background-backdrop;
 	}
