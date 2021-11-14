@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	import Select from 'svelte-select';
 	import { get } from 'svelte/store';
+	import Button from '$lib/components/Button.svelte';
 
 	let eventsDropdownList = [];
 	let eventsDropdownChosen = null;
@@ -35,14 +36,11 @@
 	<h1>Lorem ipsum dolor.</h1>
 	<div>
 		<Select items={eventsDropdownList} bind:value={eventsDropdownChosen} />
-		<button
-			class="lr-button large"
-			type="submit"
+		<Button
 			on:click={choseProject}
 			disabled={typeof eventsDropdownChosen === 'undefined' || eventsDropdownChosen === null}
+			>Choose Project</Button
 		>
-			Chose Project
-		</button>
 	</div>
 </div>
 

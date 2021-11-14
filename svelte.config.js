@@ -11,7 +11,7 @@ const config = {
 	// for more information about preprocessors
 	preprocess: preprocess({
 		scss: {
-			prependData: `@import '${sassPath}vars.scss';`
+			prependData: `@use '${sassPath}vars.scss' as *;`
 		}
 	}),
 

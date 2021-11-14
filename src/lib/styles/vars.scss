@@ -1,5 +1,10 @@
-$primary: #cf2265;
-$secondary: #222222;
+$theme-colors: (
+	'primary': #cf2265,
+	'secondary': #222222,
+	'success': #3adb76,
+	'warning': #ffae00,
+	'alert': #e96d47
+);
 
 $background-backdrop: #222222;
 $background-foreground: #dddddd;
