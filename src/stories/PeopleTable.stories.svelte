@@ -18,3 +18,10 @@
 </Template>
 
 <Story name="default" args={{peopleCount: 10}} />
+
+<style lang="scss">
+	:root {
+		font-family: 'Open Sans', Roboto, sans-serif, Arial;
+
+	}
+</style>
