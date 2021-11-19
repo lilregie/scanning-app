@@ -14,6 +14,8 @@
 	<div slot="left-bar" class="latest-check-ins-container">
 		<!-- Check in list with example data for now -->
 		<CheckInList bind:peopleList={attendees} />
+	</div>
+	<div slot="left-bar-footer">
 		<Button href="/admin/checkin" size="expanded">Next</Button>
 	</div>
 	<div slot="right-bar" class="graph-container">
@@ -25,7 +27,6 @@
 <style lang="scss">
 	.latest-check-ins-container {
 		position: relative;
-		height: 100%;
 		.next-button {
 			position: absolute;
 			bottom: 0;
