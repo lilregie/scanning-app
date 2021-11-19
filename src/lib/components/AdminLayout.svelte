@@ -50,12 +50,13 @@
 		align-items: stretch;
 		flex-grow: 1;
 		width: 100vw;
-		min-height: 100vh;
+		height: 100vh;
 		row-gap: $item-spacing;
 		column-gap: $item-spacing;
 
 		.left-bar {
 			flex: 1;
+			overflow: auto;
 		}
 		.right-bar {
 			flex: 1;
@@ -65,12 +66,15 @@
 			row-gap: $item-spacing;
 			column-gap: $item-spacing;
 			border-radius: $item-border-radius;
+			overflow: auto;
 		}
 		.info-panel {
 			flex: 1;
+			overflow: auto;
 		}
 		.list-panel {
 			flex: 1;
+			overflow: auto;
 		}
 	}
 </style>
