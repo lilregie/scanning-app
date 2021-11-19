@@ -1,23 +1,26 @@
 <script lang="ts">
-	import type { Attendee } from '$lib/attendee';
-	export let peopleList: Attendee[] = [];
+	export let tableData: string[][];
+	export let tableHeaders: string[];
+	console.log(tableData)
 </script>
 
 <table>
 	<thead>
 		<tr>
-			<th>Name</th>
-			<th>ID</th>
+			{#each tableHeaders as header}
+				<th>{header}</th>
+			{/each}
 		</tr>
 	</thead>
-	{#each peopleList as person}
 	<tbody>
-		<tr>
-			<td>{person.first_name} {person.last_name}</td>
-			<td>#{person.id}</td>
-		</tr>
+		{#each tableData as row}
+			<tr>
+				{#each row as element}
+					<td>{element}</td>
+				{/each}
+			</tr>
+		{/each}
 	</tbody>
-	{/each}
 </table>
 
 <style lang="scss">
@@ -30,7 +33,7 @@
 		border-collapse: collapse;
 		border: $border-light solid $border-weight;
 
-		tbody {
+		tbody tr {
 			&:hover {
 				$hover-adjust: -10%;
 				
