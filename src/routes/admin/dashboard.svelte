@@ -1,7 +1,7 @@
 <script lang="ts">
 	import AdminLayout from '$lib/components/AdminLayout.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import PeopleTable from '$lib/components/PeopleTable.svelte';
+	import Table from '$lib/components/Table.svelte';
 
 	import { chosenEvent } from '$lib/store';
 	import { get } from 'svelte/store';
@@ -13,7 +13,10 @@
 <AdminLayout>
 	<div slot="left-bar" class="latest-check-ins-container">
 		<!-- Check in list with example data for now -->
-		<PeopleTable bind:peopleList={attendees} />
+		<Table
+			tableHeaders={['Name', 'Email']}
+			tableData={attendees.map((a) => [a.first_name, a.email_address])}
+		/>
 		<div class="next-button">
 			<Button href="/admin/checkin" size="expanded">Next</Button>
 		</div>
