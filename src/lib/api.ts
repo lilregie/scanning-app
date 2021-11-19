@@ -1,7 +1,8 @@
 import { generateEvent } from '$lib/mocks/eventMock';
 import { get } from 'svelte/store';
 import type { Event } from './event';
-import { allEvents } from './store';
+import { generateAttendeesForEvent } from './mocks/attendeeMock';
+import { allEvents, eventAttendees } from './store';
 
 export function initializeAPI() {
 	console.log('Initializing API', get(allEvents));
@@ -18,4 +19,8 @@ export function getEventsList() {
 	}
 	console.log(events);
 	allEvents.set(events);
+}
+
+export function getAttendeesList() {
+	eventAttendees.set(generateAttendeesForEvent())
 }

@@ -37,7 +37,6 @@ export function generateEvent(): Event {
 		xero_invoice_references: [],
 		paid,
 		purchase_order_number: null,
-		attendees,
 		amount_paid: '0.0',
 		balance: '0.0',
 		date_paid: null
