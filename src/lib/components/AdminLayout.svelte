@@ -1,7 +1,11 @@
 <script lang="ts">
 	import Card from './Card.svelte';
+	import logo from '../../../static/logo/wordmark-white.svg';
 </script>
 
+<div class="brand">
+	<img src={logo} alt="Lil Regie logo" />
+</div>
 <div class="panel-container">
 	<div class="left-bar">
 		<Card expand={true}>
@@ -27,6 +31,16 @@
 <style lang="scss">
 	$item-spacing: 2rem;
 	$item-border-radius: 1rem;
+
+	.brand {
+		position: fixed;
+		top: calc($item-spacing / 2);
+		right: calc($item-spacing / 2);
+		img {
+			height: $item-spacing;
+			width: auto;
+		}
+	}
 
 	.panel-container {
 		padding: $item-spacing * 2;
