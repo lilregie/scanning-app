@@ -24,7 +24,6 @@ export interface Event {
 	xero_invoice_references: any[];
 	paid: boolean;
 	purchase_order_number?: any;
-	attendees: Attendee[];
 	amount_paid: string;
 	balance: string;
 	date_paid?: any;

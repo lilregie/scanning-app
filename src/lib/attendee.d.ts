@@ -13,7 +13,7 @@ export interface Attendee {
 	attendee_type_id: number;
 	attendee_type_name: string;
 	custom_fields: CustomField[];
-	attendances: Attendance[];
+	check_ins: CheckIn[];
 	cancelled_at?: any;
 	voucher_name?: any;
 }
@@ -23,9 +23,11 @@ export interface CustomField {
 	values: string[];
 }
 
-export interface Attendance {
-	eventlet_name: string;
-	amount_excluding_tax: string;
-	tax: string;
-	amount_including_tax: string;
+export interface CheckIn {
+	time: Date;
+	id: number;
+	attendee_id: number;
+	vaccine_certificate: string?;
+	ticket_id: string?;
+	manually_checked_in: boolean;
 }
