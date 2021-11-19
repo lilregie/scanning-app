@@ -13,10 +13,10 @@
 <AdminLayout>
 	<div slot="left-bar" class="latest-check-ins-container">
 		<!-- Check in list with example data for now -->
-		<PeopleTable bind:peopleList={attendees} />
-		<div class="next-button">
-			<Button href="/admin/checkin" size="expanded">Next</Button>
-		</div>
+		<CheckInList bind:peopleList={attendees} />
+	</div>
+	<div slot="left-bar-footer">
+		<Button href="/admin/checkin" size="expanded">Next</Button>
 	</div>
 	<div slot="right-bar" class="graph-container">
 		<h2>g r a p h</h2>
@@ -27,7 +27,6 @@
 <style lang="scss">
 	.latest-check-ins-container {
 		position: relative;
-		height: 100%;
 		.next-button {
 			position: absolute;
 			width: 100%;

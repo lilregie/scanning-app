@@ -10,6 +10,7 @@
 	<div class="left-bar">
 		<Card expand={true}>
 			<slot name="left-bar" />
+			<slot name="left-bar-footer" slot="footer" />
 		</Card>
 	</div>
 	<div class="right-bar">
