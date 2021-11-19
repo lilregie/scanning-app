@@ -25,6 +25,7 @@
 		&.expand {
 			flex: 1;
 			height: 100%;
+			overflow: auto;
 		}
 	}
 </style>
