@@ -1,7 +1,7 @@
 <script lang="ts">
 	import AdminLayout from '$lib/components/AdminLayout.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import CheckInList from '$lib/components/CheckInList.svelte';
+	import PeopleTable from '$lib/components/PeopleTable.svelte';
 
 	import { chosenEvent } from '$lib/store';
 	import { get } from 'svelte/store';
@@ -13,8 +13,10 @@
 <AdminLayout>
 	<div slot="left-bar" class="latest-check-ins-container">
 		<!-- Check in list with example data for now -->
-		<CheckInList bind:peopleList={attendees} />
-		<Button href="/admin/checkin" size="expanded">Next</Button>
+		<PeopleTable bind:peopleList={attendees} />
+		<div class="next-button">
+			<Button href="/admin/checkin" size="expanded">Next</Button>
+		</div>
 	</div>
 	<div slot="right-bar" class="graph-container">
 		<h2>g r a p h</h2>
@@ -28,6 +30,7 @@
 		height: 100%;
 		.next-button {
 			position: absolute;
+			width: 100%;
 			bottom: 0;
 			text-decoration: none;
 			box-sizing: border-box;
