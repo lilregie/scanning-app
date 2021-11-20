@@ -2,9 +2,9 @@ import faker from 'faker';
 
 import type { CheckIn, Attendee, CustomField } from '$lib/attendee';
 
-export function generateAttendeesForEvent(): Attendee[] {
+export function generateAttendeesForEvent(count: number = (faker.datatype.number(40)+12)): Attendee[] {
 	let people = [];
-	for (let i = 0; i < faker.datatype.number(40)+12; i++) {
+	for (let i = 0; i < count; i++) {
 		people.push(generateAttendee());
 	}
 	return people;
@@ -40,7 +40,7 @@ export function generateCheckIns(count: number, attendee_id: number) {
 		let ticket_id = faker.datatype.boolean() ? faker.datatype.uuid() : null;
 		let manually_checked_in = ticket_id === null && vaccine_certificate === null
 		attendances.push({
-			time: faker.date.recent(1),
+			time: faker.date.recent(0.25),
 			id: faker.datatype.number(),
 			vaccine_certificate,
 			ticket_id,

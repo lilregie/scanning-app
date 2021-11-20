@@ -41,5 +41,3 @@ export const chosenEvent = derived([chosenEventID, allEvents], ([$chosenEventID,
 });
 
 export const eventAttendees: Writable<Attendee[]> = writable([]);
-// Stored just for testing while we have mock data, otherwise everything would change every load
-useLocalStorage(eventAttendees, 'eventAttendees');
