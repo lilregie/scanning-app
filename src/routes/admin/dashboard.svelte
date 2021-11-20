@@ -1,19 +1,25 @@
 <script lang="ts">
 	import AdminLayout from '$lib/components/AdminLayout.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import PeopleTable from '$lib/components/PeopleTable.svelte';
+	import Table from '$lib/components/Table.svelte';
+	import { newestCheckInsTable } from '$lib/generateDataVis';
 
-	import { chosenEvent } from '$lib/store';
+	import { chosenEvent, eventAttendees } from '$lib/store';
 	import { get } from 'svelte/store';
+	
 
-	let attendees = $chosenEvent?.attendees || [];
+	let checkInTable: [string[],string[][]] = [[],[]];
+	eventAttendees.subscribe((_)=>{
+		checkInTable = newestCheckInsTable();
+	})
+
 	chosenEvent.subscribe((event) => console.log('Chosen Event', event));
 </script>
 
 <AdminLayout>
 	<div slot="left-bar" class="latest-check-ins-container">
 		<!-- Check in list with example data for now -->
-		<CheckInList bind:peopleList={attendees} />
+		<Table tableHeaders={checkInTable[0]} tableData={checkInTable[1]} />
 	</div>
 	<div slot="left-bar-footer">
 		<Button href="/admin/checkin" size="expanded">Next</Button>
