@@ -1,11 +1,16 @@
 <script lang="ts">
 	import Card from './Card.svelte';
+	import logo from '../../../static/logo/wordmark-white.svg';
 </script>
 
+<div class="brand">
+	<img src={logo} alt="Lil Regie logo" />
+</div>
 <div class="panel-container">
 	<div class="left-bar">
 		<Card expand={true}>
 			<slot name="left-bar" />
+			<slot name="left-bar-footer" slot="footer" />
 		</Card>
 	</div>
 	<div class="right-bar">
@@ -28,6 +33,16 @@
 	$item-spacing: 2rem;
 	$item-border-radius: 1rem;
 
+	.brand {
+		position: fixed;
+		top: calc($item-spacing / 2);
+		right: calc($item-spacing / 2);
+		img {
+			height: $item-spacing;
+			width: auto;
+		}
+	}
+
 	.panel-container {
 		padding: $item-spacing * 2;
 		box-sizing: border-box;
@@ -36,12 +51,13 @@
 		align-items: stretch;
 		flex-grow: 1;
 		width: 100vw;
-		min-height: 100vh;
+		height: 100vh;
 		row-gap: $item-spacing;
 		column-gap: $item-spacing;
 
 		.left-bar {
 			flex: 1;
+			overflow: auto;
 		}
 		.right-bar {
 			flex: 1;
@@ -51,12 +67,15 @@
 			row-gap: $item-spacing;
 			column-gap: $item-spacing;
 			border-radius: $item-border-radius;
+			overflow: auto;
 		}
 		.info-panel {
 			flex: 1;
+			overflow: auto;
 		}
 		.list-panel {
 			flex: 1;
+			overflow: auto;
 		}
 	}
 </style>
