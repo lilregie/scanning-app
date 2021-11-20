@@ -32,6 +32,7 @@
 		text-align: left;
 		border-collapse: collapse;
 		border: $border-light solid $border-weight;
+		width: 100%;
 
 		tbody tr {
 			&:hover {
