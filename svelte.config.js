@@ -23,7 +23,7 @@ const config = {
 		adapter: adapter(),
 		vite: {
 			optimizeDeps: {
-				include: ["modern-svelte-qr-scanner","events","uuid","visibilityjs","stampit"]
+				include: ["modern-svelte-qr-scanner","events","uuid","visibilityjs","stampit","lodash"]
 			}
 		}
 	}
