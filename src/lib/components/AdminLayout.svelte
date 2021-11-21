@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Card from './Card.svelte';
-	import logo from '../../../static/logo/wordmark-white.svg';
+	import logo from '/logo/wordmark-white.svg';
 </script>
 
 <div class="brand">
