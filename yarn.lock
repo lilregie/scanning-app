@@ -2465,10 +2465,10 @@
     "@typescript-eslint/types" "4.33.0"
     eslint-visitor-keys "^2.0.0"
 
-"@vaxxnz/nzcp@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@vaxxnz/nzcp/-/nzcp-1.0.0.tgz#e8a4440a187031308c2aa59d7b285633da0f9ce8"
-  integrity sha512-VG+ZC7r9U5+5Hxs49zoD2p0bk//O+21ZAjR7fVB16zKoc2YvUf8nI8+CstMcxUBqXpzvknATfdLd8M0fY5nyWQ==
+"@vaxxnz/nzcp@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@vaxxnz/nzcp/-/nzcp-1.1.0.tgz#5cdfdbf799afd2155155d16201ef21178fa97a26"
+  integrity sha512-Z8TCA6Tqm8z9eJwHGhCwrnnJ1JGBYJ3qP9kYziQdIcMNKXKXl6FlBRYB639jnjinoJxOM1WFZ6CMHo+7jPp5Qw==
 
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"

@@ -19,8 +19,9 @@ export async function validateScan(scanText: string): Promise<ScanResults> {
     if (scanText.startsWith("NZCP:")) {
         // NZ Covid Pass
         const passResult = await verifyPassURI(scanText)
+        console.log("NZCP",passResult)
+
         if (passResult.success) {
-            console.log(passResult)
             const relevantPerson = searchPerson(passResult.credentialSubject.givenName, passResult.credentialSubject.givenName)
             if (relevantPerson !== null) {
                 return {
@@ -33,6 +34,7 @@ export async function validateScan(scanText: string): Promise<ScanResults> {
                     valid: false
                 }
             }
+            
         }
     }
     return {
