@@ -1,4 +1,4 @@
-import { verifyPassURI } from "@vaxxnz/nzcp/dist/esbuild/browser";
+import { verifyPassURI } from "@vaxxnz/nzcp";
 import { get } from "svelte/store";
 import { eventAttendees } from "./store";
 import { normString as norm } from "$lib/utill";

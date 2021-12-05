@@ -2,6 +2,7 @@ import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import preprocess from 'svelte-preprocess';
 import adapter from '@sveltejs/adapter-static';
+import svg from '@poppanator/sveltekit-svg';
 
 
 const filePath = dirname(fileURLToPath(import.meta.url));
@@ -24,7 +25,10 @@ const config = {
 		vite: {
 			optimizeDeps: {
 				include: ["modern-svelte-qr-scanner","events","uuid","visibilityjs","stampit","lodash"]
-			}
+			},
+			plugins: [svg({
+				type: 'url'
+			})]
 		}
 	}
 };
