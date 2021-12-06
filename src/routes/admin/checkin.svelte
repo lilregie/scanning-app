@@ -3,7 +3,7 @@
 	import Scanner from '$lib/components/Scanner.svelte';
 </script>
 
-<AdminLayout>
+<AdminLayout cardOptionsLeft={{ scroll: false }}>
 	<div slot="left-bar">
 		<Scanner />
 	</div>

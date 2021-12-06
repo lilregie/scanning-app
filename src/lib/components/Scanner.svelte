@@ -46,7 +46,7 @@
 		<QR
 			on:scan={handleScan}
 			previewWidth_px={previewWidth}
-			previewHeight_px={previewWidth}
+			previewHeight_px={previewWidth / 1.77}
 			bind:mediaErrorMessage
 		>
 			<div slot="loading">
@@ -65,9 +65,13 @@
 	.qr-container {
 		display: flex;
 		justify-content: center;
-		width: 100%;
+		width: calc(100% + 4rem);
+		height: calc(100% + 4rem);
+		position: relative;
+		left: -2rem;
+		top: -2rem;
 		.qr-wrapper {
-			width: 75%;
+			width: 100%;
 			div {
 				background-color: $background-backdrop;
 				width: 100%;
