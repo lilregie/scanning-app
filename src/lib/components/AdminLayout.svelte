@@ -34,7 +34,6 @@
 
 <style lang="scss">
 	$item-spacing: 2rem;
-	$item-border-radius: 1rem;
 
 	.brand {
 		position: fixed;
@@ -72,7 +71,6 @@
 			align-items: stretch;
 			row-gap: $item-spacing;
 			column-gap: $item-spacing;
-			border-radius: $item-border-radius;
 			overflow: auto;
 		}
 		.info-panel {
