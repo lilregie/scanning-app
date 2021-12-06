@@ -65,11 +65,6 @@
 	.qr-container {
 		display: flex;
 		justify-content: center;
-		width: calc(100% + 4rem);
-		height: calc(100% + 4rem);
-		position: relative;
-		left: -2rem;
-		top: -2rem;
 		.qr-wrapper {
 			width: 100%;
 			div {
