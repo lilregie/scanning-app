@@ -53,6 +53,7 @@
 		flex-direction: row;
 		align-items: stretch;
 		flex-grow: 1;
+		flex-wrap: wrap;
 		width: 100vw;
 		height: 100vh;
 		row-gap: $item-spacing;
@@ -60,10 +61,12 @@
 
 		.left-bar {
 			flex: 1;
+			min-width: 400px;
 			overflow: auto;
 		}
 		.right-bar {
-			flex: 1;
+			min-width: 400px;
+			flex: 3;
 			display: flex;
 			flex-direction: column;
 			align-items: stretch;
