@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { validateScan } from '$lib/validateScan';
+	import Tick from '$lib/components/Tick.svelte';
 
 	import QR from 'modern-svelte-qr-scanner';
 	import { Circle } from 'svelte-loading-spinners';
@@ -37,8 +38,11 @@
 	<!-- Always render QR Scanner we enabled (so we hide it instead of remove it) -->
 	<div class="qr-wrapper" bind:clientWidth={previewWidth}>
 		{#if $scannerStatus === ScannerStatus.ConfirmScan}
-			<div class="comfirm" in:fly={{ y: previewWidth, duration: 500 }} out:fly>
-				are ya really sure
+			<div class="comfirm" in:fade={{ duration: 150 }} out:fly>
+				<div style="width: 30%">
+					<Tick />
+				</div>
+				COVID Pass Verified
 			</div>
 		{:else if $scannerStatus === ScannerStatus.Invaild}
 			<div class="fail" in:fly={{ y: previewWidth, duration: 500 }} out:fly>no can do</div>
@@ -69,7 +73,7 @@
 		justify-content: center;
 		.qr-wrapper {
 			width: 100%;
-			div {
+			> div {
 				background-color: $background-backdrop;
 				width: 100%;
 				height: 100%;
