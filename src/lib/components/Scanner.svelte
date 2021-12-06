@@ -62,6 +62,8 @@
 
 <style lang="scss">
 	@use '../styles/vars.scss' as *;
+	@use 'sass:map';
+
 	.qr-container {
 		display: flex;
 		justify-content: center;
@@ -80,6 +82,12 @@
 				top: 0;
 				left: 0;
 				z-index: 2;
+			}
+			.comfirm {
+				background-color: map.get($theme-colors, 'success');
+			}
+			.fail {
+				background-color: map.get($theme-colors, 'alert');
 			}
 		}
 	}
