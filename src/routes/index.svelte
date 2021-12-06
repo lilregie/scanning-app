@@ -45,6 +45,7 @@
 </div>
 
 <style lang="scss">
+	@use '../lib/styles/vars.scss' as *;
 	.container {
 		text-align: center;
 		display: flex;

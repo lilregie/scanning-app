@@ -1,5 +1,5 @@
 <script lang="ts">
-import { validateScan } from '$lib/validateScan';
+	import { validateScan } from '$lib/validateScan';
 
 	import QR from 'modern-svelte-qr-scanner';
 	import { Circle } from 'svelte-loading-spinners';
@@ -24,7 +24,7 @@ import { validateScan } from '$lib/validateScan';
 
 	function handleScan(event: CustomEvent) {
 		if (get(scannerStatus) === ScannerStatus.Scanning) {
-			console.log(validateScan(event.detail.qrContent))
+			console.log(validateScan(event.detail.qrContent));
 			scannerStatus.set(ScannerStatus.ConfirmScan);
 		}
 	}

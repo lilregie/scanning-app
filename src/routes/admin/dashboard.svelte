@@ -6,12 +6,11 @@
 
 	import { chosenEvent, eventAttendees } from '$lib/store';
 	import { get } from 'svelte/store';
-	
 
-	let checkInTable: [string[],string[][]] = [[],[]];
-	eventAttendees.subscribe((_)=>{
+	let checkInTable: [string[], string[][]] = [[], []];
+	eventAttendees.subscribe((_) => {
 		checkInTable = newestCheckInsTable();
-	})
+	});
 
 	chosenEvent.subscribe((event) => console.log('Chosen Event', event));
 </script>
@@ -31,6 +30,7 @@
 </AdminLayout>
 
 <style lang="scss">
+	@use '../../lib/styles/vars.scss' as *;
 	.latest-check-ins-container {
 		position: relative;
 		.next-button {

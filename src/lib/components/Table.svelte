@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let tableData: string[][];
 	export let tableHeaders: string[];
-	console.log(tableData)
+	console.log(tableData);
 </script>
 
 <table>
@@ -24,7 +24,7 @@
 </table>
 
 <style lang="scss">
-	@use "sass:color";
+	@use 'sass:color';
 	@use '../styles/vars.scss' as *;
 	table {
 		$border-weight: 1px;
@@ -37,7 +37,7 @@
 		tbody tr {
 			&:hover {
 				$hover-adjust: -10%;
-				
+
 				&:nth-child(even) {
 					background: color.adjust($background-intermediate-light, $lightness: $hover-adjust);
 				}
@@ -58,10 +58,8 @@
 			}
 		}
 		thead th {
-				font-weight: 600;
-				padding: 0.5rem;
+			font-weight: 600;
+			padding: 0.5rem;
 		}
-
-
 	}
 </style>
