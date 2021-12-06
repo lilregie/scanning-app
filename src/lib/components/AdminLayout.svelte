@@ -1,6 +1,9 @@
 <script lang="ts">
 	import Card from './Card.svelte';
 	import logo from '$lib/assets/logo/wordmark-white.svg';
+	export let cardOptionsLeft = {};
+	export let cardOptionsRightTop = {};
+	export let cardOptionsRightBottom = {};
 </script>
 
 <div class="brand">
@@ -8,7 +11,7 @@
 </div>
 <div class="panel-container">
 	<div class="left-bar">
-		<Card expand={true}>
+		<Card expand={true} {...cardOptionsLeft}>
 			<slot name="left-bar" />
 			<slot name="left-bar-footer" slot="footer" />
 		</Card>
