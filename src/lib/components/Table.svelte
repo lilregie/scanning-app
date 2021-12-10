@@ -1,7 +1,12 @@
 <script lang="ts">
-	export let tableData: string[][];
+	export let tableData: TableRow[];
 	export let tableHeaders: string[];
 	console.log(tableData);
+
+	interface TableRow {
+		data: string[];
+		callback?: () => void;
+	}
 </script>
 
 <table>
@@ -13,12 +18,21 @@
 		</tr>
 	</thead>
 	<tbody>
-		{#each tableData as row}
-			<tr>
-				{#each row as element}
-					<td>{element}</td>
-				{/each}
-			</tr>
+		{#each tableData as tableRow}
+			{#if tableRow.callback}
+				<tr on:click={tableRow.callback} class="clickable-row">
+					{#each tableRow.data as element}
+						<td>{element}</td>
+					{/each}
+				</tr>
+			{:else}
+				<tr>
+					{#each tableRow.data as element}
+						<td>{element}</td>
+					{/each}
+				</tr>
+			{/if}
+
 		{/each}
 	</tbody>
 </table>
@@ -55,6 +69,9 @@
 			td {
 				border-top: $border-light solid $border-weight;
 				padding: 0.5rem;
+			}
+			&.clickable-row {
+				cursor: pointer;
 			}
 		}
 		thead th {

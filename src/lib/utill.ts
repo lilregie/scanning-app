@@ -15,6 +15,11 @@ export function newestCheckIns(eventAttendees: Attendee[]): [CheckIn, Attendee][
 	});
 	return checkIns
 }
+
 export function normString(x: string): string {
 	return normalizeStrings(x).toLowerCase().trim();
+}
+
+export function findByKey<T>(list: T[], key: string, value: any): T | undefined {
+	return list.find((item) => item[key] === value);
 }

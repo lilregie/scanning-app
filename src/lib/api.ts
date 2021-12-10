@@ -1,8 +1,10 @@
 import { generateEvent } from '$lib/mocks/eventMock';
 import { get } from 'svelte/store';
+import type { Attendee } from './attendee';
 import type { Event } from './event';
 import { generateAttendeesForEvent } from './mocks/attendeeMock';
 import { allEvents, eventAttendees } from './store';
+import {findByKey} from "$lib/utill"
 
 export function initializeAPI() {
 	console.log('Initializing API', get(allEvents));
@@ -23,4 +25,24 @@ export function getEventsList() {
 
 export function getAttendeesList() {
 	eventAttendees.set(generateAttendeesForEvent())
+}
+
+export function createCheckIn(attendee: Attendee, manually_checked_in: boolean, vaccine_certificate: string = null, ticket_id: string = null) {
+	// Would send post to API, then use attendee.id from response
+	eventAttendees.update((_eventAttendees) => {
+		findByKey(_eventAttendees, "id", attendee.id).check_ins.push(
+			{
+				time: new Date(),
+				id: 0,
+				attendee_id: attendee.id,
+				vaccine_certificate,
+				ticket_id,
+				manually_checked_in,
+			}
+		);
+		return _eventAttendees;
+	})
+	
+
+	
 }

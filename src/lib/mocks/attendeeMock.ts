@@ -27,7 +27,7 @@ export function generateAttendee(): Attendee {
 		attendee_type_id: faker.datatype.number(),
 		attendee_type_name: faker.datatype.string(),
 		custom_fields: [],
-		check_ins: generateCheckIns(faker.datatype.number(4),id),
+		check_ins: generateCheckIns(faker.datatype.boolean() ? 0 : faker.datatype.number(3),id),
 		cancelled_at: null,
 		voucher_name: null
 	};

@@ -79,6 +79,7 @@
 		}
 		.list-panel {
 			flex: 1;
+			max-height: 50vh;
 			overflow: auto;
 		}
 	}

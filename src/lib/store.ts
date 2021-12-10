@@ -1,5 +1,5 @@
-import { derived, writable } from 'svelte/store';
-import type { Writable } from 'svelte/store';
+import { derived, get, writable } from 'svelte/store';
+import type { Writable, Readable } from 'svelte/store';
 import type { Event } from '$lib/event';
 import type { Attendee } from './attendee';
 import { getAttendeesList } from './api';
@@ -28,16 +28,34 @@ export const allEvents: Writable<Event[]> = writable([]);
 // Stored just for testing while we have mock data, otherwise everything would change every load
 useLocalStorage(allEvents, 'allEvents');
 
-export const chosenEvent = derived([chosenEventID, allEvents], ([$chosenEventID, $allEvents]) => {
-	let potentialChosenEvent = $allEvents.filter((event) => event.id === $chosenEventID);
+export const chosenEvent = derived([chosenEventID, allEvents], ([_chosenEventID, _allEvents]) => {
+
+	let potentialChosenEvent = _allEvents.filter((event) => event.id === _chosenEventID);
 	if (potentialChosenEvent.length === 1) {
+		console.log("Found event", _chosenEventID);
+
 		// Also need to get people for new chosen event
 		getAttendeesList();
 		return potentialChosenEvent[0];
 	} else {
-		console.log("couldn't find event", $chosenEventID);
+		console.log("couldn't find event", _chosenEventID);
 		return null;
 	}
 });
 
 export const eventAttendees: Writable<Attendee[]> = writable([]);
+useLocalStorage(eventAttendees, 'eventAttendees');
+
+
+export const attendeesSearchTerm: Writable<string> = writable('');
+
+export const selectedAttendeeID: Writable<number> = writable(null);
+
+export const selectedAttendee: Readable<Attendee> = derived([selectedAttendeeID, eventAttendees], ([_selectedAttendeeID, _eventAttendees]) => {
+	let potentialSelectedAttendee = _eventAttendees.filter((attendee) => attendee.id === _selectedAttendeeID);
+	if (potentialSelectedAttendee.length === 1) {
+		return potentialSelectedAttendee[0];
+	} else {
+		return null;
+	}
+})
