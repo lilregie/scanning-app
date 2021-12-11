@@ -2,16 +2,23 @@ import faker from 'faker';
 
 import type { CheckIn, Attendee, CustomField } from '$lib/attendee';
 
-export function generateAttendeesForEvent(count: number = (faker.datatype.number(40)+12)): Attendee[] {
+export function generateAttendeesForEvent({count = (faker.datatype.number(40)+12), forceCheckIns = false}={}): Attendee[] {
 	let people = [];
+	people.push(generateAttendee({firstName: "jasper", lastName: "miller-waugh"}));
 	for (let i = 0; i < count; i++) {
-		people.push(generateAttendee());
+		people.push(generateAttendee({forceCheckIns}));
 	}
 	return people;
 }
 
-export function generateAttendee(firstName = faker.name.firstName(), lastName = faker.name.lastName()): Attendee {
+export function generateAttendee({
+	firstName = faker.name.firstName(),
+	lastName = faker.name.lastName(),
+	forceCheckIns = false
+  }={}): Attendee {
 	let id  = faker.datatype.number();
+	let checkInCount = forceCheckIns ? 1 : (faker.datatype.boolean() ? 0 : faker.datatype.number(3));
+	console.log(`generateAttendee: ${firstName} ${lastName}, id: ${id}, forcing check in: ${forceCheckIns}`);
 	return {
 		id,
 		booking_id: faker.datatype.number(),
@@ -27,7 +34,7 @@ export function generateAttendee(firstName = faker.name.firstName(), lastName = 
 		attendee_type_id: faker.datatype.number(),
 		attendee_type_name: faker.datatype.string(),
 		custom_fields: [],
-		check_ins: generateCheckIns(faker.datatype.boolean() ? 0 : faker.datatype.number(3),id),
+		check_ins: generateCheckIns(checkInCount,id),
 		cancelled_at: null,
 		voucher_name: null
 	};

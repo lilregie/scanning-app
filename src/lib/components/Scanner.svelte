@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { validateScan, ScanTypes } from '$lib/validateScan';
-	import Tick from '$lib/components/Tick.svelte';
+	import SuccessTick from '$lib/components/SuccessTick.svelte';
 	import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
 
 
@@ -53,7 +53,7 @@
 		{#if $scannerStatus === ScannerStatus.ConfirmScan}
 			<div class="comfirm" in:fade={{ duration: 150 }} out:fly>
 				<div style="width: 30%">
-					<Tick />
+					<SuccessTick />
 				</div>
 				COVID Pass Verified
 			</div>

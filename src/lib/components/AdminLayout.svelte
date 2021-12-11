@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Card from './Card.svelte';
-	import logo from '$lib/assets/logo/wordmark-white.svg';
+	import logo from '../assets/logo/wordmark-white.svg';
 
 	interface CardOptions {
 		margin?: boolean;
