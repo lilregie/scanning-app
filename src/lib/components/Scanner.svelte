@@ -1,18 +1,29 @@
 <script lang="ts">
-	import { validateScan } from '$lib/validateScan';
+	import { validateScan, ScanTypes } from '$lib/validateScan';
+	import SuccessTick from '$lib/components/SuccessTick.svelte';
+	import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
+
 
 	import QR from 'modern-svelte-qr-scanner';
 	import { Circle } from 'svelte-loading-spinners';
-	import { transition_in } from 'svelte/internal';
-
+	
 	import { get, writable } from 'svelte/store';
-	import { fly } from 'svelte/transition';
+	import { fly, fade } from 'svelte/transition';
+	import { getContext } from "svelte";
+
+	export let enabledScanTypes: ScanTypes = {
+		ticketBarcode: true,
+		nzCovidPass: true
+	};
+
+	const { open } = getContext('simple-modal');
 
 	enum ScannerStatus {
 		Scanning,
 		ConfirmScan,
 		Invaild
 	}
+
 	let scannerStatus = writable(ScannerStatus.Scanning);
 	scannerStatus.subscribe((status) => {
 		if (status === ScannerStatus.Invaild) {
@@ -22,10 +33,13 @@
 		}
 	});
 
-	function handleScan(event: CustomEvent) {
+	async function handleScan(event: CustomEvent) {
 		if (get(scannerStatus) === ScannerStatus.Scanning) {
-			console.log(validateScan(event.detail.qrContent));
-			scannerStatus.set(ScannerStatus.ConfirmScan);
+			let validator = await validateScan(event.detail.qrContent, enabledScanTypes);
+			if (validator.valid) {
+				open(AttendeeMatching,{...validator});
+			}
+			// scannerStatus.set(ScannerStatus.ConfirmScan);
 		}
 	}
 
@@ -37,8 +51,11 @@
 	<!-- Always render QR Scanner we enabled (so we hide it instead of remove it) -->
 	<div class="qr-wrapper" bind:clientWidth={previewWidth}>
 		{#if $scannerStatus === ScannerStatus.ConfirmScan}
-			<div class="comfirm" in:fly={{ y: previewWidth, duration: 500 }} out:fly>
-				are ya really sure
+			<div class="comfirm" in:fade={{ duration: 150 }} out:fly>
+				<div style="width: 30%">
+					<SuccessTick />
+				</div>
+				COVID Pass Verified
 			</div>
 		{:else if $scannerStatus === ScannerStatus.Invaild}
 			<div class="fail" in:fly={{ y: previewWidth, duration: 500 }} out:fly>no can do</div>
@@ -69,7 +86,7 @@
 		justify-content: center;
 		.qr-wrapper {
 			width: 100%;
-			div {
+			> div {
 				background-color: $background-backdrop;
 				width: 100%;
 				height: 100%;

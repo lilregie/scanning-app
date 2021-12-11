@@ -30,8 +30,7 @@
 		display: inline-block;
 		box-sizing: border-box;
 		padding: 0.85em 1em;
-		margin: 0 0 1.875rem 0;
-		margin-bottom: 0;
+		margin: 0;
 		vertical-align: middle;
 		font-size: 1rem;
 		border: 1px solid transparent;

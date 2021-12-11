@@ -1,9 +1,24 @@
 <script lang="ts">
 	import Card from './Card.svelte';
-	import logo from '$lib/assets/logo/wordmark-white.svg';
-	export let cardOptionsLeft = {};
-	export let cardOptionsRightTop = {};
-	export let cardOptionsRightBottom = {};
+	import logo from '../assets/logo/wordmark-white.svg';
+
+	interface CardOptions {
+		margin?: boolean;
+		scroll?: boolean;
+		shadow?: false | "small" | "medium" | "large"
+	}
+
+	interface Cards {
+		left: false | CardOptions;
+		rightTop: false | CardOptions;
+		rightBottom: false | CardOptions;
+	}
+
+	export let cards: Cards = {
+		"left": {},
+		"rightTop": {},
+		"rightBottom": {},
+	};
 </script>
 
 <div class="brand">
@@ -11,22 +26,34 @@
 </div>
 <div class="panel-container">
 	<div class="left-bar">
-		<Card expand={true} {...cardOptionsLeft}>
+		{#if cards.left}
+			<Card expand={true} {...cards.left}>
+				<slot name="left-bar" />
+				<slot name="left-bar-footer" slot="footer" />
+			</Card>
+		{:else}
 			<slot name="left-bar" />
-			<slot name="left-bar-footer" slot="footer" />
-		</Card>
+		{/if}
 	</div>
 	<div class="right-bar">
 		<slot name="right-bar">
 			<div class="info-panel">
-				<Card expand={true}>
+				{#if cards.rightTop}
+					<Card expand={true} {...cards.rightTop}>
+						<slot name="info-panel" />
+					</Card>
+				{:else}
 					<slot name="info-panel" />
-				</Card>
+				{/if}
 			</div>
 			<div class="list-panel">
-				<Card expand={true}>
+				{#if cards.rightBottom}
+					<Card expand={true} {...cards.rightBottom}>
+						<slot name="list-panel" />
+					</Card>
+				{:else}
 					<slot name="list-panel" />
-				</Card>
+				{/if}
 			</div>
 		</slot>
 	</div>
@@ -79,6 +106,7 @@
 		}
 		.list-panel {
 			flex: 1;
+			max-height: 50vh;
 			overflow: auto;
 		}
 	}
