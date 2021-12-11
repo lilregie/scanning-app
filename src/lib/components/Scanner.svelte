@@ -1,19 +1,29 @@
 <script lang="ts">
-	import { validateScan } from '$lib/validateScan';
+	import { validateScan, ScanTypes } from '$lib/validateScan';
 	import Tick from '$lib/components/Tick.svelte';
+	import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
+
 
 	import QR from 'modern-svelte-qr-scanner';
 	import { Circle } from 'svelte-loading-spinners';
-	import { transition_in } from 'svelte/internal';
-
+	
 	import { get, writable } from 'svelte/store';
-	import { fly } from 'svelte/transition';
+	import { fly, fade } from 'svelte/transition';
+	import { getContext } from "svelte";
+
+	export let enabledScanTypes: ScanTypes = {
+		ticketBarcode: true,
+		nzCovidPass: true
+	};
+
+	const { open } = getContext('simple-modal');
 
 	enum ScannerStatus {
 		Scanning,
 		ConfirmScan,
 		Invaild
 	}
+
 	let scannerStatus = writable(ScannerStatus.Scanning);
 	scannerStatus.subscribe((status) => {
 		if (status === ScannerStatus.Invaild) {
@@ -23,10 +33,13 @@
 		}
 	});
 
-	function handleScan(event: CustomEvent) {
+	async function handleScan(event: CustomEvent) {
 		if (get(scannerStatus) === ScannerStatus.Scanning) {
-			console.log(validateScan(event.detail.qrContent));
-			scannerStatus.set(ScannerStatus.ConfirmScan);
+			let validator = await validateScan(event.detail.qrContent, enabledScanTypes);
+			if (validator.valid) {
+				open(AttendeeMatching,{...validator});
+			}
+			// scannerStatus.set(ScannerStatus.ConfirmScan);
 		}
 	}
 

@@ -1,6 +1,7 @@
 import { get } from "svelte/store";
 import { eventAttendees, selectedAttendeeID } from "./store";
 import { newestCheckIns } from "./utill";
+import Fuse from 'fuse.js';
 
 
 import { formatDistance } from "date-fns";
@@ -23,9 +24,24 @@ export function newestCheckInsTable(): [string[], TableRow[]]  {
 	return [tableHeaders, tableData]
 }
 
-export function attendeesTable(attendees: Attendee[]): [string[], TableRow[]] {
+export function attendeesTable(attendees: Attendee[], searchTerm: string = ""): [string[], TableRow[]] {
 	let tableHeaders = ["Name", "ID", "Checked In"];
-	let tableData: TableRow[] = attendees.map(attendee => {
+	let sortedAttendees: Attendee[];
+	console.log(searchTerm==="");
+	if (searchTerm!=="") {
+		let fuse = new Fuse(attendees, {
+			includeScore: true,
+			keys: [{
+				name: "first_name",
+				weight: 3,
+			}, "last_name", "id"],
+			threshold: 0.3,
+		});
+		sortedAttendees = fuse.search(searchTerm).map(result => result.item);
+	} else {
+		sortedAttendees = attendees;
+	}
+	let tableData: TableRow[] = sortedAttendees.map(attendee => {
 		return {
 			data: [
 				`${attendee.first_name}  ${attendee.last_name}`,
@@ -39,6 +55,7 @@ export function attendeesTable(attendees: Attendee[]): [string[], TableRow[]] {
 			}
 		}
 	});
+
 	console.log("table", attendees.length)
 	return [tableHeaders, tableData]
 

@@ -23,3 +23,14 @@ export function normString(x: string): string {
 export function findByKey<T>(list: T[], key: string, value: any): T | undefined {
 	return list.find((item) => item[key] === value);
 }
+
+
+/// Convert a string to title case, so it is "Like This".
+export function titleCase(str) {
+	let splitStr = str.toLowerCase().split(/[\s\-,_]+/);
+	for (var i = 0; i < splitStr.length; i++) {
+		splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
+	}
+	return splitStr.join(' '); 
+ }
+ 

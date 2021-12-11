@@ -2,23 +2,27 @@
 	import AdminLayout from '$lib/components/AdminLayout.svelte';
 	import Scanner from '$lib/components/Scanner.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import AttendeeSearch from '$lib/components/Search.svelte';
 	import Table from "$lib/components/Table.svelte";
-	import { eventAttendees, selectedAttendee } from "$lib/store";
-
+	import Search from '$lib/components/Search.svelte';
 
 	import { attendeesTable } from '$lib/generateDataVis';
 	import { createCheckIn } from '$lib/api';
+	import { attendeesSearchTerm, eventAttendees, selectedAttendee } from "$lib/store";
+
 	import { get } from 'svelte/store';
 
-	$: attendeesTableData = attendeesTable($eventAttendees);
+	$: attendeesTableData = attendeesTable($eventAttendees, $attendeesSearchTerm);
 
 	// $: selectedAttendeeCheckedIn = $selectedAttendee &&  $selectedAttendee.check_ins.length === 0;
 
 	let leftBarState: "ScanAny" | "ValidateCovidPass" | "CheckInSuccess" = "ScanAny";
 </script>
 
-<AdminLayout cardOptionsLeft={{ scroll: false }}>
+<AdminLayout cards={{
+	left: {scroll: false},
+	rightBottom: false,
+	rightTop: {scroll: false},
+}}>
 	<div slot="left-bar" class="left-bar">
 		{#if leftBarState==="ValidateCovidPass"}
 			<div class="header-text">
@@ -68,6 +72,7 @@
 
 	</div>
 	<div slot="list-panel">
+		<Search placeholder="Search for name, email, booking number, etc" size="expanded" bind:searchTerm={$attendeesSearchTerm}></Search>
 		<Table tableHeaders={attendeesTableData[0]} tableData={attendeesTableData[1]}/>
 	</div>
 </AdminLayout>

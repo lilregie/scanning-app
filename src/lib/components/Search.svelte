@@ -12,7 +12,11 @@
 
 <style lang="scss">
     input {
-
+		border: none;
+		border-radius: 0;
+		margin: 2em 0;
+		padding: 0.5em 1em;
+		box-sizing: border-box;
 		&.tiny {
 			font-size: 0.8rem;
 			padding-top: 0.48rem;

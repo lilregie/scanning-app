@@ -10,13 +10,13 @@ export function generateAttendeesForEvent(count: number = (faker.datatype.number
 	return people;
 }
 
-export function generateAttendee(): Attendee {
+export function generateAttendee(firstName = faker.name.firstName(), lastName = faker.name.lastName()): Attendee {
 	let id  = faker.datatype.number();
 	return {
 		id,
 		booking_id: faker.datatype.number(),
-		first_name: faker.name.firstName(),
-		last_name: faker.name.lastName(),
+		first_name: firstName,
+		last_name: lastName,
 		contact_phone: faker.phone.phoneNumber(),
 		email_address: faker.internet.email(),
 		organisation: faker.company.companyName(),

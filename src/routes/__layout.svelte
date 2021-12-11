@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import Modal from 'svelte-simple-modal';
 
 	import { initializeAPI } from '$lib/api';
 
@@ -10,7 +11,9 @@
 	});
 </script>
 
-<slot />
+<Modal>
+	<slot />
+</Modal>
 
 <style lang="scss">
 	@use '../lib/styles/vars.scss' as *;

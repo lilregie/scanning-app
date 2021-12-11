@@ -1,12 +1,14 @@
+<script lang="ts" context="module">
+	export interface TableRow {
+		data: string[];
+		callback?: () => void;
+	}
+</script>
+
 <script lang="ts">
 	export let tableData: TableRow[];
 	export let tableHeaders: string[];
 	console.log(tableData);
-
-	interface TableRow {
-		data: string[];
-		callback?: () => void;
-	}
 </script>
 
 <table>
@@ -47,6 +49,8 @@
 		border-collapse: collapse;
 		border: $border-light solid $border-weight;
 		width: 100%;
+		overflow: auto;
+
 
 		tbody tr {
 			&:hover {
@@ -77,6 +81,8 @@
 		thead th {
 			font-weight: 600;
 			padding: 0.5rem;
+			background: $background-foreground;
+
 		}
 	}
 </style>
