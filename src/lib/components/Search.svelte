@@ -17,7 +17,7 @@
     input {
 		border: $border-light solid 1px;
 		border-radius: 0;
-		margin: 2em 0;
+		margin: 1em 0;
 		padding: 0.5em 1em;
 		box-sizing: border-box;
 		font-size: 0.9rem;

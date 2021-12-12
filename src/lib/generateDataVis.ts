@@ -5,13 +5,10 @@ import Fuse from 'fuse.js';
 
 
 import { formatDistance } from "date-fns";
+
 import type { Attendee } from "./attendee";
+import type { TableRow } from "$lib/components/Table.svelte";
 
-
-interface TableRow {
-	data: string[];
-	callback?: () => void;
-}
 
 export function newestCheckInsTable(): [string[], TableRow[]]  {
 	let checkIns = newestCheckIns(get(eventAttendees));
@@ -24,6 +21,7 @@ export function newestCheckInsTable(): [string[], TableRow[]]  {
 	return [tableHeaders, tableData]
 }
 
+/// Generates an table of all the attendees, based off a search term
 export function attendeesTable(attendees: Attendee[], searchTerm: string = ""): [string[], TableRow[]] {
 	let tableHeaders = ["Name", "ID", "Checked In"];
 	let sortedAttendees: Attendee[];
@@ -52,7 +50,8 @@ export function attendeesTable(attendees: Attendee[], searchTerm: string = ""): 
 			callback: () => {
 				console.log("Selected: ", attendee);
 				selectedAttendeeID.set(attendee.id);
-			}
+			},
+			hightlighted: attendee.id === get(selectedAttendeeID),
 		}
 	});
 

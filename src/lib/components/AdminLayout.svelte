@@ -44,6 +44,7 @@
 </div>
 <div class="panel-container">
 	<div class="left-bar">
+		<slot name="left-bar-header" />
 		{#if cards.left}
 			<Card expand={true} {...cards.left}>
 				<slot name="left-bar" />
@@ -56,21 +57,32 @@
 	<div class="right-bar">
 		<slot name="right-bar">
 			<div class="info-panel">
+				<div class="info-panel-header">
+					<slot name="info-panel-header" />
+				</div>
 				{#if cards.rightTop}
 					<Card expand={true} {...cards.rightTop}>
 						<slot name="info-panel" />
 					</Card>
 				{:else}
-					<slot name="info-panel" />
+					<div class="info-panel-content">
+						<slot name="info-panel"/>
+					</div>
 				{/if}
 			</div>
 			<div class="list-panel">
+				<div class="list-panel-header">
+					<slot name="list-panel-header" />
+				</div>
 				{#if cards.rightBottom}
 					<Card expand={true} {...cards.rightBottom}>
 						<slot name="list-panel" />
 					</Card>
 				{:else}
+				<div class="list-panel-content">
 					<slot name="list-panel" />
+
+				</div>
 				{/if}
 			</div>
 		</slot>
@@ -138,11 +150,32 @@
 		.info-panel {
 			flex: 1;
 			overflow: auto;
+			display: flex;
+			flex-flow: column;
+			.info-panel-header {
+				flex: 0 1 auto;
+			}
+			.info-panel-content {
+				flex: 1 1 auto;
+
+			}
+
 		}
 		.list-panel {
 			flex: 1;
 			max-height: 50vh;
 			overflow: auto;
+			display: flex;
+			flex-flow: column;
+			.list-panel-header {
+				flex: 0 1 auto;
+			}
+			.list-panel-content {
+				flex: 1 1 auto;
+				overflow: auto;
+
+
+			}
 		}
 	}
 </style>
