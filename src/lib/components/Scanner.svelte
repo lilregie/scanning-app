@@ -37,7 +37,7 @@
 		if (get(scannerStatus) === ScannerStatus.Scanning) {
 			let validator = await validateScan(event.detail.qrContent, enabledScanTypes);
 			if (validator.valid) {
-				open(AttendeeMatching,{...validator});
+				open(AttendeeMatching,{...validator, vaccineCert: event.detail.qrContent});
 			}
 			// scannerStatus.set(ScannerStatus.ConfirmScan);
 		}

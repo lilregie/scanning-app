@@ -19,7 +19,7 @@
 	export let DOB: string;
 	export let vaccineCert: string;
 
-	let {close} = getContext('simple-modal');
+	let { close } = getContext('simple-modal');
 
 	let matchingAttendees = [];
 
@@ -43,7 +43,9 @@
 		isCaseSensitive: false
 	});
 	matchingAttendees = fuse.search(`${firstName} ${lastName}`);
-	selectedAttendeeID.set(matchingAttendees[0].item.id);
+	if (matchingAttendees.length > 0) {
+		selectedAttendeeID.set(matchingAttendees[0].item.id);
+	}
 
 	// Update Stats
 	countMatching = matchingAttendees.length;
@@ -83,21 +85,42 @@
 <div class="header">
 	<div class="match-info">
 		<h1>Find&NonBreakingSpace;Attendee</h1>
-		<p>
-			This pass matched <b>{countMatchingExactly}</b> attendee exactly.<br />
-			We’ve also found <b>{countMatching - countMatchingExactly}</b> other close matches in case of a
-			typo.
-		</p>
+		{#if countMatching > 0}
+			<p>
+				This pass matched <b>{countMatchingExactly}</b> attendee exactly.<br />
+				We’ve also found <b>{countMatching - countMatchingExactly}</b> other close matches in case of
+				a typo.
+			</p>
+		{:else}
+			<p>
+				This pass didn’t match any attendees for this event.<br/>
+				You can check in the attendee manually by searching for the attendee’s name,<br/> and using the Check In button in the Attendee Details panel.
+
+			</p>
+		{/if}
 	</div>
 	<div class="covid-pass-badge-wrapper">
 		<CovidPassBadge name={titleCase(`${givenName} ${lastName}`)} dob={DOB} />
 	</div>
 </div>
-<Table tableHeaders={['Name', 'ID', 'Certainty', 'Checked In']} {tableData} />
+{#if countMatching > 0}
+	<Table tableHeaders={['Name', 'ID', 'Certainty', 'Checked In']} {tableData} />
+{/if}
 <div class="action-container">
-	<div><Button size="large" color="secondary" on:click={close}>View attendee details</Button></div>
-	<div><Button size="large" disabled={$selectedAttendee === null} on:click={checkInAttendee}
-		>Check In attendee</Button></div>
+	<div>
+		<Button size="large" color="secondary" on:click={close}>
+			{#if countMatching > 0}
+				View attendee details
+			{:else}
+				Search for Attendee
+			{/if}
+		</Button>
+	</div>
+	<div>
+		<Button size="large" disabled={$selectedAttendee === null} on:click={checkInAttendee}>
+			Check In attendee
+		</Button>
+	</div>
 </div>
 
 <style lang="scss">
