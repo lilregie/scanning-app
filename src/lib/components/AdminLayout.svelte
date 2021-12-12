@@ -2,6 +2,8 @@
 	import Card from './Card.svelte';
 	import logo from '../assets/logo/wordmark-white.svg';
 
+	import {checkedInCount, eventAttendees} from "$lib/store";
+
 	interface CardOptions {
 		margin?: boolean;
 		scroll?: boolean;
@@ -23,6 +25,22 @@
 
 <div class="brand">
 	<img src={logo} alt="Lil Regie logo" />
+</div>
+<div class="stats-container">
+	<div class="stat">
+		<span class="stat-value">{$checkedInCount}</span>
+		<span class="stat-label">Checked In</span>
+	</div>
+
+	<div class="stat">
+		<span class="stat-value">?</span>
+		<span class="stat-label">Available Tickets</span>
+	</div>
+
+	<div class="stat">
+		<span class="stat-value">{$eventAttendees.length}</span>
+		<span class="stat-label">Registered</span>
+	</div>
 </div>
 <div class="panel-container">
 	<div class="left-bar">
@@ -60,15 +78,32 @@
 </div>
 
 <style lang="scss">
+	@use '../styles/vars.scss' as *;
+
 	$item-spacing: 2rem;
 
 	.brand {
 		position: fixed;
 		top: calc($item-spacing / 2);
-		right: calc($item-spacing / 2);
+		left: calc($item-spacing / 2);
 		img {
 			height: $item-spacing;
 			width: auto;
+		}
+	}
+
+	.stats-container {
+		position: fixed;
+		top: calc($item-spacing / 2);
+		right: calc($item-spacing / 2);
+		display: flex;
+		flex-direction: row;
+		color: $text-dark;
+		.stat {
+			margin: 0 1em;
+			.stat-value {
+				font-weight: bold;
+			}
 		}
 	}
 

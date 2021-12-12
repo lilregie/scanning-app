@@ -1,4 +1,4 @@
-import { derived, get, writable } from 'svelte/store';
+import { derived, writable } from 'svelte/store';
 import type { Writable, Readable } from 'svelte/store';
 import type { Event } from '$lib/event';
 import type { Attendee } from './attendee';
@@ -62,3 +62,7 @@ export const selectedAttendee: Readable<Attendee> = derived([selectedAttendeeID,
 		return null;
 	}
 })
+
+export const checkedInCount: Readable<number> = derived(eventAttendees, (_eventAttendees) => {
+	return _eventAttendees.filter((attendee) => attendee.check_ins.length > 0).length;
+});
