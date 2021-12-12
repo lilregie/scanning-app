@@ -5,9 +5,9 @@
 	import { newestCheckInsTable } from '$lib/generateDataVis';
 
 	import { chosenEvent, eventAttendees } from '$lib/store';
-	import { get } from 'svelte/store';
+	import type { TableRow } from '$lib/components/Table.svelte';
 
-	let checkInTable: [string[], string[][]] = [[], []];
+	let checkInTable: [string[], TableRow[]] = [[], []];
 	eventAttendees.subscribe((_) => {
 		checkInTable = newestCheckInsTable();
 	});

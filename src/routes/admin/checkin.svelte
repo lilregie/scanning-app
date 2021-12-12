@@ -4,6 +4,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import Table from "$lib/components/Table.svelte";
 	import Search from '$lib/components/Search.svelte';
+	import AttendeeDetail from '$lib/components/AttendeeDetail.svelte';
 
 	import { attendeesTable } from '$lib/generateDataVis';
 	import { createCheckIn } from '$lib/api';
@@ -62,10 +63,9 @@
 	</div>
 	<div slot="info-panel">
 		{#if $selectedAttendee}
-			{JSON.stringify($selectedAttendee)}
-			<Button on:click={()=>{
+			<AttendeeDetail attendee={$selectedAttendee} on:checkIn={()=>{
 				leftBarState = "ValidateCovidPass"
-			}}>Check In</Button>
+			}}/>
 		{:else if leftBarState==="ScanAny"}
 			Scan a booking or COVID pass, or search below to view attendee details 
 		{/if}
