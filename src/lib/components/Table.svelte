@@ -1,6 +1,7 @@
 <script lang="ts" context="module">
 	export interface TableRow {
 		data: string[];
+		hightlighted?: boolean;
 		callback?: () => void;
 	}
 </script>
@@ -21,19 +22,11 @@
 	</thead>
 	<tbody>
 		{#each tableData as tableRow}
-			{#if tableRow.callback}
-				<tr on:click={tableRow.callback} class="clickable-row">
-					{#each tableRow.data as element}
-						<td>{element}</td>
-					{/each}
-				</tr>
-			{:else}
-				<tr>
-					{#each tableRow.data as element}
-						<td>{element}</td>
-					{/each}
-				</tr>
-			{/if}
+			<tr on:click={tableRow.callback} class={`${tableRow.callback ? "clickable-row" : ""} ${tableRow.hightlighted ? "highlight" : ""}`}>
+				{#each tableRow.data as element}
+					<td>{element}</td>
+				{/each}
+			</tr>
 
 		{/each}
 	</tbody>
@@ -41,6 +34,7 @@
 
 <style lang="scss">
 	@use 'sass:color';
+	@use 'sass:map';
 	@use '../styles/vars.scss' as *;
 	table {
 		$border-weight: 1px;
@@ -62,6 +56,9 @@
 				&:nth-child(odd) {
 					background: color.adjust($background-foreground, $lightness: $hover-adjust);
 				}
+				&.highlight {
+					background: color.adjust(map-get($theme-colors, "primary"), $lightness: $hover-adjust);
+				}
 			}
 			&:nth-child(even) {
 				background: $background-intermediate-light;
@@ -76,6 +73,10 @@
 			}
 			&.clickable-row {
 				cursor: pointer;
+			}
+			&.highlight {
+				background: map-get($theme-colors, "primary");
+				color: $text-dark;
 			}
 		}
 		thead th {

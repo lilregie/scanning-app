@@ -11,7 +11,7 @@
 	});
 </script>
 
-<Modal>
+<Modal styleWindow={{width: "80vw"}}>
 	<slot />
 </Modal>
 
