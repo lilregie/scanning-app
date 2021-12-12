@@ -45,6 +45,17 @@
     .header {
         font-size: 1.5rem;
         font-weight: 600;
+        
+    }
+    @media (max-width: 768px) {
+        .header {
+            font-size: 1rem;
+
+        }
+        .details {
+            font-size: 0.8rem;
+
+        }
     }
     
 </style>
