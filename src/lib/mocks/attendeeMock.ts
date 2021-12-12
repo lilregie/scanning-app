@@ -4,7 +4,6 @@ import type { CheckIn, Attendee, CustomField } from '$lib/attendee';
 
 export function generateAttendeesForEvent({count = (faker.datatype.number(40)+12), forceCheckIns = false}={}): Attendee[] {
 	let people = [];
-	people.push(generateAttendee({firstName: "jasper", lastName: "miller-waugh"}));
 	for (let i = 0; i < count; i++) {
 		people.push(generateAttendee({forceCheckIns}));
 	}
