@@ -10,11 +10,14 @@
 	import { get, writable } from 'svelte/store';
 	import { fly, fade } from 'svelte/transition';
 	import { getContext } from "svelte";
+	import InvaildScan from './scannerStates/InvaildScan.svelte';
 
 	export let enabledScanTypes: ScanTypes = {
 		ticketBarcode: true,
 		nzCovidPass: true
 	};
+
+	let covidPassFailReason: string = "";
 
 	const { open } = getContext('simple-modal');
 
@@ -29,7 +32,7 @@
 		if (status === ScannerStatus.Invaild) {
 			setTimeout(() => {
 				scannerStatus.set(ScannerStatus.Scanning);
-			}, 10000);
+			}, 5000);
 		}
 	});
 
@@ -38,6 +41,9 @@
 			let validator = await validateScan(event.detail.qrContent, enabledScanTypes);
 			if (validator.valid) {
 				open(AttendeeMatching,{...validator, vaccineCert: event.detail.qrContent});
+			} else {
+				scannerStatus.set(ScannerStatus.Invaild);
+				covidPassFailReason = validator.violates;
 			}
 			// scannerStatus.set(ScannerStatus.ConfirmScan);
 		}
@@ -58,7 +64,10 @@
 				COVID Pass Verified
 			</div>
 		{:else if $scannerStatus === ScannerStatus.Invaild}
-			<div class="fail" in:fly={{ y: previewWidth, duration: 500 }} out:fly>no can do</div>
+			<div class="fail" in:fly={{ y: previewWidth, duration: 500 }} out:fly>
+				<InvaildScan/>
+				{covidPassFailReason}
+			</div>
 		{/if}
 		<QR
 			on:scan={handleScan}
@@ -105,6 +114,9 @@
 			}
 			.fail {
 				background-color: map.get($theme-colors, 'alert');
+				:global(svg) {
+					width: 4em;
+				}
 			}
 		}
 	}

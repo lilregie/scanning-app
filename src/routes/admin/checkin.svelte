@@ -18,7 +18,7 @@
 	$: {
 		// IMPORTANT: This console.log means that the entire block will reload when 
 		// the $selectedAttendee changes. This is a hack, and should be fixed later on.
-		console.log("Selected Attendee",$selectedAttendee.id);
+		console.log("Selected Attendee",$selectedAttendee);
 
 		attendeesTableData = attendeesTable($eventAttendees, $attendeesSearchTerm);
 	}

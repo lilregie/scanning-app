@@ -1,9 +1,5 @@
 import { verifyPassURI } from "@vaxxnz/nzcp";
-import { get } from "svelte/store";
-import { eventAttendees } from "./store";
-import { normString as norm } from "$lib/utill";
 
-import type { Attendee } from "./attendee";
 import type { VerificationResult } from "@vaxxnz/nzcp";
 
 
@@ -12,9 +8,10 @@ declare type ScanResults = {
     givenName: string,
     lastName: string,
     DOB: string,
-    covidPassInfo?: VerificationResult;
+    covidPassInfo: VerificationResult;
 } | {
     valid: false;
+    violates: string;
 }
 
 export interface ScanTypes {
@@ -38,17 +35,16 @@ export async function validateScan(scanText: string, enabledScanTypes: ScanTypes
                 covidPassInfo: passResult
             }
             
+        } else {
+            console.log("NZCP",passResult)
+            return {
+                valid: false,
+                violates: passResult.violates.description
+            }
         }
     }
     return {
-        valid: false
+        valid: false,
+        violates: "Not an NZ Covid Pass"
     }
 }
-
-// function searchPerson(firstName: string, lastName: string) {
-//     const attendees = get(eventAttendees);
-//     const matches = attendees.filter((possibleMatch) =>
-//         norm(possibleMatch.first_name) === norm(firstName) && norm(possibleMatch.last_name) === norm(lastName)
-//     )
-//     return matches.length === 1 ? matches[0] : null
-// }
