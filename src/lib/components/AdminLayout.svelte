@@ -7,7 +7,8 @@
 	interface CardOptions {
 		margin?: boolean;
 		scroll?: boolean;
-		shadow?: false | "small" | "medium" | "large"
+		shadow?: false | "small" | "medium" | "large";
+		highlighted?: boolean;
 	}
 
 	interface Cards {
@@ -43,7 +44,7 @@
 	</div>
 </div>
 <div class="panel-container">
-	<div class="left-bar">
+	<div class="left-bar" class:highlighted={cards.left && cards.left.highlighted}>
 		<slot name="left-bar-header" />
 		{#if cards.left}
 			<Card expand={true} {...cards.left}>
@@ -56,7 +57,7 @@
 	</div>
 	<div class="right-bar">
 		<slot name="right-bar">
-			<div class="info-panel">
+			<div class="info-panel" class:highlighted={cards.rightTop && cards.rightTop.highlighted}>
 				<div class="info-panel-header">
 					<slot name="info-panel-header" />
 				</div>
@@ -70,7 +71,7 @@
 					</div>
 				{/if}
 			</div>
-			<div class="list-panel">
+			<div class="list-panel" class:highlighted={cards.rightBottom && cards.rightBottom.highlighted}>
 				<div class="list-panel-header">
 					<slot name="list-panel-header" />
 				</div>
@@ -173,9 +174,14 @@
 			.list-panel-content {
 				flex: 1 1 auto;
 				overflow: auto;
-
-
 			}
+		}
+	}
+	.list-panel, .info-panel, .left-bar {
+		transition: all 200ms ease;
+		&.highlighted {
+			box-shadow: 0px 0px 8px 4px rgba(207,34,101,0.56);
+			overflow: visible;
 		}
 	}
 </style>

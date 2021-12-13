@@ -26,7 +26,6 @@
 	});
 
 	function choseProject() {
-		console.log(eventsDropdownChosen);
 		chosenEventID.set(eventsDropdownChosen.value);
 		goto('/admin/dashboard');
 	}

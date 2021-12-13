@@ -23,7 +23,6 @@ export async function validateScan(scanText: string, enabledScanTypes: ScanTypes
     if (scanText.startsWith("NZCP:") && enabledScanTypes.nzCovidPass) {
         // NZ Covid Pass
         const passResult = await verifyPassURI(scanText)
-        console.log("NZCP",passResult)
 
         if (passResult.success) {
             // const relevantPerson = searchPerson()
@@ -36,7 +35,6 @@ export async function validateScan(scanText: string, enabledScanTypes: ScanTypes
             }
             
         } else {
-            console.log("NZCP",passResult)
             return {
                 valid: false,
                 violates: passResult.violates.description

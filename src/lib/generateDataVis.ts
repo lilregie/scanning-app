@@ -25,7 +25,6 @@ export function newestCheckInsTable(): [string[], TableRow[]]  {
 export function attendeesTable(attendees: Attendee[], searchTerm: string = ""): [string[], TableRow[]] {
 	let tableHeaders = ["Name", "ID", "Checked In"];
 	let sortedAttendees: Attendee[];
-	console.log(searchTerm==="");
 	if (searchTerm!=="") {
 		let fuse = new Fuse(attendees, {
 			includeScore: true,
@@ -48,14 +47,11 @@ export function attendeesTable(attendees: Attendee[], searchTerm: string = ""): 
 				`${attendee.check_ins.length > 0 ? "Checked In" : "Not Checked In"}`
 			],
 			callback: () => {
-				console.log("Selected: ", attendee);
 				selectedAttendeeID.set(attendee.id);
 			},
 			hightlighted: attendee.id === get(selectedAttendeeID),
 		}
 	});
 
-	console.log("table", attendees.length)
 	return [tableHeaders, tableData]
-
 }

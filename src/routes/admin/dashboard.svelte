@@ -11,8 +11,6 @@
 	eventAttendees.subscribe((_) => {
 		checkInTable = newestCheckInsTable();
 	});
-
-	chosenEvent.subscribe((event) => console.log('Chosen Event', event));
 </script>
 
 <AdminLayout>

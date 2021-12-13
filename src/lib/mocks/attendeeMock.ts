@@ -17,7 +17,6 @@ export function generateAttendee({
   }={}): Attendee {
 	let id  = faker.datatype.number();
 	let checkInCount = forceCheckIns ? 1 : (faker.datatype.boolean() ? 0 : faker.datatype.number(3));
-	console.log(`generateAttendee: ${firstName} ${lastName}, id: ${id}, forcing check in: ${forceCheckIns}`);
 	return {
 		id,
 		booking_id: faker.datatype.number(),

@@ -19,7 +19,6 @@ export function getEventsList() {
 	for (let i = 0; i < 3; i++) {
 		events.push(generateEvent());
 	}
-	console.log(events);
 	allEvents.set(events);
 }
 
