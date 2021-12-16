@@ -10,6 +10,8 @@ export function generateAttendeesForEvent({count = (faker.datatype.number(40)+12
 	return people;
 }
 
+faker.seed(42);
+
 export function generateAttendee({
 	firstName = faker.name.firstName(),
 	lastName = faker.name.lastName(),

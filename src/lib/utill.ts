@@ -11,7 +11,9 @@ export function newestCheckIns(eventAttendees: Attendee[]): [CheckIn, Attendee][
 		checkIns = checkIns.concat(attendee.check_ins.map((check_in) => [check_in, attendee]))
 	})
 	checkIns = checkIns.sort((a, b) => {
-		return b[0].time.getTime() - a[0].time.getTime();
+		if (b[0].time && a[0]) {
+			return b[0].time.getTime() - a[0].time.getTime();
+		}
 	});
 	return checkIns
 }

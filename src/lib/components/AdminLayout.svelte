@@ -2,7 +2,7 @@
 	import Card from './Card.svelte';
 	import logo from '../assets/logo/wordmark-white.svg';
 
-	import {checkedInCount, eventAttendees} from "$lib/store";
+	import {checkedInCount, eventAttendees, chosenEvent} from "$lib/store";
 
 	interface CardOptions {
 		margin?: boolean;
@@ -34,7 +34,7 @@
 	</div>
 
 	<div class="stat">
-		<span class="stat-value">?</span>
+		<span class="stat-value">{$chosenEvent?.total_tickets - $checkedInCount}</span>
 		<span class="stat-label">Available Tickets</span>
 	</div>
 

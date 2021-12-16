@@ -4,7 +4,7 @@ import type { Event } from '$lib/event';
 import type { Attendee } from './attendee';
 import { getAttendeesList } from './api';
 
-let LOCAL_STORAGE_VERSION = 1;
+let LOCAL_STORAGE_VERSION = 2;
 
 /** Makes a store persistent in local storage
  * @param  {[Writable]} store Writable store to be made persistent
@@ -28,8 +28,6 @@ export const chosenEventID = writable(-1);
 useLocalStorage(chosenEventID, 'chosenEventID');
 
 export const allEvents: Writable<Event[]> = writable([]);
-// Stored just for testing while we have mock data, otherwise everything would change every load
-useLocalStorage(allEvents, 'allEvents');
 
 export const chosenEvent = derived([chosenEventID, allEvents], ([_chosenEventID, _allEvents]) => {
 
@@ -47,8 +45,6 @@ export const chosenEvent = derived([chosenEventID, allEvents], ([_chosenEventID,
 });
 
 export const eventAttendees: Writable<Attendee[]> = writable([]);
-useLocalStorage(eventAttendees, 'eventAttendees');
-
 
 export const attendeesSearchTerm: Writable<string> = writable('');
 

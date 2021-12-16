@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { chosenEventID } from '$lib/store';
+	import { chosenEvent, chosenEventID } from '$lib/store';
 	import { get } from 'svelte/store';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/env';
-	if (get(chosenEventID) === -1 && browser) {
+	if (get(chosenEvent) === null && browser) {
 		goto('/');
 	}
 </script>

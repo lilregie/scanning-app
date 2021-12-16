@@ -8,10 +8,12 @@ import {findByKey} from "$lib/utill"
 
 export function initializeAPI() {
 	console.log('Initializing API', get(allEvents));
-	if (get(allEvents).length === 0) {
-		console.log('Loading Events');
-		getEventsList();
-	}
+	console.log('Loading Events');
+	getEventsList();
+	getAttendeesList();
+	// if (get(allEvents).length === 0) {
+		
+	// }
 }
 
 export function getEventsList() {
@@ -19,6 +21,7 @@ export function getEventsList() {
 	for (let i = 0; i < 3; i++) {
 		events.push(generateEvent());
 	}
+	console.log("Generated Events", events);
 	allEvents.set(events);
 }
 
