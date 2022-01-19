@@ -24,11 +24,11 @@ const config = {
 		adapter: adapter(),
 		vite: {
 			optimizeDeps: {
-				include: ["modern-svelte-qr-scanner","events","uuid","visibilityjs","stampit","lodash","dayjs"]
+				include: ["events","uuid","visibilityjs","stampit","lodash","dayjs"]
 			},
 			plugins: [svg({
 				type: 'url'
-			})]
+			})],
 		}
 	}
 };
