@@ -52,5 +52,5 @@
     "visibilityjs": "^2.0.2"
   },
   "type": "module",
-  "dependencies": {}
+  "packageManager": "yarn@1.22.17"
 }

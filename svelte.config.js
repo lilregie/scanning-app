@@ -29,8 +29,11 @@ const config = {
 			plugins: [svg({
 				type: 'url'
 			})]
+		},
+		paths: {
+			base: process.env["SVELTE_BASE_PATH"] ? process.env["SVELTE_BASE_PATH"] : ""
 		}
-	}
+	},
 };
 
 export default config;

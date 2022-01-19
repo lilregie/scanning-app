@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { chosenEvent, chosenEventID } from '$lib/store';
+	import { chosenEvent } from '$lib/store';
 	import { get } from 'svelte/store';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/env';
+	import { basePath } from '$lib/consts';
 	if (get(chosenEvent) === null && browser) {
-		goto('/');
+		goto(`${basePath}`);
 	}
 </script>
 

@@ -1,7 +1,7 @@
 <script lang="ts">
     import SuccessTick from "$lib/components/SuccessTick.svelte";
     import dayjs from 'dayjs';
-    import relativeTime from 'dayjs/plugin/relativeTime';
+    import relativeTime from 'dayjs/plugin/relativeTime.js';
 
     dayjs.extend(relativeTime);
 

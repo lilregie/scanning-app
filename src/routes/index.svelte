@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { chosenEventID, allEvents, chosenEvent } from '$lib/store';
 	import { eventNameFromReference } from '$lib/utill';
 	import { onMount } from 'svelte';
 	import Select from 'svelte-select';
 	import { get } from 'svelte/store';
 	import Button from '$lib/components/Button.svelte';
+import { basePath } from '$lib/consts';
 
 	let eventsDropdownList = [];
 	let eventsDropdownChosen = null;
@@ -27,19 +27,24 @@
 
 	function choseProject() {
 		chosenEventID.set(eventsDropdownChosen.value);
-		goto('/admin/dashboard');
+		console.log(`${basePath}/admin/dashboard`)
+		// goto(`${basePath}/admin/dashboard`);
 	}
 </script>
 
 <div class="container">
 	<h1>Lorem ipsum dolor.</h1>
-	<div>
-		<Select items={eventsDropdownList} bind:value={eventsDropdownChosen} />
-		<Button
-			on:click={choseProject}
-			disabled={typeof eventsDropdownChosen === 'undefined' || eventsDropdownChosen === null}
-			>Choose Project</Button
-		>
+	<div class="project-selection">
+		<div>
+			<Select items={eventsDropdownList} bind:value={eventsDropdownChosen} />
+		</div>
+		<div>
+			<Button
+				on:click={choseProject}
+				disabled={typeof eventsDropdownChosen === 'undefined' || eventsDropdownChosen === null}
+				>Choose Project</Button
+			>
+		</div>
 	</div>
 </div>
 
@@ -56,9 +61,10 @@
 			font-size: 4rem;
 			color: $text-dark;
 		}
-		form {
-			select {
-				display: block;
+		.project-selection{
+			min-width: 15em;
+			div {
+				margin-bottom: 1em;
 			}
 		}
 	}

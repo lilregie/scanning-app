@@ -6,6 +6,7 @@
 
 	import { chosenEvent, eventAttendees } from '$lib/store';
 	import type { TableRow } from '$lib/components/Table.svelte';
+	import { basePath } from '$lib/consts';
 
 	let checkInTable: [string[], TableRow[]] = [[], []];
 	eventAttendees.subscribe((_) => {
@@ -19,7 +20,7 @@
 		<Table tableHeaders={checkInTable[0]} tableData={checkInTable[1]} />
 	</div>
 	<div slot="left-bar-footer">
-		<Button href="/admin/checkin" size="expanded">Next</Button>
+		<Button href={`${basePath}/admin/checkin`} size="expanded">Next</Button>
 	</div>
 	<div slot="right-bar" class="graph-container">
 		<h2>g r a p h</h2>
