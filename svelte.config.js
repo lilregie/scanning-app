@@ -20,7 +20,9 @@ const config = {
 	kit: {
 		// hydrate the <div id="svelte"> element in src/app.html
 		target: '#svelte',
-		adapter: adapter(),
+		adapter: adapter({
+			fallback: 'index.html',
+		}),
 		vite: {
 			optimizeDeps: {
 				include: ["events","uuid","visibilityjs","stampit","lodash","dayjs"]
