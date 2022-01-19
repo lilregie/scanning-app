@@ -4,7 +4,6 @@ import preprocess from 'svelte-preprocess';
 import adapter from '@sveltejs/adapter-static';
 import svg from '@poppanator/sveltekit-svg';
 
-
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	// Consult https://github.com/sveltejs/svelte-preprocess
@@ -31,7 +30,7 @@ const config = {
 			})]
 		},
 		paths: {
-			base: process.env["SVELTE_BASE_PATH"] ? process.env["SVELTE_BASE_PATH"] : ""
+			base: process.env["VITE_BASE_PATH"] ? process.env["VITE_BASE_PATH"] : ""
 		}
 	},
 };

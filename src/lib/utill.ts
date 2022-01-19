@@ -35,12 +35,3 @@ export function titleCase(str) {
 	}
 	return splitStr.join(' ');
 }
-
-
-export function relGoto(path: string) {
-	let fullPath = "";
-	if (path[path.length -1 ]==="/") {
-		path = path.slice(0, -1);
-	}
-
-}

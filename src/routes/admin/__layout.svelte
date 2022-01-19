@@ -5,7 +5,7 @@
 	import { browser } from '$app/env';
 	import { basePath } from '$lib/consts';
 	if (get(chosenEvent) === null && browser) {
-		goto(`${basePath}`);
+		goto(`${basePath}/`);
 	}
 </script>
 

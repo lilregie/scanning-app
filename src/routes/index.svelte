@@ -5,10 +5,13 @@
 	import Select from 'svelte-select';
 	import { get } from 'svelte/store';
 	import Button from '$lib/components/Button.svelte';
-import { basePath } from '$lib/consts';
+	import { basePath } from '$lib/consts';
+	import { goto } from '$app/navigation';
 
 	let eventsDropdownList = [];
 	let eventsDropdownChosen = null;
+
+	console.log(import.meta.env.BASE_URL)
 
 	allEvents.subscribe((events) => {
 		eventsDropdownList = events.map((event) => {
@@ -27,8 +30,7 @@ import { basePath } from '$lib/consts';
 
 	function choseProject() {
 		chosenEventID.set(eventsDropdownChosen.value);
-		console.log(`${basePath}/admin/dashboard`)
-		// goto(`${basePath}/admin/dashboard`);
+		goto(`${basePath}/admin/dashboard`);
 	}
 </script>
 
