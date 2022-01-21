@@ -16,23 +16,36 @@ const config = {
 			// prependData: `@use 'src/lib/styles/vars.scss';`
 		}
 	}),
-
 	kit: {
-		// hydrate the <div id="svelte"> element in src/app.html
-		target: '#svelte',
+		appDir: process.env['RAILS_ENV'] ? 'checkin' : '_app',
 		adapter: adapter({
-			fallback: 'index.html',
+			fallback: process.env['RAILS_ENV'] ? 'layouts/checkin.html.erb' : 'index.html'
 		}),
+		files: {
+			template: process.env['RAILS_ENV'] ? 'src/checkin_rails_layout.html' : 'src/app.html'
+		},
+		paths: {
+			base: process.env['ROOT_PATH'] ? process.env['ROOT_PATH'] : '',
+			assets: process.env['PUBLIC_ASSETS_PATH'] ? process.env['PUBLIC_ASSETS_PATH'] : ''
+		},
+		target: '#svelte',
 		vite: {
 			optimizeDeps: {
-				include: ["events","uuid","visibilityjs","stampit","lodash","dayjs"]
+				include: [
+					"events",
+					"uuid",
+					"visibilityjs",
+					"stampit",
+					"lodash",
+					"dayjs"
+				]
 			},
 			plugins: [svg({
 				type: 'url'
-			})]
-		},
-		paths: {
-			base: process.env["VITE_BASE_PATH"] ? process.env["VITE_BASE_PATH"] : ""
+			})],
+			css: {
+				postcss: {}
+			}
 		}
 	},
 };
