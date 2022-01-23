@@ -2,12 +2,12 @@
 	import Card from './Card.svelte';
 	import logo from '../assets/logo/wordmark-white.svg';
 
-	import {checkedInCount, eventAttendees, chosenEvent} from "$lib/store";
+	import { checkedInCount, eventAttendees, chosenEvent } from '$lib/store';
 
 	interface CardOptions {
 		margin?: boolean;
 		scroll?: boolean;
-		shadow?: false | "small" | "medium" | "large";
+		shadow?: false | 'small' | 'medium' | 'large';
 		highlighted?: boolean;
 	}
 
@@ -18,9 +18,9 @@
 	}
 
 	export let cards: Cards = {
-		"left": {},
-		"rightTop": {},
-		"rightBottom": {},
+		left: {},
+		rightTop: {},
+		rightBottom: {}
 	};
 </script>
 
@@ -67,11 +67,14 @@
 					</Card>
 				{:else}
 					<div class="info-panel-content">
-						<slot name="info-panel"/>
+						<slot name="info-panel" />
 					</div>
 				{/if}
 			</div>
-			<div class="list-panel" class:highlighted={cards.rightBottom && cards.rightBottom.highlighted}>
+			<div
+				class="list-panel"
+				class:highlighted={cards.rightBottom && cards.rightBottom.highlighted}
+			>
 				<div class="list-panel-header">
 					<slot name="list-panel-header" />
 				</div>
@@ -80,10 +83,9 @@
 						<slot name="list-panel" />
 					</Card>
 				{:else}
-				<div class="list-panel-content">
-					<slot name="list-panel" />
-
-				</div>
+					<div class="list-panel-content">
+						<slot name="list-panel" />
+					</div>
 				{/if}
 			</div>
 		</slot>
@@ -134,6 +136,11 @@
 		row-gap: $item-spacing;
 		column-gap: $item-spacing;
 
+		.left-bar,
+		.right-bar {
+			max-height: 100%;
+		}
+
 		.left-bar {
 			flex: 1;
 			min-width: 400px;
@@ -159,9 +166,7 @@
 			}
 			.info-panel-content {
 				flex: 1 1 auto;
-
 			}
-
 		}
 		.list-panel {
 			flex: 1;
@@ -178,10 +183,12 @@
 			}
 		}
 	}
-	.list-panel, .info-panel, .left-bar {
+	.list-panel,
+	.info-panel,
+	.left-bar {
 		transition: all 200ms ease;
 		&.highlighted {
-			box-shadow: 0px 0px 8px 4px rgba(207,34,101,0.56);
+			box-shadow: 0px 0px 8px 4px rgba(207, 34, 101, 0.56);
 			overflow: visible;
 		}
 	}

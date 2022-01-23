@@ -87,24 +87,24 @@
 		</div>
 		<div class="detail-key-value">
 			<span class="detail-key">Custom Field</span>
-				{#if $attendee.custom_fields.length>0}
-					<div class="detail-value">
-						{#each $attendee.custom_fields as field}
-							<div class="detail-key-value">
-								<span class="detail-key">{field.name}</span>
-								<span class="detail-value">{field.values.join(" ")}</span>
-							</div>
-						{/each}
-					</div>
-				{:else}
-					<span class="detail-missing">None</span>
-				{/if}
-	</div>
+			{#if $attendee.custom_fields.length > 0}
+				<div class="detail-value">
+					{#each $attendee.custom_fields as field}
+						<div class="detail-key-value">
+							<span class="detail-key">{field.name}</span>
+							<span class="detail-value">{field.values.join(' ')}</span>
+						</div>
+					{/each}
+				</div>
+			{:else}
+				<span class="detail-missing">None</span>
+			{/if}
+		</div>
 	</div>
 </div>
 <div class="action-container">
 	{#if checkedIn}
-		<Button on:click={removeLatestCheckIn} color="warning">Remove Latest Check In</Button>
+		<Button on:click={removeLatestCheckIn} color="warning">Remove Check In</Button>
 	{:else}
 		<Button on:click={checkIn}>Check In</Button>
 	{/if}

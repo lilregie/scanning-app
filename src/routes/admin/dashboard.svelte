@@ -1,4 +1,7 @@
 <script lang="ts">
+	import Chart from 'svelte-frappe-charts';
+	import { browser } from '$app/env';
+
 	import AdminLayout from '$lib/components/AdminLayout.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Table from '$lib/components/Table.svelte';
@@ -11,9 +14,28 @@
 	eventAttendees.subscribe((_) => {
 		checkInTable = newestCheckInsTable();
 	});
+
+	$: checkedIn = $eventAttendees.filter((e) => e.check_ins.length > 0).length;
+	$: notCheckedIn = $eventAttendees.length - checkedIn;
+	$: availableTickets = $chosenEvent?.['total_tickets'] - $eventAttendees.length;
+
+	$: checkinChartData = {
+		labels: ['Available', 'Not Checked in', 'Checked in'],
+		datasets: [
+			{
+				values: [availableTickets, notCheckedIn, checkedIn]
+			}
+		]
+	};
 </script>
 
-<AdminLayout>
+<AdminLayout
+	cards={{
+		left: { scroll: true, highlighted: false },
+		rightBottom: false,
+		rightTop: false
+	}}
+>
 	<div slot="left-bar" class="latest-check-ins-container">
 		<!-- Check in list with example data for now -->
 		<Table tableHeaders={checkInTable[0]} tableData={checkInTable[1]} />
@@ -22,8 +44,12 @@
 		<Button href="/admin/checkin" size="expanded">Next</Button>
 	</div>
 	<div slot="right-bar" class="graph-container">
-		<h2>g r a p h</h2>
-		<div />
+		<Chart
+			data={checkinChartData}
+			type="donut"
+			colors={['#2BA628', '#626262', 'rgba(255,255,255,0.08)']}
+			height="300"
+		/>
 	</div>
 </AdminLayout>
 
@@ -42,17 +68,10 @@
 	.graph-container {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		justify-content: center;
 		text-align: center;
 		flex: 1;
-		color: $text-dark;
-		div {
-			background-color: green;
-			border-radius: 50%;
-			padding: 2em;
-			width: 100px;
-			height: 100px;
-		}
+		align-items: stretch;
+		align-content: stretch;
+		justify-content: center;
 	}
 </style>

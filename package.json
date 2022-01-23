@@ -52,5 +52,7 @@
     "visibilityjs": "^2.0.2"
   },
   "type": "module",
-  "dependencies": {}
+  "dependencies": {
+    "svelte-frappe-charts": "^1.9.1"
+  }
 }

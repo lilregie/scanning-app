@@ -5309,6 +5309,11 @@ fragment-cache@^0.2.1:
   dependencies:
     map-cache "^0.2.2"
 
+frappe-charts@^1.6.2:
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/frappe-charts/-/frappe-charts-1.6.2.tgz#4671a943a8606e5020180fa65c8ea1835c510baf"
+  integrity sha512-9TC3/+YVUi84yYoEbxFiSqu+1FQ5If/ydUNj6i8FRpwynd08t6a7RkS+IRJozAk6NfdL8/LVTTE1DUOjjKZZxg==
+
 fresh@0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
@@ -9379,6 +9384,14 @@ svelte-dev-helper@^1.1.9:
   resolved "https://registry.yarnpkg.com/svelte-dev-helper/-/svelte-dev-helper-1.1.9.tgz#7d187db5c6cdbbd64d75a32f91b8998bde3273c3"
   integrity sha1-fRh9tcbNu9ZNdaMvkbiZi94yc8M=
 
+svelte-frappe-charts@^1.9.1:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/svelte-frappe-charts/-/svelte-frappe-charts-1.9.1.tgz#4358db23cc4d231b7ec58f4735f6d6919d3c1076"
+  integrity sha512-cp2Sv+EXxdH5nIJ9I6ant9XP73Sc8CGXLzb0h8vpV0viH+zCCE+CEmo/cOiWL4JWNZrxRJ5UBdDGVk5nnORyKA==
+  dependencies:
+    frappe-charts "^1.6.2"
+    svelte "^3.44.0"
+
 svelte-hmr@^0.14.2:
   version "0.14.7"
   resolved "https://registry.yarnpkg.com/svelte-hmr/-/svelte-hmr-0.14.7.tgz#7fa8261c7b225d9409f0a86f3b9ea5c3ca6f6607"
@@ -9424,6 +9437,11 @@ svelte-simple-modal@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/svelte-simple-modal/-/svelte-simple-modal-1.1.1.tgz#263309b1d6fa3a684fba2624273ae7ec98c7f539"
   integrity sha512-2u6bGk0TwZ/0oxIEX9d2shQZsqKGQwyJHHL4eiNL2e/wDA9k5zHc9F884Y0qmKa/Pg0D80t+5CrY3At3zmUDzA==
+
+svelte@^3.44.0:
+  version "3.46.2"
+  resolved "https://registry.yarnpkg.com/svelte/-/svelte-3.46.2.tgz#f0ffbffaea3a9a760edcbefc0902b41998a686ad"
+  integrity sha512-RXSAtYNefe01Sb1lXtZ2I+gzn3t/h/59hoaRNeRrm8IkMIu6BSiAkbpi41xb+C44x54YKnbk9+dtfs3pM4hECA==
 
 svelte@^3.44.2:
   version "3.44.2"
