@@ -32,13 +32,14 @@
 </script>
 
 <div class="container">
-	<h1>Lorem ipsum dolor.</h1>
-	<div>
+	<h1>Choose your event</h1>
+	<div class="event-selector">
 		<Select items={eventsDropdownList} bind:value={eventsDropdownChosen} />
 		<Button
+			size="expanded"
 			on:click={choseProject}
 			disabled={typeof eventsDropdownChosen === 'undefined' || eventsDropdownChosen === null}
-			>Choose Project</Button
+			>Choose Event</Button
 		>
 	</div>
 </div>
@@ -61,5 +62,10 @@
 				display: block;
 			}
 		}
+	}
+
+	.event-selector {
+		width: 600px;
+		max-width: calc(100% - 2rem);
 	}
 </style>
