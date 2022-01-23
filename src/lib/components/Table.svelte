@@ -83,6 +83,8 @@
 			font-weight: 600;
 			padding: 0.5rem;
 			background: $background-foreground;
+			position: sticky;
+			top: 0;
 
 		}
 	}

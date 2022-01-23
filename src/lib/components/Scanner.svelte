@@ -10,7 +10,7 @@
 	import { get, writable } from 'svelte/store';
 	import { fly, fade } from 'svelte/transition';
 	import { getContext } from "svelte";
-	import InvaildScan from './scannerStates/InvaildScan.svelte';
+	import InvalidCross from './InvalidCross.svelte';
 
 	export let enabledScanTypes: ScanTypes = {
 		ticketBarcode: true,
@@ -65,7 +65,7 @@
 			</div>
 		{:else if $scannerStatus === ScannerStatus.Invaild}
 			<div class="fail" in:fly={{ y: previewWidth, duration: 500 }} out:fly>
-				<InvaildScan/>
+				<InvalidCross colour="#d0021b"/>
 				{covidPassFailReason}
 			</div>
 		{/if}

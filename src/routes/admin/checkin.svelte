@@ -5,10 +5,10 @@
 	import Table from '$lib/components/Table.svelte';
 	import Search from '$lib/components/Search.svelte';
 	import Card from '$lib/components/Card.svelte';
-	import AttendeeDetail from '$lib/components/AttendeeDetail.svelte';
+	import AttendeeDetails from '$lib/components/AttendeeDetails.svelte';
 
 	import { attendeesTable } from '$lib/generateDataVis';
-	import { createCheckIn } from '$lib/api';
+	import { createCheckIn, removeLatestCheckIn } from '$lib/api';
 	import { attendeesSearchTerm, eventAttendees, selectedAttendee } from '$lib/store';
 
 	import { get, Writable, writable } from 'svelte/store';
@@ -92,16 +92,22 @@
 		{/if}
 	</div>
 	<div slot="info-panel-header">
-		<h2 class="pannel-header">Attendee details</h2>
+		<h2 class="pannel-header">Attendee Details</h2>
 	</div>
 	<div slot="info-panel" class="info-panel">
 		<Card expand={true} scroll={true}>
 			{#if $selectedAttendee}
-				<AttendeeDetail
-					attendee={$selectedAttendee}
+				<AttendeeDetails
+					attendee={selectedAttendee}
 					on:checkIn={() => {
 						leftBarState = 'ValidateCovidPass';
 						leftBarHighlighted.set(true);
+					}}
+					on:removeLatestCheckIn={()=>{
+						removeLatestCheckIn(get(selectedAttendee));
+					}}
+					on:moreDetails={() => {
+						// TODO: Implement detailed attendee deatails page
 					}}
 				/>
 			{:else if leftBarState === 'ScanAny'}

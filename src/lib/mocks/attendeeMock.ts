@@ -28,7 +28,7 @@ export function generateAttendee({
 		email_address: faker.internet.email(),
 		organisation: faker.company.companyName(),
 		position: null,
-		requirements: null,
+		requirements: faker.datatype.boolean() ? faker.lorem.sentence() : null,
 		ticket_type_id: faker.datatype.number(),
 		ticket_type_name: faker.commerce.productName(),
 		attendee_type_id: faker.datatype.number(),

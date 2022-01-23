@@ -45,6 +45,7 @@
 		&.margin {
 			.contents {
 				margin: 2rem;
+				position: relative;
 			}
 			&.has-footer .contents {
 				margin-bottom: 0;
