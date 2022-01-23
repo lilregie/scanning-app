@@ -53,7 +53,12 @@ export function createCheckIn(attendee: Attendee, manually_checked_in: boolean, 
 		);
 		return _eventAttendees;
 	})
-	
+}
 
-	
+export function removeLatestCheckIn(attendee: Attendee) {
+	// Would send post to API, then use attendee.id from response
+	eventAttendees.update((_eventAttendees) => {
+		findByKey(_eventAttendees, "id", attendee.id).check_ins.pop();
+		return _eventAttendees;
+	})
 }

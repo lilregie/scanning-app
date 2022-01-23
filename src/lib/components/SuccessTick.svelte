@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { draw, fade } from 'svelte/transition';
-	import { quintOut } from 'svelte/easing';
 
 	export let visible = true;
 	export let colour = "#ffffff";

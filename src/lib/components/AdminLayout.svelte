@@ -102,6 +102,7 @@
 		img {
 			height: $item-spacing;
 			width: auto;
+			cursor: pointer;
 		}
 	}
 

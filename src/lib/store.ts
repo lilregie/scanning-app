@@ -4,7 +4,7 @@ import type { Event } from '$lib/event';
 import type { Attendee } from './attendee';
 import { getAttendeesList } from './api';
 
-let LOCAL_STORAGE_VERSION = 2;
+let LOCAL_STORAGE_VERSION = 3;
 
 /** Makes a store persistent in local storage
  * @param  {[Writable]} store Writable store to be made persistent
@@ -28,6 +28,7 @@ export const chosenEventID = writable(-1);
 useLocalStorage(chosenEventID, 'chosenEventID');
 
 export const allEvents: Writable<Event[]> = writable([]);
+useLocalStorage(allEvents, 'allEvents');
 
 export const chosenEvent = derived([chosenEventID, allEvents], ([_chosenEventID, _allEvents]) => {
 
