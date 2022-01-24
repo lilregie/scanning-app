@@ -10,6 +10,8 @@
 	import { chosenEvent, eventAttendees } from '$lib/store';
 	import type { TableRow } from '$lib/components/Table.svelte';
 
+	let chartHeight;
+
 	let checkInTable: [string[], TableRow[]] = [[], []];
 	eventAttendees.subscribe((_) => {
 		checkInTable = newestCheckInsTable();
@@ -43,12 +45,12 @@
 	<div slot="left-bar-footer">
 		<Button href="/admin/checkin" size="expanded">Next</Button>
 	</div>
-	<div slot="right-bar" class="graph-container">
+	<div slot="right-bar" class="graph-container" bind:clientHeight={chartHeight}>
 		<Chart
 			data={checkinChartData}
 			type="donut"
 			colors={['#2BA628', '#626262', 'rgba(255,255,255,0.08)']}
-			height="300"
+			height="400"
 		/>
 	</div>
 </AdminLayout>

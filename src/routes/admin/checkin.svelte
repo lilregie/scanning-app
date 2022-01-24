@@ -14,7 +14,6 @@
 	import { get, Writable, writable } from 'svelte/store';
 	import { fly, fade } from 'svelte/transition';
 
-
 	let attendeesTableData;
 
 	$: {
@@ -51,12 +50,12 @@
 >
 	<div slot="left-bar" class="left-bar">
 		{#if leftBarState === 'ValidateCovidPass'}
-			<div class="header-text" out:fade in:fly="{{y: -200, duration: 1000, delay: 500}}">
+			<div class="header-text" out:fade in:fly={{ y: -200, duration: 1000, delay: 500 }}>
 				Booking for <b>{$selectedAttendee.first_name} {$selectedAttendee.last_name}</b>
 				<h2>Please Verify COVID Pass</h2>
 			</div>
 		{:else if leftBarState === 'ScanAny'}
-			<div class="header-text" out:fade in:fly="{{y: -200, duration: 1000}}">
+			<div class="header-text" out:fade in:fly={{ y: -200, duration: 1000 }}>
 				<h2>Scan a Booking or COVID Pass</h2>
 			</div>
 		{/if}
@@ -64,38 +63,40 @@
 			<Scanner />
 		</div>
 		{#if leftBarState === 'ValidateCovidPass'}
-			<div out:fade in:fly="{{y: 200, duration: 1000}}">
+			<div out:fade in:fly={{ y: 200, duration: 1000 }}>
 				This will be a QR code provided by the government to verify eligibility for events. Scan
 				using the webcam above to start.
 			</div>
 
-			<hr class="hr-or" out:fade in:fly="{{y: 200, duration: 500}}"/>
+			<hr class="hr-or" out:fade in:fly={{ y: 200, duration: 500 }} />
 		{:else if leftBarState === 'ScanAny'}
-			<div out:fade in:fly="{{y: 200, duration: 1000}}">
-				Scan a booking or COVID pass, or search attendees to access their details
+			<h2>Scan a booking or COVID pass to begin</h2>
+			<div out:fade in:fly={{ y: 200, duration: 1000 }}>
+				Not working or no code? Use the search to the right to bring up the attendee details and
+				mark them as checked in.
 			</div>
 		{/if}
 	</div>
 	<div slot="left-bar-footer">
 		{#if leftBarState === 'ValidateCovidPass'}
-		<div out:fade in:fly="{{y: 200, duration: 1000}}">
-			<Button
-				size="expanded"
-				on:click={() => {
-					createCheckIn(get(selectedAttendee), true);
-					leftBarState = 'ScanAny';
-				}}
-			>
-				Skip and check in anyway
-			</Button>
-		</div>
+			<div out:fade in:fly={{ y: 200, duration: 1000 }}>
+				<Button
+					size="expanded"
+					on:click={() => {
+						createCheckIn(get(selectedAttendee), true);
+						leftBarState = 'ScanAny';
+					}}
+				>
+					Skip and check in anyway
+				</Button>
+			</div>
 		{/if}
 	</div>
 	<div slot="info-panel-header">
 		<h2 class="pannel-header">Attendee Details</h2>
 	</div>
 	<div slot="info-panel" class="info-panel">
-		<Card expand={true} scroll={true}>
+		<Card expand={true} scroll={true} background={!!$selectedAttendee}>
 			{#if $selectedAttendee}
 				<AttendeeDetails
 					attendee={selectedAttendee}
@@ -103,7 +104,7 @@
 						leftBarState = 'ValidateCovidPass';
 						leftBarHighlighted.set(true);
 					}}
-					on:removeLatestCheckIn={()=>{
+					on:removeLatestCheckIn={() => {
 						removeLatestCheckIn(get(selectedAttendee));
 					}}
 					on:moreDetails={() => {
@@ -111,7 +112,9 @@
 					}}
 				/>
 			{:else if leftBarState === 'ScanAny'}
-				Scan a booking or COVID pass, or search below to view attendee details
+				<p class="noSelect">
+					Scan a booking or COVID pass, or search attendees to access their details.
+				</p>
 			{/if}
 		</Card>
 	</div>
@@ -161,10 +164,18 @@
 			bottom: 0;
 		}
 		.scanner-container {
-			width: calc(100% + 4rem);
+			width: 100%;
 			margin-bottom: 2em;
 			position: relative;
-			left: -2rem;
+			border-radius: 0.7rem;
+			:global#cam-preview {
+				border-radius: 0.7rem;
+				transform: scale(0.98);
+			}
+			:global.dialog-container {
+				border-radius: 0.7rem;
+				transform: scale(0.98);
+			}
 		}
 	}
 	.pannel-header {
@@ -174,5 +185,20 @@
 	}
 	.info-panel {
 		height: 100%;
+		.noSelect {
+			font-size: 2em;
+			text-align: center;
+			opacity: 40%;
+			font-weight: 700;
+			max-width: 700px;
+			margin: auto;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			display: flex;
+			align-items: center;
+		}
 	}
 </style>
