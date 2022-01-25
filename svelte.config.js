@@ -17,7 +17,7 @@ const config = {
 		}
 	}),
 	kit: {
-		appDir: process.env['RAILS_ENV'] ? 'checkin' : '_app',
+		appDir: process.env['RAILS_ENV'] ? '_assets' : '_app',
 		adapter: adapter({
 			fallback: process.env['RAILS_ENV'] ? 'layouts/checkin.html.erb' : 'index.html'
 		}),
