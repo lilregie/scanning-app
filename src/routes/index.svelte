@@ -1,14 +1,17 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { chosenEventID, allEvents, chosenEvent } from '$lib/store';
 	import { eventNameFromReference } from '$lib/utill';
 	import { onMount } from 'svelte';
 	import Select from 'svelte-select';
 	import { get } from 'svelte/store';
 	import Button from '$lib/components/Button.svelte';
+	import { basePath } from '$lib/consts';
+	import { goto } from '$app/navigation';
 
 	let eventsDropdownList = [];
-	let eventsDropdownChosen = null;
+	let eventsDropdownChosen: {value: number,label: string} = null;
+
+	console.log(import.meta.env.BASE_URL)
 
 	allEvents.subscribe((events) => {
 		eventsDropdownList = events.map((event) => {
@@ -27,7 +30,7 @@
 
 	function choseProject() {
 		chosenEventID.set(eventsDropdownChosen.value);
-		goto('/admin/dashboard');
+		goto(`${basePath}/${eventsDropdownChosen.value}`);
 	}
 </script>
 
@@ -57,9 +60,10 @@
 			font-size: 4rem;
 			color: $text-dark;
 		}
-		form {
-			select {
-				display: block;
+		.project-selection{
+			min-width: 15em;
+			div {
+				margin-bottom: 1em;
 			}
 		}
 	}

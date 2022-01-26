@@ -7,6 +7,15 @@ import { allEvents, eventAttendees } from './store';
 import {findByKey} from "$lib/utill"
 
 export function initializeAPI() {
+	// Load CSRF token
+	let metaTag = document.querySelector('meta[name=csrf-token]') as HTMLMetaElement;
+	const CSRF_TOKEN = metaTag?.content;
+	if (CSRF_TOKEN==="testing-token") {
+		console.log("Waring: API in testing mode");
+	} else if (!CSRF_TOKEN) {
+		console.log("Error: API token not found",metaTag);
+	}
+
 	console.log('Initializing API', get(allEvents));
 	console.log('Loading Events');
 	getEventsList();

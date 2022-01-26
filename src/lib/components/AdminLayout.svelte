@@ -131,7 +131,6 @@
 		align-items: stretch;
 		flex-grow: 1;
 		flex-wrap: wrap;
-		width: 100vw;
 		height: 100vh;
 		row-gap: $item-spacing;
 		column-gap: $item-spacing;

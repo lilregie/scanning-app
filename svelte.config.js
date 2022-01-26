@@ -4,7 +4,6 @@ import preprocess from 'svelte-preprocess';
 import adapter from '@sveltejs/adapter-static';
 import svg from '@poppanator/sveltekit-svg';
 
-
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	// Consult https://github.com/sveltejs/svelte-preprocess
@@ -17,20 +16,38 @@ const config = {
 			// prependData: `@use 'src/lib/styles/vars.scss';`
 		}
 	}),
-
 	kit: {
-		// hydrate the <div id="svelte"> element in src/app.html
+		appDir: process.env['RAILS_ENV'] ? '_assets' : '_app',
+		adapter: adapter({
+			fallback: process.env['RAILS_ENV'] ? 'layouts/checkin.html.erb' : 'index.html'
+		}),
+		files: {
+			template: process.env['RAILS_ENV'] ? 'src/checkin_rails_layout.html' : 'src/app.html'
+		},
+		paths: {
+			base: process.env['ROOT_PATH'] ? process.env['ROOT_PATH'] : '',
+			assets: process.env['PUBLIC_ASSETS_PATH'] ? process.env['PUBLIC_ASSETS_PATH'] : ''
+		},
 		target: '#svelte',
-		adapter: adapter(),
 		vite: {
 			optimizeDeps: {
-				include: ["events","uuid","visibilityjs","stampit","lodash","dayjs"]
+				include: [
+					"events",
+					"uuid",
+					"visibilityjs",
+					"stampit",
+					"lodash",
+					"dayjs"
+				]
 			},
 			plugins: [svg({
 				type: 'url'
 			})],
+			css: {
+				postcss: {}
+			}
 		}
-	}
+	},
 };
 
 export default config;
