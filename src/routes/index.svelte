@@ -9,7 +9,7 @@
 	import { goto } from '$app/navigation';
 
 	let eventsDropdownList = [];
-	let eventsDropdownChosen = null;
+	let eventsDropdownChosen: {value: number,label: string} = null;
 
 	console.log(import.meta.env.BASE_URL)
 
@@ -30,7 +30,7 @@
 
 	function choseProject() {
 		chosenEventID.set(eventsDropdownChosen.value);
-		goto(`${basePath}/admin/dashboard`);
+		goto(`${basePath}/${eventsDropdownChosen.value}`);
 	}
 </script>
 

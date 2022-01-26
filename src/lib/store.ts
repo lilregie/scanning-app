@@ -24,8 +24,7 @@ function useLocalStorage<T>(store: Writable<T>, key: string) {
 	}
 }
 
-export const chosenEventID = writable(-1);
-useLocalStorage(chosenEventID, 'chosenEventID');
+export const chosenEventID: Writable<number> = writable(null);
 
 export const allEvents: Writable<Event[]> = writable([]);
 useLocalStorage(allEvents, 'allEvents');
