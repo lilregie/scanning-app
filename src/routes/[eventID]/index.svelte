@@ -44,7 +44,7 @@
 		<Table tableHeaders={checkInTable[0]} tableData={checkInTable[1]} />
 	</div>
 	<div slot="left-bar-footer">
-		<Button href="{basePath}/{$chosenEventID}/checkin" size="expanded">Next</Button>
+		<Button href="{basePath}/{$chosenEventID}/edit" size="expanded">Next</Button>
 	</div>
 	<div slot="right-bar" class="graph-container" bind:clientHeight={chartHeight}>
 		<Chart
