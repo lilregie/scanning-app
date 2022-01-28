@@ -4,6 +4,7 @@
 	import { ScannerStatus } from './scannerStatus';
     import { tweened } from 'svelte/motion';
     import {fly} from 'svelte/transition'
+import { globalModalState } from '$lib/store';
 
 	export let scannerStatus: Writable<ScannerStatus>;
 	export let backgroundColour: string = '#fff';
@@ -17,6 +18,12 @@
     function getTimeLeft(): number {
         return (Date.now() - timeoutStart) / openTime;
     }
+    let percentTime = tweened(0, {
+        duration: progressBarPoll,
+
+    });
+    const close = () => scannerStatus.set(ScannerStatus.Scanning);
+
     
     setInterval(() => {
         if (timeout) {
@@ -27,12 +34,16 @@
     },progressBarPoll);
 
     function setTimer() {
-        if (timeout) {
-            clearTimeout(timeout);
-            console.log("timer still running?");
+        if ($globalModalState===null) {
+            if (timeout) {
+                console.log("timer still running?");
+            } else {
+                timeoutStart = Date.now();
+                timeout = setTimeout(close, openTime);
+            }
+        } else {
+            console.log("tried to start timer but modal is open");
         }
-        timeoutStart = Date.now();
-		timeout = setTimeout(close, openTime);
     }
     function cancelTimer() {
         if (timeout) {
@@ -42,16 +53,14 @@
             console.log("timer not set")
         }
     }
-    onMount(() => {
-        setTimer()
+    globalModalState.subscribe(state => {
+        if (state===null && !timeout) {
+            setTimer()
+        } else if (timeout) {
+            cancelTimer()
+        }
     })
 
-    let percentTime = tweened(0, {
-        duration: progressBarPoll,
-
-    });
-
-    const close = () => scannerStatus.set(ScannerStatus.Scanning);
 </script>
 
 <div class="wrapper" style="--background-colour: {backgroundColour};" transition:fly="{{ y: 200, duration: 200 }}" on:mouseleave={setTimer} on:mouseenter={cancelTimer}>

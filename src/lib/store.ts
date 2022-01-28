@@ -4,6 +4,7 @@ import type { Event } from '$lib/event';
 import type { Attendee } from './attendee';
 import { getAttendeesList } from './api';
 
+
 let LOCAL_STORAGE_VERSION = 3;
 
 /** Makes a store persistent in local storage
@@ -65,3 +66,5 @@ export const checkedInCount: Readable<number> = derived(eventAttendees, (_eventA
 
 export const prefersCameraOrTextScanning: Writable<string> = writable('camera');
 useLocalStorage(prefersCameraOrTextScanning, 'prefersCameraOrTextScanning');
+
+export const globalModalState: Writable<any> = writable(null);

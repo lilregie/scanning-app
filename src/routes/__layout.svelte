@@ -5,13 +5,14 @@
 	import { initializeAPI } from '$lib/api';
 
 	import '../global.scss';
+	import { globalModalState } from '$lib/store';
 
 	onMount(() => {
 		initializeAPI();
 	});
 </script>
 
-<Modal styleWindow={{width: "80vw"}}>
+<Modal styleWindow={{width: "80vw"}} bind:show={$globalModalState} on:closed={()=>globalModalState.set(null)}>
 	<slot />
 </Modal>
 

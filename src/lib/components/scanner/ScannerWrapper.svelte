@@ -6,13 +6,14 @@
 
 	import { get, writable } from 'svelte/store';
 	import { fly, fade } from 'svelte/transition';
-	import { getContext } from 'svelte';
+	import { getContext, SvelteComponent } from 'svelte';
 	import InvalidCross from '../InvalidCross.svelte';
 	import CameraScanner from './CameraScanner.svelte';
 	import TextScanner from './TextScanner.svelte';
-	import { prefersCameraOrTextScanning } from '$lib/store';
+	import { globalModalState, prefersCameraOrTextScanning } from '$lib/store';
 	import { ScannerStatus } from './scannerStatus';
 	import ScanResult from './ScanResult.svelte';
+	import {bind} from "svelte-simple-modal";
 
 	export let enabledScanTypes: ScanTypes = {
 		ticketBarcode: true,
@@ -20,8 +21,6 @@
 	};
 
 	let covidPassFailReason: string = '';
-
-	const { open } = getContext('simple-modal');
 
 	let scannerStatus = writable(ScannerStatus.Scanning);
 
@@ -31,12 +30,12 @@
 			if (validator.valid) {
 				scannerStatus.set(ScannerStatus.ConfirmScan);
 
-				setTimeout(()=>{open(AttendeeMatching, { ...validator, vaccineCert: event.detail.qrContent })},500);
+				// @ts-ignore
+				setTimeout(()=>{globalModalState.set(bind(AttendeeMatching, { ...validator, vaccineCert: event.detail.qrContent }))},500);
 			} else {
 				scannerStatus.set(ScannerStatus.Invalid);
 				covidPassFailReason = validator.violates;
 			}
-			// scannerStatus.set(ScannerStatus.ConfirmScan);
 		}
 	}
 
