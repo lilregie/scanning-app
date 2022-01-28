@@ -62,3 +62,6 @@ export const selectedAttendee: Readable<Attendee> = derived([selectedAttendeeID,
 export const checkedInCount: Readable<number> = derived(eventAttendees, (_eventAttendees) => {
 	return _eventAttendees.filter((attendee) => attendee.check_ins.length > 0).length;
 });
+
+export const prefersCameraOrTextScanning: Writable<string> = writable('camera');
+useLocalStorage(prefersCameraOrTextScanning, 'prefersCameraOrTextScanning');

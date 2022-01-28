@@ -9,6 +9,7 @@ declare type ScanResults = {
     lastName: string,
     DOB: string,
     covidPassInfo: VerificationResult;
+    violates?: string;
 } | {
     valid: false;
     violates: string;

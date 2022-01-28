@@ -39,7 +39,7 @@
 	<div class="event-selector">
 		<Select items={eventsDropdownList} bind:value={eventsDropdownChosen} />
 		<Button
-			size="expanded"
+			expanded
 			on:click={choseProject}
 			disabled={typeof eventsDropdownChosen === 'undefined' || eventsDropdownChosen === null}
 			>Choose Event</Button
