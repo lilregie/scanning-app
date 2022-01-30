@@ -21,11 +21,11 @@
 	$: availableTickets = $chosenEvent?.['total_tickets'] - $eventAttendees.length;
 
 	$: checkinChartData = {
-		labels: ['Available', 'Not Checked in', 'Checked in'],
+		labels: ['Checked in', 'Not Checked in', 'Available'],
 		datasets: [
 			{
 				label: 'Registrations',
-				data: [availableTickets, notCheckedIn, checkedIn],
+				data: [checkedIn, notCheckedIn, availableTickets],
 				backgroundColor: ['#2BA628', '#626262', 'rgba(255,255,255,0.08)'],
 				hoverOffset: 20,
 				borderWidth: 0,
@@ -64,6 +64,10 @@
 	</div>
 	<div slot="right-bar" class="graph-container">
 		<Doughnut data={checkinChartData} options={chartOptions} />
+		<div class="stats">
+			<h2>{$eventAttendees.length} Registered</h2>
+			<h3>{availableTickets || '??'} Available Tickets</h3>
+		</div>
 	</div>
 </AdminLayout>
 
@@ -90,5 +94,19 @@
 		width: 30em;
 		max-width: 100%;
 		margin: auto;
+		color: white;
+		.stats {
+			h2,
+			h3 {
+				margin: 0;
+			}
+			h2 {
+				font-size: 2.5em;
+			}
+			h3 {
+				font-size: 1.4em;
+				font-weight: normal;
+			}
+		}
 	}
 </style>

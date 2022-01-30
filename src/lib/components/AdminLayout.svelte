@@ -34,7 +34,7 @@
 	</div>
 
 	<div class="stat">
-		<span class="stat-value">{$chosenEvent?.total_tickets - $checkedInCount}</span>
+		<span class="stat-value">{$chosenEvent?.total_tickets - $checkedInCount || '??'}</span>
 		<span class="stat-label">Available Tickets</span>
 	</div>
 
