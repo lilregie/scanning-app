@@ -56,5 +56,7 @@
   },
   "type": "module",
   "packageManager": "yarn@1.22.17",
-  "dependencies": {}
+  "dependencies": {
+    "svelte-chartjs": "^1.1.3"
+  }
 }

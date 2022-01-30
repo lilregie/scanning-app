@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Chart from 'svelte-frappe-charts';
+	import Doughnut from 'svelte-chartjs/src/Doughnut.svelte';
 	import { browser } from '$app/env';
 
 	import AdminLayout from '$lib/components/AdminLayout.svelte';
@@ -10,8 +10,6 @@
 	import { chosenEvent, chosenEventID, eventAttendees } from '$lib/store';
 	import type { TableRow } from '$lib/components/Table.svelte';
 	import { basePath } from '$lib/consts';
-
-	let chartHeight;
 
 	let checkInTable: [string[], TableRow[]] = [[], []];
 	eventAttendees.subscribe((_) => {
@@ -26,9 +24,27 @@
 		labels: ['Available', 'Not Checked in', 'Checked in'],
 		datasets: [
 			{
-				values: [availableTickets, notCheckedIn, checkedIn]
+				label: 'Registrations',
+				data: [availableTickets, notCheckedIn, checkedIn],
+				backgroundColor: ['#2BA628', '#626262', 'rgba(255,255,255,0.08)'],
+				hoverOffset: 20,
+				borderWidth: 0,
+				rotation: 90,
+				borderRadius: 2,
+				cutout: '120'
 			}
 		]
+	};
+
+	const chartOptions = {
+		layout: {
+			padding: 50
+		},
+		plugins: {
+			legend: {
+				display: false
+			}
+		}
 	};
 </script>
 
@@ -46,13 +62,8 @@
 	<div slot="left-bar-footer">
 		<Button href="{basePath}/{$chosenEventID}/edit" expanded>Next</Button>
 	</div>
-	<div slot="right-bar" class="graph-container" bind:clientHeight={chartHeight}>
-		<Chart
-			data={checkinChartData}
-			type="donut"
-			colors={['#2BA628', '#626262', 'rgba(255,255,255,0.08)']}
-			height="400"
-		/>
+	<div slot="right-bar" class="graph-container">
+		<Doughnut data={checkinChartData} options={chartOptions} />
 	</div>
 </AdminLayout>
 
@@ -76,5 +87,8 @@
 		align-items: stretch;
 		align-content: stretch;
 		justify-content: center;
+		width: 30em;
+		max-width: 100%;
+		margin: auto;
 	}
 </style>

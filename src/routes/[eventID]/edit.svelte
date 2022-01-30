@@ -14,7 +14,6 @@
 	import { get, Writable, writable } from 'svelte/store';
 	import { fly, fade } from 'svelte/transition';
 
-
 	let attendeesTableData;
 
 	$: {
@@ -129,7 +128,7 @@
 			/>
 		</div>
 	</div>
-	<div slot="list-panel">
+	<div slot="list-panel" class="table">
 		<Table tableHeaders={attendeesTableData[0]} tableData={attendeesTableData[1]} />
 	</div>
 </AdminLayout>
@@ -201,5 +200,10 @@
 			display: flex;
 			align-items: center;
 		}
+	}
+	.search-container :global(input),
+	.table {
+		border-radius: $radius-default;
+		overflow: hidden;
 	}
 </style>
