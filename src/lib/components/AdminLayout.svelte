@@ -125,6 +125,13 @@
 
 	.panel-container {
 		padding: $item-spacing * 2;
+		@media screen and (max-width: 650px) {
+			padding: 1rem;
+			.left-bar,
+			.right-bar {
+				min-width: 100% !important;
+			}
+		}
 		box-sizing: border-box;
 		display: flex;
 		flex-direction: row;
