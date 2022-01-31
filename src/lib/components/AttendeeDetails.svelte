@@ -11,8 +11,6 @@
 
 	export let attendee: Readable<Attendee>;
 
-	console.log('Oh well', $attendee);
-
 	// Live updating checklist for attendee
 	let checkedIn = false;
 	let checkList = {};

@@ -43,8 +43,6 @@
 
 	let cameraScannerClientHeight: number;
 	let textScannerClientHeight: number;
-
-	console.log(textScannerClientHeight);
 </script>
 
 <div class="qr-container">

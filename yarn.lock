@@ -7026,10 +7026,10 @@ mkdirp@^1.0.3, mkdirp@^1.0.4:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
-modern-svelte-qr-scanner@^1.4.2:
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/modern-svelte-qr-scanner/-/modern-svelte-qr-scanner-1.4.2.tgz#f74add4722408f3a182d6673269d603541779179"
-  integrity sha512-AyC9Et2tDRYvwy6XUkNQ04WJ3waJeO8BVMCrFuIxhFWGVBE9Xz3QEx1XHGnc8wIOxoMrcP5NFZl8E+TKfRwKIQ==
+modern-svelte-qr-scanner@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/modern-svelte-qr-scanner/-/modern-svelte-qr-scanner-1.5.0.tgz#18b5df34bc0fb68e8edc1bd937fbbd602aa98fb2"
+  integrity sha512-hEWttb2GkBU3mi50zXegnjmTLDH26vEZvfODoXwb7QImPWKu03PYzj5qgp9HsNL+fI0pF6UntP0sqkX8kPVHvg==
 
 move-concurrently@^1.0.1:
   version "1.0.1"
