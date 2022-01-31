@@ -3,6 +3,7 @@ import type { Writable, Readable } from 'svelte/store';
 import type { Event } from '$lib/event';
 import type { Attendee } from './attendee';
 import { getAttendeesList } from './api';
+import { findAttendeeByID } from './utill';
 
 
 let LOCAL_STORAGE_VERSION = 3;
@@ -51,14 +52,10 @@ export const attendeesSearchTerm: Writable<string> = writable('');
 
 export const selectedAttendeeID: Writable<number> = writable(null);
 
-export const selectedAttendee: Readable<Attendee> = derived([selectedAttendeeID, eventAttendees], ([_selectedAttendeeID, _eventAttendees]) => {
-	let potentialSelectedAttendee = _eventAttendees.filter((attendee) => attendee.id === _selectedAttendeeID);
-	if (potentialSelectedAttendee.length === 1) {
-		return potentialSelectedAttendee[0];
-	} else {
-		return null;
-	}
-})
+export const selectedAttendee: Readable<Attendee> = derived(
+	[selectedAttendeeID, eventAttendees],
+	([_selectedAttendeeID, _eventAttendees]) => findAttendeeByID(_eventAttendees, _selectedAttendeeID)
+);
 
 export const checkedInCount: Readable<number> = derived(eventAttendees, (_eventAttendees) => {
 	return _eventAttendees.filter((attendee) => attendee.check_ins.length > 0).length;

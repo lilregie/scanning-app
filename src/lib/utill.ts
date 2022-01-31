@@ -26,6 +26,17 @@ export function findByKey<T>(list: T[], key: string, value: any): T | undefined 
 	return list.find((item) => item[key] === value);
 }
 
+export function findAttendeeByID(attendees: Attendee[], id: number): Attendee | null {
+	if (id === null) {
+		return null
+	}
+	let potentialSelectedAttendee = attendees.filter((attendee) => attendee.id === id);
+	if (potentialSelectedAttendee.length === 1) {
+		return potentialSelectedAttendee[0];
+	} else {
+		return null;
+	}
+}
 
 /// Convert a string to title case, so it is "Like This".
 export function titleCase(str) {

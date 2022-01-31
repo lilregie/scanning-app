@@ -5,19 +5,25 @@
 	import type { TableRow } from '$lib/components/Table.svelte';
 	import type { Attendee } from '$lib/attendee';
 
-	import { titleCase } from '$lib/utill';
-	import { eventAttendees, selectedAttendeeID, selectedAttendee } from '$lib/store';
+	import { findAttendeeByID, titleCase } from '$lib/utill';
+	import { eventAttendees, selectedAttendeeID as globalSelectedAttendeeID } from '$lib/store';
 	import { createCheckIn } from '$lib/api';
 
 	import Fuse from 'fuse.js';
 	import { getContext, onMount } from 'svelte';
-	import { get, Writable, writable } from 'svelte/store';
+	import { derived, get, Readable, Writable, writable } from 'svelte/store';
 	import Button from '../Button.svelte';
 
 	export let givenName: string;
 	export let lastName: string;
 	export let DOB: string;
 	export let vaccineCert: string;
+
+	const selectedAttendeeID: Writable<number> = writable(null);
+	const selectedAttendee: Readable<Attendee> = derived(
+		[selectedAttendeeID,eventAttendees],
+		([id,attendees]) => findAttendeeByID(attendees, id)
+	);
 
 	let { close } = getContext('simple-modal');
 
@@ -75,6 +81,7 @@
 		let attendee = get(selectedAttendee);
 		if (attendee) {
 			createCheckIn(attendee, false, vaccineCert);
+			globalSelectedAttendeeID.set(attendee.id)
 			close();
 		} else {
 			console.log('No attendee selected, but somehow we are trying to check in someone');
