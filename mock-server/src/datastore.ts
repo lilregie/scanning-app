@@ -1,7 +1,7 @@
-import { LilRegieEvent } from "../mockInterfaces/event";
-import { Attendee } from "../mockInterfaces/attendee";
-import { generateEvent } from "../mockGeneration/events";
-import { generateAttendeesForEvent } from "../mockGeneration/attendees";
+import { LilRegieEvent } from "./mockInterfaces/event";
+import { Attendee } from "./mockInterfaces/attendee";
+import { generateEvent } from "./mockGeneration/events";
+import { generateAttendeesForEvent } from "./mockGeneration/attendees";
 
 export let events: LilRegieEvent[] = [];
 export let attendees: Map<string, Attendee[]> = new Map();

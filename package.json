@@ -2,7 +2,9 @@
   "name": "scanning-app",
   "version": "0.0.1",
   "scripts": {
-    "dev": "svelte-kit dev",
+    "dev": "yarn dev:server & yarn dev:svelte",
+    "dev:svelte": "svelte-kit dev",
+    "dev:server": "cd mock-server && yarn dev && cd ..",
     "build": "svelte-kit build",
     "preview": "svelte-kit preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",

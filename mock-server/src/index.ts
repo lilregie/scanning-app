@@ -27,5 +27,5 @@ router.get('/alive', (req, res) => {
 
 apiInitializeWithRouter(router)
 
-console.log("Listening on http://localhost:8080/")
+console.log("MOCK SERVER - Listening on http://localhost:8080/")
 app.listen(8080)

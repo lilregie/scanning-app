@@ -1,21 +1,21 @@
 import { Request, Response, Router } from "express";
-import { events } from "./datastore";
+import { events } from "../datastore";
+import { getEvent } from "./utill";
 
 
 
 export default function eventsInitialize(router: Router) {
     router.get("/events.json", (req, res) => {
+        console.log("Got All Events")
         res.json(events);
     });
 
     router.get("/events/:eventId.json", (req: Request, res: Response) => {
-        let eventId = req.params.eventId;
-        let matchingEvent = events.filter((event) => event.id === eventId);
-        if (matchingEvent.length === 1) {
-            res.json(matchingEvent[0]);
-        } else {
-            res.status(404);
-            res.json({"error": "event not found"});
+        let event = getEvent(req, res);
+        if (event === null) {
+            return;
         }
+        console.log("Got Event:",event.id)
+        res.json(event);
     });
 }
