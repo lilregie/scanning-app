@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import type { Attendee } from '../attendee';
 import type { Event } from '../event';
-import { allEvents, eventAttendees } from '../store';
+import { allEvents, chosenEventID, eventAttendees } from '../store';
 import {findByKey} from "$lib/utill"
 import { request } from './request';
 
@@ -45,28 +45,46 @@ export async function getAttendeesList(eventID: string) {
 	}
 }
 
-export function createCheckIn(attendee: Attendee, manually_checked_in: boolean, vaccine_certificate: string = null, ticket_id: string = null) {
-	// Would send post to API, then use attendee.id from response
+export async function createCheckIn(attendee: Attendee, manually_checked_in: boolean, vaccine_certificate: string = null, ticket_id: string = null) {
+	if (findByKey(get(eventAttendees), "id", attendee.id).checked_in_at !== null) {
+		console.warn("Tried to create check in, when attendee is already checked in");
+	}
+
+	// Optimistically update UI
 	eventAttendees.update((_eventAttendees) => {
 		findByKey(_eventAttendees, "id", attendee.id).checked_in_at = new Date()
-		// .push(
-		// 	{
-		// 		time: new Date(),
-		// 		id: 0,
-		// 		attendee_id: attendee.id,
-		// 		vaccine_certificate,
-		// 		ticket_id,
-		// 		manually_checked_in,
-		// 	}
-		// );
+		
 		return _eventAttendees;
 	})
+	
+	const checkInData = await request.post(`/events/${get(chosenEventID)}/attendees/${attendee.id}/checkin`, {}, {});
+	if (checkInData.status !== 200) {
+		console.error("Failed to create checkin", checkInData.status, checkInData.text());
+		// Undo UI update
+		eventAttendees.update((_eventAttendees) => {
+			findByKey(_eventAttendees, "id", attendee.id).checked_in_at = null
+			return _eventAttendees;
+		})
+	}
 }
 
-export function removeLatestCheckIn(attendee: Attendee) {
-	// Would send post to API, then use attendee.id from response
+export async function removeLatestCheckIn(attendee: Attendee) {
+	if (findByKey(get(eventAttendees), "id", attendee.id).checked_in_at === null) {
+		console.warn("Trying to remove check in, but attendee is not checked in");
+	}
+
+
+	// Optimistically update UI
 	eventAttendees.update((_eventAttendees) => {
 		findByKey(_eventAttendees, "id", attendee.id).checked_in_at = null;
 		return _eventAttendees;
 	})
+	const checkInData = await request.delete_(`/events/${get(chosenEventID)}/attendees/${attendee.id}/checkin`, {}, {});
+	if (checkInData.status === 204) {
+		console.log("Successfully removed checkin");
+	} else if (checkInData.status === 422) {
+		console.log("Tried to remove check-in, but it doesn't exist server-side");
+
+	}
+
 }

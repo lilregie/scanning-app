@@ -10,12 +10,6 @@ export default function checkInInitialize(router: Router) {
         if (attendee === null) {
             return;
         }
-
-        if (req.headers["content-type"] !== "application/json") {
-            res.status(400);
-            res.json({ "error": "request must be json with a optional string ticket_id property" });
-            return null;
-        }
         
         // Only validate ticket if included in request
         if (!("ticket_id" in req.headers) || attendee.ticket_id === req.headers["ticket_id"]) {
