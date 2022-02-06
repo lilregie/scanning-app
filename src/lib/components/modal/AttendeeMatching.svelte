@@ -7,7 +7,7 @@
 
 	import { findAttendeeByID, titleCase } from '$lib/utill';
 	import { eventAttendees, selectedAttendeeID as globalSelectedAttendeeID } from '$lib/store';
-	import { createCheckIn } from '$lib/api';
+	import { createCheckIn } from '$lib/api/api';
 
 	import Fuse from 'fuse.js';
 	import { getContext, onMount } from 'svelte';
@@ -19,7 +19,7 @@
 	export let DOB: string;
 	export let vaccineCert: string;
 
-	const selectedAttendeeID: Writable<number> = writable(null);
+	const selectedAttendeeID: Writable<string> = writable(null);
 	const selectedAttendee: Readable<Attendee> = derived(
 		[selectedAttendeeID,eventAttendees],
 		([id,attendees]) => findAttendeeByID(attendees, id)
@@ -65,7 +65,7 @@
 					titleCase(`${attendee.first_name} ${attendee.last_name}`),
 					`#${attendee.id}`,
 					`${((1 - fuseMatch.score) * 100).toFixed(2)}%`,
-					attendee.check_ins.length > 0 ? 'Checked In' : 'Not Checked In'
+					attendee.checked_in_at !== null ? 'Checked In' : 'Not Checked In'
 				],
 				hightlighted: attendee.id === get(selectedAttendeeID),
 				callback: () => {
