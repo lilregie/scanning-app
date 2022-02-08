@@ -57,6 +57,7 @@
   "type": "module",
   "packageManager": "yarn@1.22.17",
   "dependencies": {
+    "jsqr": "^1.4.0",
     "svelte-chartjs": "^1.1.3"
   }
 }
