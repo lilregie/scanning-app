@@ -18,7 +18,6 @@
 	export let eventID: string;
 
 	chosenEventID.set(eventID);
-	console.log(eventID)
 	if (eventID === null && browser) {
 		goto(`${basePath}/`);
 	}

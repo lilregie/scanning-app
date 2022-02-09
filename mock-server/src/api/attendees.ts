@@ -8,7 +8,6 @@ export default function attendeeInitialize(router: Router) {
         let eventId = req.params.eventId;
         let matchingEvent = events.filter((event) => event.id === eventId);
 
-        console.log(eventId)
         if (matchingEvent.length === 1) {
             console.log("Get Attendees for event:",eventId);
             res.json(attendees.get(eventId));

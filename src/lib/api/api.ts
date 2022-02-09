@@ -19,7 +19,6 @@ export async function initializeAPI() {
 		return
 	}
 
-	console.log('Initializing API', get(allEvents));
 	console.log('Loading Events');
 	await getEventsList();
 }
