@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { chosenEventID, allEvents, chosenEvent } from '$lib/store';
-	import { eventNameFromReference } from '$lib/utill';
 	import { onMount } from 'svelte';
 	import Select from 'svelte-select';
 	import { get } from 'svelte/store';
@@ -9,13 +8,13 @@
 	import { goto } from '$app/navigation';
 
 	let eventsDropdownList = [];
-	let eventsDropdownChosen: {value: number,label: string} = null;
+	let eventsDropdownChosen: {value: string,label: string} = null;
 
 	console.log(import.meta.env.BASE_URL)
 
 	allEvents.subscribe((events) => {
 		eventsDropdownList = events.map((event) => {
-			return { value: event.id, label: eventNameFromReference(event.reference) };
+			return { value: event.id, label: event.name };
 		});
 	});
 
@@ -23,7 +22,7 @@
 		if (get(chosenEvent) !== null) {
 			eventsDropdownChosen = {
 				value: get(chosenEventID),
-				label: eventNameFromReference(get(chosenEvent).reference)
+				label: get(chosenEvent).name
 			};
 		}
 	});
@@ -35,18 +34,15 @@
 </script>
 
 <div class="container">
-	<h1>Lorem ipsum dolor.</h1>
-	<div class="project-selection">
-		<div>
-			<Select items={eventsDropdownList} bind:value={eventsDropdownChosen} />
-		</div>
-		<div>
-			<Button
-				on:click={choseProject}
-				disabled={typeof eventsDropdownChosen === 'undefined' || eventsDropdownChosen === null}
-				>Choose Project</Button
-			>
-		</div>
+	<h1>Choose your event</h1>
+	<div class="event-selector">
+		<Select items={eventsDropdownList} bind:value={eventsDropdownChosen} />
+		<Button
+			expanded
+			on:click={choseProject}
+			disabled={typeof eventsDropdownChosen === 'undefined' || eventsDropdownChosen === null}
+			>Choose Event</Button
+		>
 	</div>
 </div>
 
@@ -69,5 +65,10 @@
 				margin-bottom: 1em;
 			}
 		}
+	}
+
+	.event-selector {
+		width: 600px;
+		max-width: calc(100% - 2rem);
 	}
 </style>

@@ -1,13 +1,13 @@
 <script>
 	import { Meta, Template, Story } from '@storybook/addon-svelte-csf';
-	import Search from '../lib/components/Search.svelte';
+	import TextInput from '../lib/components/TextInput.svelte';
 
-    let searchTerm = "";
+    let textInputValue = "";
 </script>
 
 <Meta
-	title="Search"
-	component={Search}
+	title="Text Input"
+	component={TextInput}
 	argTypes={{
 		size: {
 			control: 'select',
@@ -21,8 +21,8 @@
 />
 
 <Template let:args>
-    <div>Searching for "{searchTerm}"</div>
-	<Search {...args} bind:searchTerm />
+    <div>Input: "{textInputValue}"</div>
+	<TextInput {...args} bind:textInputValue />
 </Template>
 
 <Story

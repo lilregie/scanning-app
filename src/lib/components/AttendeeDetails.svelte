@@ -11,20 +11,16 @@
 
 	export let attendee: Readable<Attendee>;
 
-	console.log('Oh well', $attendee);
-
 	// Live updating checklist for attendee
 	let checkedIn = false;
 	let checkList = {};
 	$: {
 		checkList = {
 			'Booking Found': $attendee.booking_id,
-			'COVID Pass Verfied': $attendee.check_ins.some((checkIn) => {
-				checkIn.vaccine_certificate !== null;
-			})
+			'COVID Pass Verfied': false
 		};
 		// jankly adding in `Not` if not checked in
-		checkedIn = $attendee.check_ins.length !== 0;
+		checkedIn = $attendee.checked_in_at !== null;
 		checkList[checkedIn ? 'Checked In' : 'Not Checked In'] = checkedIn;
 	}
 
@@ -48,7 +44,7 @@
 			{$attendee.last_name}
 		</h2>
 		<div class="attendee-org">
-			{$attendee.organisation}
+			{$attendee.organisation || ''}
 		</div>
 		<div class="check-list">
 			{#each Object.entries(checkList) as check}
@@ -73,38 +69,51 @@
 			<span class="detail-missing">No Requirements Found</span>
 		{/if}
 		<h3 class="detail-group-header">Attendee Details</h3>
+		{#if $attendee.email_address}
+			<div class="detail-key-value">
+				<span class="detail-key">Email</span>
+				<span class="detail-value">{$attendee.email_address}</span>
+			</div>
+		{/if}
+		{#if $attendee.contact_phone}
+			<div class="detail-key-value">
+				<span class="detail-key">Phone</span>
+				<span class="detail-value">{$attendee.contact_phone}</span>
+			</div>
+		{/if}
+		{#if $attendee.ticket_type_name}
+			<div class="detail-key-value">
+				<span class="detail-key">Ticket Type</span>
+				<span class="detail-value">{$attendee.ticket_type_name}</span>
+			</div>
+		{/if}
 		<div class="detail-key-value">
-			<span class="detail-key">Email</span>
-			<span class="detail-value">{$attendee.email_address}</span>
+			<span class="detail-key">Custom Fields</span>
+			{#if $attendee.custom_fields.length > 0}
+				<div class="detail-value custom-fields">
+					{#each $attendee.custom_fields as field}
+						<div class="detail-key-value">
+							<span class="detail-key">{field.name}</span>
+							{#if field.values.length > 1}
+								{#each field.values as value}
+									<br />
+									<span class="detail-value custom-fields-multiple">{value}</span>
+								{/each}
+							{:else}
+								<span class="detail-value">{field.values[0]}</span>
+							{/if}
+						</div>
+					{/each}
+				</div>
+			{:else}
+				<span class="detail-missing">None</span>
+			{/if}
 		</div>
-		<div class="detail-key-value">
-			<span class="detail-key">Phone</span>
-			<span class="detail-value">{$attendee.contact_phone}</span>
-		</div>
-		<div class="detail-key-value">
-			<span class="detail-key">Ticket Type</span>
-			<span class="detail-value">{$attendee.ticket_type_name}</span>
-		</div>
-		<div class="detail-key-value">
-			<span class="detail-key">Custom Field</span>
-				{#if $attendee.custom_fields.length>0}
-					<div class="detail-value">
-						{#each $attendee.custom_fields as field}
-							<div class="detail-key-value">
-								<span class="detail-key">{field.name}</span>
-								<span class="detail-value">{field.values.join(" ")}</span>
-							</div>
-						{/each}
-					</div>
-				{:else}
-					<span class="detail-missing">None</span>
-				{/if}
-	</div>
 	</div>
 </div>
 <div class="action-container">
 	{#if checkedIn}
-		<Button on:click={removeLatestCheckIn} color="warning">Remove Latest Check In</Button>
+		<Button on:click={removeLatestCheckIn} color="warning">Remove Check In</Button>
 	{:else}
 		<Button on:click={checkIn}>Check In</Button>
 	{/if}
@@ -160,6 +169,15 @@
 				font-weight: bold;
 				&::after {
 					content: ': ';
+				}
+			}
+			.detail-value.custom-fields {
+				margin-left: 1rem;
+				.custom-fields-multiple {
+					margin-left: 1rem;
+					&::before {
+						content: '- ';
+					}
 				}
 			}
 		}

@@ -3,7 +3,7 @@
 		const {eventID} = params;
 		return {
 			props: {
-				eventID: parseInt(eventID) || null
+				eventID: eventID || null
 			}
 		}
 	}
@@ -15,7 +15,7 @@
 	import { browser } from '$app/env';
 	import { basePath } from '$lib/consts';
 
-	export let eventID: number;
+	export let eventID: string;
 
 	chosenEventID.set(eventID);
 	console.log(eventID)

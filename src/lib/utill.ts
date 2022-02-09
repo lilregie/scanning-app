@@ -1,18 +1,13 @@
-import type { Attendee, CheckIn } from "./attendee";
+import type { Attendee } from "./attendee";
 import normalizeStrings from "normalize-strings"
 
-export function eventNameFromReference(reference: string): string {
-	return reference.split(' ').slice(1).join(' ');
-}
-
-export function newestCheckIns(eventAttendees: Attendee[]): [CheckIn, Attendee][] {
-	let checkIns: [CheckIn, Attendee][] = [];
-	eventAttendees.forEach((attendee) => {
-		checkIns = checkIns.concat(attendee.check_ins.map((check_in) => [check_in, attendee]))
-	})
-	checkIns = checkIns.sort((a, b) => {
-		if (b[0].time && a[0]) {
-			return b[0].time.getTime() - a[0].time.getTime();
+export function newestCheckIns(eventAttendees: Attendee[]): Attendee[] {
+	let checkIns: Attendee[] = [];
+	checkIns = eventAttendees.filter(attendee => attendee.checked_in_at !== null);
+	checkIns = checkIns.sort((a: Attendee, b: Attendee) => {
+		if (b.checked_in_at && a.checked_in_at) {
+			console.log(b)
+			return b.checked_in_at.getTime() - a.checked_in_at.getTime();
 		}
 	});
 	return checkIns
@@ -26,6 +21,17 @@ export function findByKey<T>(list: T[], key: string, value: any): T | undefined 
 	return list.find((item) => item[key] === value);
 }
 
+export function findAttendeeByID(attendees: Attendee[], id: string): Attendee | null {
+	if (id === null) {
+		return null
+	}
+	let potentialSelectedAttendee = attendees.filter((attendee) => attendee.id === id);
+	if (potentialSelectedAttendee.length === 1) {
+		return potentialSelectedAttendee[0];
+	} else {
+		return null;
+	}
+}
 
 /// Convert a string to title case, so it is "Like This".
 export function titleCase(str) {
