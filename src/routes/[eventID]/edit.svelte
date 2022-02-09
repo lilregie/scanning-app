@@ -8,7 +8,7 @@
 	import AttendeeDetails from '$lib/components/AttendeeDetails.svelte';
 
 	import { attendeesTable } from '$lib/generateDataVis';
-	import { createCheckIn, removeLatestCheckIn } from '$lib/api';
+	import { createCheckIn, removeLatestCheckIn } from '$lib/api/api';
 	import { attendeesSearchTerm, eventAttendees, selectedAttendee } from '$lib/store';
 
 	import { get, Writable, writable } from 'svelte/store';

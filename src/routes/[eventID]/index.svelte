@@ -16,7 +16,7 @@
 		checkInTable = newestCheckInsTable();
 	});
 
-	$: checkedIn = $eventAttendees.filter((e) => e.check_ins.length > 0).length;
+	$: checkedIn = $eventAttendees.filter((e) => e.checked_in_at !== null).length;
 	$: notCheckedIn = $eventAttendees.length - checkedIn;
 	$: availableTickets = $chosenEvent?.['total_tickets'] - $eventAttendees.length;
 
