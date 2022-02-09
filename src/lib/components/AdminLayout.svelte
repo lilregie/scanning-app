@@ -2,12 +2,12 @@
 	import Card from './Card.svelte';
 	import logo from '../assets/logo/wordmark-white.svg';
 
-	import {checkedInCount, eventAttendees, chosenEvent} from "$lib/store";
+	import { checkedInCount, eventAttendees, chosenEvent } from '$lib/store';
 
 	interface CardOptions {
 		margin?: boolean;
 		scroll?: boolean;
-		shadow?: false | "small" | "medium" | "large";
+		shadow?: false | 'small' | 'medium' | 'large';
 		highlighted?: boolean;
 	}
 
@@ -18,9 +18,9 @@
 	}
 
 	export let cards: Cards = {
-		"left": {},
-		"rightTop": {},
-		"rightBottom": {},
+		left: {},
+		rightTop: {},
+		rightBottom: {}
 	};
 </script>
 
@@ -34,7 +34,7 @@
 	</div>
 
 	<div class="stat">
-		<span class="stat-value">{$chosenEvent?.total_tickets - $checkedInCount}</span>
+		<span class="stat-value">{$chosenEvent?.total_tickets - $checkedInCount || '??'}</span>
 		<span class="stat-label">Available Tickets</span>
 	</div>
 
@@ -67,11 +67,14 @@
 					</Card>
 				{:else}
 					<div class="info-panel-content">
-						<slot name="info-panel"/>
+						<slot name="info-panel" />
 					</div>
 				{/if}
 			</div>
-			<div class="list-panel" class:highlighted={cards.rightBottom && cards.rightBottom.highlighted}>
+			<div
+				class="list-panel"
+				class:highlighted={cards.rightBottom && cards.rightBottom.highlighted}
+			>
 				<div class="list-panel-header">
 					<slot name="list-panel-header" />
 				</div>
@@ -80,10 +83,9 @@
 						<slot name="list-panel" />
 					</Card>
 				{:else}
-				<div class="list-panel-content">
-					<slot name="list-panel" />
-
-				</div>
+					<div class="list-panel-content">
+						<slot name="list-panel" />
+					</div>
 				{/if}
 			</div>
 		</slot>
@@ -123,16 +125,27 @@
 
 	.panel-container {
 		padding: $item-spacing * 2;
+		@media screen and (max-width: 650px) {
+			padding: 1rem;
+			.left-bar,
+			.right-bar {
+				min-width: 100% !important;
+			}
+		}
 		box-sizing: border-box;
 		display: flex;
 		flex-direction: row;
 		align-items: stretch;
 		flex-grow: 1;
 		flex-wrap: wrap;
-		width: 100vw;
 		height: 100vh;
 		row-gap: $item-spacing;
 		column-gap: $item-spacing;
+
+		.left-bar,
+		.right-bar {
+			max-height: 100%;
+		}
 
 		.left-bar {
 			flex: 1;
@@ -159,9 +172,7 @@
 			}
 			.info-panel-content {
 				flex: 1 1 auto;
-
 			}
-
 		}
 		.list-panel {
 			flex: 1;
@@ -178,10 +189,12 @@
 			}
 		}
 	}
-	.list-panel, .info-panel, .left-bar {
+	.list-panel,
+	.info-panel,
+	.left-bar {
 		transition: all 200ms ease;
 		&.highlighted {
-			box-shadow: 0px 0px 8px 4px rgba(207,34,101,0.56);
+			box-shadow: 0px 0px 8px 4px rgba(207, 34, 101, 0.56);
 			overflow: visible;
 		}
 	}

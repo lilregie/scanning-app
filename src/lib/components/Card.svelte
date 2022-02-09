@@ -3,6 +3,7 @@
 	export let margin: boolean = true;
 	export let scroll: boolean = true;
 	export let shadow: false | 'small' | 'medium' | 'large' = 'medium';
+	export let background: boolean | string = true;
 </script>
 
 <div
@@ -10,6 +11,7 @@
 	class:expand
 	class:margin
 	class:scroll
+	class:transparent={!background}
 	class:has-footer={$$slots.footer}
 >
 	<div class="contents">
@@ -35,6 +37,11 @@
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
+
+		&.transparent {
+			background: none;
+			color: $text-dark;
+		}
 
 		@each $size, $shadow in $shadows {
 			&.shadow-#{$size} {

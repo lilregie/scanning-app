@@ -1,15 +1,16 @@
 
 <script lang="ts">
-    export let size: 'tiny' | 'small' | 'medium' | 'large' | 'expanded' = 'medium';
+    export let size: 'tiny' | 'small' | 'medium' | 'large' = 'medium';
 
-
-    export let searchTerm = "";
+    export let textInputValue = "";
 	export let placeholder = "";
 	export let disabled = false;
+	export let expanded: boolean = false;
 
+	export let inputComponent: HTMLInputElement = null;
 </script>
 
-<input bind:value={searchTerm} class="{size}" {placeholder} disabled={disabled}/>
+<input bind:value={textInputValue} class="{size}" class:expanded {placeholder} disabled={disabled} bind:this={inputComponent}/>
 
 <style lang="scss">
 	@use '../styles/vars.scss' as *;
@@ -37,8 +38,8 @@
 
 		&.large {
 			font-size: 1.3rem;
-			padding-top: 0.78rem;
-			padding-bottom: 0.78rem;
+			padding-top: 0.58rem;
+			padding-bottom: 0.58rem;
 		}
 
 		&.expanded {

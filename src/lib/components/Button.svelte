@@ -1,14 +1,15 @@
 <script lang="ts">
 	export let color: 'primary' | 'secondary' | 'success' | 'warning' = 'primary';
 	export let href: string | undefined = undefined;
-	export let size: 'tiny' | 'small' | 'medium' | 'large' | 'expanded' = 'medium';
+	export let size: 'tiny' | 'small' | 'medium' | 'large' = 'medium';
 	export let submit: boolean = true;
 	export let disabled: boolean = false;
 	export let outline: boolean = false;
+	export let expanded: boolean = false;
 </script>
 
 {#if href}
-	<a on:click class="{color} {size}" class:outline disabled={disabled ? true : null} {href}>
+	<a on:click class="{color} {size}" class:outline class:expanded disabled={disabled ? true : null} {href}>
 		<slot>Submit</slot>
 	</a>
 {:else}
@@ -18,6 +19,7 @@
 		class:outline
 		disabled={disabled ? true : null}
 		type={submit ? 'submit' : ''}
+		class:expanded
 	>
 		<slot>Submit</slot>
 	</button>

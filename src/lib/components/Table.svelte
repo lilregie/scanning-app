@@ -9,7 +9,6 @@
 <script lang="ts">
 	export let tableData: TableRow[];
 	export let tableHeaders: string[];
-	console.log(tableData);
 </script>
 
 <table>
