@@ -18,9 +18,12 @@
 	export let eventID: string;
 
 	chosenEventID.set(eventID);
-	if (eventID === null && browser) {
-		goto(`${basePath}/`);
-	}
+	chosenEventID.subscribe(id => {
+		if ($chosenEventID === null && browser) {
+			goto(`${basePath}/eventNotFound`);
+		}
+	});
+	
 </script>
 
 <slot />

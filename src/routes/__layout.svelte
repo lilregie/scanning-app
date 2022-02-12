@@ -6,6 +6,7 @@
 
 	import '../global.scss';
 	import { globalModalState } from '$lib/store';
+	import ConnectionMaster from '$lib/components/connectionInfo/connectionMaster.svelte';
 
 	onMount(() => {
 		initializeAPI();
@@ -13,6 +14,7 @@
 </script>
 
 <Modal styleWindow={{width: "80vw"}} bind:show={$globalModalState} on:closed={()=>globalModalState.set(null)}>
+	<ConnectionMaster/>
 	<slot />
 </Modal>
 

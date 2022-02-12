@@ -1,9 +1,10 @@
 import { get } from 'svelte/store';
 import type { Attendee } from '../attendee';
 import type { Event } from '../event';
-import { allEvents, chosenEventID, eventAttendees } from '../store';
+import { allEvents, apiProduction, chosenEventID, eventAttendees } from '../store';
 import {findByKey} from "$lib/utill"
 import { request } from './request';
+import { errorAPICallbacks } from './statusStores';
 
 export async function initializeAPI() {
 	console.log('initializeAPI');
@@ -13,10 +14,14 @@ export async function initializeAPI() {
 	const CSRF_TOKEN = metaTag?.content;
 	if (CSRF_TOKEN==="testing-token") {
 		console.warn("API in DEV mode");
-
+		apiProduction.set(false);
 	} else if (!CSRF_TOKEN) {
 		console.error("Error: API token not found",metaTag);
 		return
+	} else {
+		console.log("API in production mode");
+		apiProduction.set(true);
+
 	}
 
 	console.log('Loading Events');
@@ -32,16 +37,21 @@ export async function getEventsList() {
 }
 
 export async function getAttendeesList(eventID: string) {
-	let result = await request.get(`/events/${eventID}/attendees.json`, {});
-	if (result.status == 404) {
-		console.log("Event not found");
-	} else {
-		let attendees: Attendee[] = (await result.json()).map(attendee=>{
-			attendee.checked_in_at = typeof attendee.checked_in_at === "string" && new Date(attendee.checked_in_at) || null
-			return attendee
-		});
-		eventAttendees.set(attendees);
+	try {
+		let result = await request.get(`/events/${eventID}/attendees.json`, {});
+		if (result.status == 404) {
+			console.log("Event not found");
+		} else {
+			let attendees: Attendee[] = (await result.json()).map(attendee=>{
+				attendee.checked_in_at = typeof attendee.checked_in_at === "string" && new Date(attendee.checked_in_at) || null
+				return attendee
+			});
+			eventAttendees.set(attendees);
+		}
+	} catch {
+		console.log("Failed to get event attendees");
 	}
+
 }
 
 export async function createCheckIn(attendee: Attendee, manually_checked_in: boolean, vaccine_certificate: string = null, ticket_id: string = null) {
@@ -55,16 +65,32 @@ export async function createCheckIn(attendee: Attendee, manually_checked_in: boo
 		
 		return _eventAttendees;
 	})
-	
-	const checkInData = await request.post(`/events/${get(chosenEventID)}/attendees/${attendee.id}/checkin`, {}, {});
-	if (checkInData.status !== 200) {
-		console.error("Failed to create checkin", checkInData.status, checkInData.text());
+	try {
+		const checkInData = await request.post(`/events/${get(chosenEventID)}/attendees/${attendee.id}/checkin`, {}, {});
+		if (checkInData.status !== 200) {
+			console.error("Failed to create checkin", checkInData.status, checkInData.text());
+			// Undo UI update
+			eventAttendees.update((_eventAttendees) => {
+				findByKey(_eventAttendees, "id", attendee.id).checked_in_at = null
+				return _eventAttendees;
+			})
+		}
+	} catch {
+		console.log("Failed to create checkin, server not responding");
 		// Undo UI update
 		eventAttendees.update((_eventAttendees) => {
 			findByKey(_eventAttendees, "id", attendee.id).checked_in_at = null
 			return _eventAttendees;
 		})
+		errorAPICallbacks.update((_errorAPICallbacks) => {
+			_errorAPICallbacks.push(() => {
+				createCheckIn(attendee, manually_checked_in, vaccine_certificate, ticket_id);
+			})
+			return _errorAPICallbacks
+		})
+
 	}
+
 }
 
 export async function removeLatestCheckIn(attendee: Attendee) {
@@ -78,12 +104,27 @@ export async function removeLatestCheckIn(attendee: Attendee) {
 		findByKey(_eventAttendees, "id", attendee.id).checked_in_at = null;
 		return _eventAttendees;
 	})
-	const checkInData = await request.delete_(`/events/${get(chosenEventID)}/attendees/${attendee.id}/checkin`, {}, {});
-	if (checkInData.status === 204) {
-		console.log("Successfully removed checkin");
-	} else if (checkInData.status === 422) {
-		console.log("Tried to remove check-in, but it doesn't exist server-side");
-
+	try {
+		const checkInData = await request.delete_(`/events/${get(chosenEventID)}/attendees/${attendee.id}/checkin`, {}, {});
+		if (checkInData.status === 204) {
+			console.log("Successfully removed checkin");
+		} else if (checkInData.status === 422) {
+			console.log("Tried to remove check-in, but it doesn't exist server-side");
+		}
+	} catch {
+		console.log("Failed to remove checkin");
+		// Undo UI update
+		eventAttendees.update((_eventAttendees) => {
+			findByKey(_eventAttendees, "id", attendee.id).checked_in_at = new Date();
+			return _eventAttendees;
+		})
+		errorAPICallbacks.update((_errorAPICallbacks) => {
+			_errorAPICallbacks.push(() => {
+				removeLatestCheckIn(attendee);
+			})
+			return _errorAPICallbacks
+		})
 	}
+
 
 }
