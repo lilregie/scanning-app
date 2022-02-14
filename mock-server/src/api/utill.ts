@@ -4,7 +4,7 @@ import { attendees, events } from "../datastore";
 import { LilRegieEvent } from "../mockInterfaces/event";
 
 export function getAttendee(req: Request, res: Response): Attendee | null {
-    let attendeeId = req.params.attendeeId;
+    let attendeeId = parseInt(req.params.attendeeId);
 
     let event = getEvent(req, res);
     if (event === null) {return null;}
@@ -20,7 +20,7 @@ export function getAttendee(req: Request, res: Response): Attendee | null {
 }
 
 export function getEvent(req: Request, res: Response): LilRegieEvent | null {
-    let eventId = req.params.eventId;
+    let eventId = parseInt(req.params.eventId);
 
     let matchingEvent = events.filter((event) => event.id === eventId);
 

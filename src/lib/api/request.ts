@@ -57,11 +57,11 @@ export namespace request {
 					method,
 					body: data && JSON.stringify(data) || null,
 					...params,
-					headers: { "X-CSRF-Token": storeGet(csrfAPIState) || "" }
+					headers: { "x-csrf-token": storeGet(csrfAPIState) || "" }
 				}
 			);
-			console.log("Recived header",result, result.headers.get("X-CSRF-Token"))
-			csrfAPIState.set(result.headers.get("X-CSRF-Token"));
+			console.log("Received header", result.headers.get("x-csrf-token"))
+			csrfAPIState.set(result.headers.get("x-csrf-token"));
 
 		} finally {
 			// Clear API request from logs

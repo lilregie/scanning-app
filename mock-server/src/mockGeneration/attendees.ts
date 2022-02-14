@@ -12,13 +12,13 @@ function maybe<T>(x: T): T | null {
 export function generateAttendeesForEvent(): Attendee[] {
 	let people = [];
 	for (let i = 0; i < faker.datatype.number(70) + 12; i++) {
-		people.push(generateAttendee(((i+1)*137).toString().padStart(5, '0')));
+		people.push(generateAttendee(((i+1)*137)));
 	}
 	return people;
 }
 
 
-export function generateAttendee(id: string = genID()): Attendee {
+export function generateAttendee(id: number = faker.datatype.number(99999)): Attendee {
 	let checkInCount = faker.datatype.boolean() ? 0 : faker.datatype.number(3);
 	return {
 		id,

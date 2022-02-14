@@ -5,7 +5,7 @@ import { getAttendee } from "./utill";
 
 export default function attendeeInitialize(router: Router) {
     router.get("/:eventId/attendees.json", (req, res) => {
-        let eventId = req.params.eventId;
+        let eventId = parseInt(req.params.eventId);
         let matchingEvent = events.filter((event) => event.id === eventId);
 
         if (matchingEvent.length === 1) {

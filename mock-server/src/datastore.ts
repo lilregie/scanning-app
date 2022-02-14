@@ -4,7 +4,7 @@ import { generateEvent } from "./mockGeneration/events";
 import { generateAttendeesForEvent } from "./mockGeneration/attendees";
 
 export let events: LilRegieEvent[] = [];
-export let attendees: Map<string, Attendee[]> = new Map();
+export let attendees: Map<number, Attendee[]> = new Map();
 
 for (let i = 0; i < 3; i++) {
     events.push(generateEvent());

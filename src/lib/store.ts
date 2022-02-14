@@ -29,7 +29,7 @@ function useLocalStorage<T>(store: Writable<T>, key: string) {
 	}
 }
 
-export const chosenEventID: Writable<string> = writable(null);
+export const chosenEventID: Writable<number> = writable(null);
 
 export const allEvents: Writable<Event[]> = writable([]);
 
