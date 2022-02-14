@@ -1,21 +1,24 @@
 import { NextFunction, Request, Response } from "express";
 import { v4 } from "uuid";
 
-let CSRF_TOKEN = 'testing-token';
+const START_TOKEN = 'testing-token';
+let csrf_token = 'testing-token';
 
 
 function newToken(): string {
-    CSRF_TOKEN = v4();
-    return CSRF_TOKEN;
+    csrf_token = v4();
+    return csrf_token;
 }
 
 
 export const csrfMiddleware = (req: Request, res: Response<any, Record<string, any>>, next: NextFunction) => {
-    // if (req.body?.csrf !== CSRF_TOKEN) {
-    //     res.status(403).send('Invalid CSRF Token');
-    // } else {
-    //     return next();
-    // }
-    res.set('X-CSRF-Token', newToken());
-    return next();
+    const request_csrf = req.get('X-CSRF-Token');
+    console.log(`Supplied CSRF: '${request_csrf}'`)
+    if (request_csrf === csrf_token || request_csrf === START_TOKEN) {
+        res.set('X-CSRF-Token', newToken());
+        res.set("Access-Control-Expose-Headers","X-CSRF-Token")
+        return next();
+    } else {
+        res.status(403).send('Invalid CSRF Token');
+    }
 }

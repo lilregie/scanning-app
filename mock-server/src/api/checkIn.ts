@@ -5,7 +5,7 @@ import { getAttendee } from "./utill";
 
 
 export default function checkInInitialize(router: Router) {
-    router.post("/events/:eventId/attendees/:attendeeId/checkin", (req, res) => {
+    router.post("/:eventId/attendees/:attendeeId/checkin", (req, res) => {
         let attendee = getAttendee(req, res);
         if (attendee === null) {
             return;
@@ -26,7 +26,7 @@ export default function checkInInitialize(router: Router) {
         }
     });
 
-    router.delete("/events/:eventId/attendees/:attendeeId/checkin", (req, res) => {
+    router.delete("/:eventId/attendees/:attendeeId/checkin", (req, res) => {
         let attendee = getAttendee(req, res);
         if (attendee === null) {
             return;

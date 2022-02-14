@@ -5,7 +5,7 @@ import { getAttendee, getEvent } from "./utill";
 
 
 export default function checkInInitialize(router: Router) {
-    router.get("/events/:eventId/tickets/:ticketID", (req, res) => {
+    router.get("/:eventId/tickets/:ticketID", (req, res) => {
         let ticketID = req.params.ticketID;
         let barcode_id = req.headers.barcode_id;
 

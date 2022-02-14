@@ -38,7 +38,7 @@ export const chosenEvent = derived([chosenEventID, allEvents], ([_chosenEventID,
 		let potentialChosenEvent = _allEvents.filter((event) => event.id === _chosenEventID);
 		if (potentialChosenEvent.length === 1) {
 			console.log("Found event", _chosenEventID);
-	
+
 			// Also need to get people for new chosen event
 			getAttendeesList(_chosenEventID.toString());
 			return potentialChosenEvent[0];
@@ -73,7 +73,3 @@ export const prefersCameraOrTextScanning: Writable<string> = writable('camera');
 useLocalStorage(prefersCameraOrTextScanning, 'prefersCameraOrTextScanning');
 
 export const globalModalState: Writable<any> = writable(null);
-
-export const csrfAPIState: Writable<string> = writable(null);
-
-export const apiProduction: Writable<boolean> = writable(false);

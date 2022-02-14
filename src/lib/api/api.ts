@@ -1,10 +1,10 @@
 import { get } from 'svelte/store';
 import type { Attendee } from '../attendee';
 import type { Event } from '../event';
-import { allEvents, apiProduction, chosenEventID, eventAttendees } from '../store';
+import { allEvents, chosenEventID, eventAttendees } from '../store';
 import {findByKey} from "$lib/utill"
 import { request } from './request';
-import { errorAPICallbacks } from './statusStores';
+import { apiProduction, csrfAPIState, errorAPICallbacks } from './statusStores';
 
 export async function initializeAPI() {
 	console.log('initializeAPI');
@@ -12,6 +12,7 @@ export async function initializeAPI() {
 	// Load CSRF token
 	let metaTag = document.querySelector('meta[name=csrf-token]') as HTMLMetaElement;
 	const CSRF_TOKEN = metaTag?.content;
+	csrfAPIState.set(CSRF_TOKEN);
 	if (CSRF_TOKEN==="testing-token") {
 		console.warn("API in DEV mode");
 		apiProduction.set(false);
@@ -30,7 +31,7 @@ export async function initializeAPI() {
 
 export async function getEventsList() {
 	console.log('Loading Events');
-	let result = await request.get('/events.json', {});
+	let result = await request.get('.json', {});
 	let events: Event[] = await result.json();
 	console.log("Generated Events", events);
 	allEvents.set(events);
@@ -38,7 +39,7 @@ export async function getEventsList() {
 
 export async function getAttendeesList(eventID: string) {
 	try {
-		let result = await request.get(`/events/${eventID}/attendees.json`, {});
+		let result = await request.get(`/${eventID}/attendees.json`, {});
 		if (result.status == 404) {
 			console.log("Event not found");
 		} else {
@@ -62,11 +63,11 @@ export async function createCheckIn(attendee: Attendee, manually_checked_in: boo
 	// Optimistically update UI
 	eventAttendees.update((_eventAttendees) => {
 		findByKey(_eventAttendees, "id", attendee.id).checked_in_at = new Date()
-		
+
 		return _eventAttendees;
 	})
 	try {
-		const checkInData = await request.post(`/events/${get(chosenEventID)}/attendees/${attendee.id}/checkin`, {}, {});
+		const checkInData = await request.post(`/${get(chosenEventID)}/attendees/${attendee.id}/checkin`, {}, {});
 		if (checkInData.status !== 200) {
 			console.error("Failed to create checkin", checkInData.status, checkInData.text());
 			// Undo UI update
@@ -105,7 +106,7 @@ export async function removeLatestCheckIn(attendee: Attendee) {
 		return _eventAttendees;
 	})
 	try {
-		const checkInData = await request.delete_(`/events/${get(chosenEventID)}/attendees/${attendee.id}/checkin`, {}, {});
+		const checkInData = await request.delete_(`/${get(chosenEventID)}/attendees/${attendee.id}/checkin`, {}, {});
 		if (checkInData.status === 204) {
 			console.log("Successfully removed checkin");
 		} else if (checkInData.status === 422) {

@@ -5,12 +5,12 @@ import { getEvent } from "./utill";
 
 
 export default function eventsInitialize(router: Router) {
-    router.get("/events.json", (req, res) => {
+    router.get("/.json", (req, res) => {
         console.log("Got All Events")
         res.json(events);
     });
 
-    router.get("/events/:eventId.json", (req: Request, res: Response) => {
+    router.get("/:eventId.json", (req: Request, res: Response) => {
         let event = getEvent(req, res);
         if (event === null) {
             return;
