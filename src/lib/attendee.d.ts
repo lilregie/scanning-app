@@ -1,7 +1,7 @@
 export interface Attendee {
 	id: number;
-	booking_id: string;
-	ticket_id: string;
+	booking_id: number;
+	ticket_id: number;
 	first_name: string;
 	last_name: string;
 	contact_phone: string | null;
@@ -20,14 +20,14 @@ export interface Attendee {
 	voucher_name: string | null;
 }
 export interface CustomField {
-	name: string;
+	name: number;
 	input_type: string;
 	values: string[];
 }
 
 export interface Attendance {
-	id: string;
-	eventlet_id: string;
+	id: number;
+	eventlet_id: number;
 	eventlet_name: string;
 	amount_excluding_tax: string;
 	tax: string;

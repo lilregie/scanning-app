@@ -10,7 +10,6 @@
 	let eventsDropdownList = [];
 	let eventsDropdownChosen: {value: string,label: string} = null;
 
-	console.log(import.meta.env.BASE_URL)
 
 	allEvents.subscribe((events) => {
 		eventsDropdownList = events.map((event) => {
@@ -21,14 +20,14 @@
 	onMount(() => {
 		if (get(chosenEvent) !== null) {
 			eventsDropdownChosen = {
-				value: get(chosenEventID),
+				value: get(chosenEventID).toString(),
 				label: get(chosenEvent).name
 			};
 		}
 	});
 
 	function choseProject() {
-		chosenEventID.set(eventsDropdownChosen.value);
+		chosenEventID.set(parseInt(eventsDropdownChosen.value));
 		goto(`${basePath}/${eventsDropdownChosen.value}`);
 	}
 </script>
@@ -59,16 +58,11 @@
 			font-size: 4rem;
 			color: $text-dark;
 		}
-		.project-selection{
-			min-width: 15em;
-			div {
-				margin-bottom: 1em;
-			}
+		.event-selector {
+			width: 600px;
+			max-width: calc(100% - 2rem);
 		}
 	}
 
-	.event-selector {
-		width: 600px;
-		max-width: calc(100% - 2rem);
-	}
+
 </style>

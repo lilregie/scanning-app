@@ -4,9 +4,9 @@
 
 	import type { Attendee } from '$lib/attendee';
 
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 	import InvalidCross from './InvalidCross.svelte';
-	import type { Readable } from 'svelte/store';
+	import { Readable, writable } from 'svelte/store';
 	const dispatch = createEventDispatcher();
 
 	export let attendee: Readable<Attendee>;
@@ -35,10 +35,28 @@
 	function moreDetails() {
 		dispatch('moreDetails', {});
 	}
+
+
+	// Detail level manager
+	let detailLevel = writable(0);
+	let elementWidth = 0;
+	let detailLevelManager: NodeJS.Timer;
+	onMount(()=>{
+		detailLevelManager = setInterval(()=>{
+			console.log(elementWidth)
+			detailLevel.set(Math.floor(elementWidth / 250))
+		}, 250);
+	});
+	onDestroy(()=> {
+		if(detailLevelManager){
+			clearInterval(detailLevelManager);
+		}
+	});
+
 </script>
 
-<div class="details-container">
-	<div class="detail-column priority">
+<div class="details-container" bind:clientWidth={elementWidth}>
+	<div class="detail-column">
 		<h2 class="attendee-name">
 			{$attendee.first_name}
 			{$attendee.last_name}
@@ -61,6 +79,7 @@
 			{/each}
 		</div>
 	</div>
+	{#if $detailLevel > 1}
 	<div class="detail-column">
 		<h3 class="detail-group-header">Requirements</h3>
 		{#if $attendee.requirements}
@@ -87,29 +106,25 @@
 				<span class="detail-value">{$attendee.ticket_type_name}</span>
 			</div>
 		{/if}
-		<div class="detail-key-value">
-			<span class="detail-key">Custom Fields</span>
-			{#if $attendee.custom_fields.length > 0}
-				<div class="detail-value custom-fields">
+	</div>
+	{/if}
+	{#if $detailLevel > 2}
+		<div class="detail-column">
+			<h3 class="detail-group-header">Custom Fields</h3>
+			<div class="detail-key-value">
+				<div class="custom-fields">
 					{#each $attendee.custom_fields as field}
+						<span class="detail-key">{field.name}</span>
 						<div class="detail-key-value">
-							<span class="detail-key">{field.name}</span>
-							{#if field.values.length > 1}
-								{#each field.values as value}
-									<br />
-									<span class="detail-value custom-fields-multiple">{value}</span>
-								{/each}
-							{:else}
-								<span class="detail-value">{field.values[0]}</span>
-							{/if}
+							{#each field.values as value}
+								<span class="detail-value custom-fields-multiple">{value}</span>
+							{/each}
 						</div>
 					{/each}
 				</div>
-			{:else}
-				<span class="detail-missing">None</span>
-			{/if}
+			</div>
 		</div>
-	</div>
+	{/if}
 </div>
 <div class="action-container">
 	{#if checkedIn}
@@ -124,13 +139,17 @@
 	.details-container {
 		display: flex;
 		flex-direction: row;
-		justify-content: start;
-		align-items: center;
+		justify-content: space-between;
+		align-items: stretch;
 		margin-bottom: 1rem;
-		.priority {
-			flex-basis: 20em;
-		}
+		box-sizing: border-box;
+		list-style: none;
+		flex-shrink: 0;
+
 		.detail-column {
+			position: relative;
+			padding: 0 1rem;
+			flex: 1 1 auto;
 			.attendee-name {
 				font-size: 2rem;
 				font-weight: bold;
@@ -171,17 +190,19 @@
 					content: ': ';
 				}
 			}
-			.detail-value.custom-fields {
+			.custom-fields-multiple {
 				margin-left: 1rem;
-				.custom-fields-multiple {
-					margin-left: 1rem;
-					&::before {
-						content: '- ';
-					}
+				&::before {
+					content: '- ';
 				}
+				display: block;
+			}
+			& + .detail-column {
+				border-left: solid 1px black;
 			}
 		}
 	}
+
 	.action-container {
 		position: absolute;
 		bottom: 0;

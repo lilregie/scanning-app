@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Doughnut from 'svelte-chartjs/src/Doughnut.svelte';
-	import { browser } from '$app/env';
 
 	import AdminLayout from '$lib/components/AdminLayout.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -75,13 +74,6 @@
 	@use '../../lib/styles/vars.scss' as *;
 	.latest-check-ins-container {
 		position: relative;
-		.next-button {
-			position: absolute;
-			width: 100%;
-			bottom: 0;
-			text-decoration: none;
-			box-sizing: border-box;
-		}
 	}
 	.graph-container {
 		display: flex;
