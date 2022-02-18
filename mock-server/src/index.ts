@@ -15,6 +15,17 @@ app.use(express.json());
 // Check Token
 app.use(csrfMiddleware);
 
+// Check for json header
+app.use(function (req, res, next) {
+    if (req.get('Accept') === 'application/json') {
+        next()
+    } else {
+        res.status(406).json({
+            error: "Only JSON responses are supported"
+        });
+    }
+})
+
 app.use("/",router)
 
 router.get('/', (req, res) => {

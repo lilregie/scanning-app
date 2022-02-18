@@ -57,7 +57,10 @@ export namespace request {
 					method,
 					body: data && JSON.stringify(data) || null,
 					...params,
-					headers: { "x-csrf-token": storeGet(csrfAPIState) || "" }
+					headers: {
+						"x-csrf-token": storeGet(csrfAPIState) || "",
+						"Accept": "application/json",
+					}
 				}
 			);
 			console.log("Received header", result.headers.get("x-csrf-token"))
