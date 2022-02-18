@@ -6,7 +6,6 @@ export function newestCheckIns(eventAttendees: Attendee[]): Attendee[] {
 	checkIns = eventAttendees.filter(attendee => attendee.checked_in_at !== null);
 	checkIns = checkIns.sort((a: Attendee, b: Attendee) => {
 		if (b.checked_in_at && a.checked_in_at) {
-			console.log(b)
 			return b.checked_in_at.getTime() - a.checked_in_at.getTime();
 		}
 	});

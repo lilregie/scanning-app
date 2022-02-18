@@ -4,11 +4,10 @@ import { getAttendee } from "./utill";
 
 
 export default function attendeeInitialize(router: Router) {
-    router.get("/events/:eventId/attendees.json", (req, res) => {
-        let eventId = req.params.eventId;
+    router.get("/:eventId/attendees.json", (req, res) => {
+        let eventId = parseInt(req.params.eventId);
         let matchingEvent = events.filter((event) => event.id === eventId);
 
-        console.log(eventId)
         if (matchingEvent.length === 1) {
             console.log("Get Attendees for event:",eventId);
             res.json(attendees.get(eventId));
@@ -18,7 +17,7 @@ export default function attendeeInitialize(router: Router) {
         }
     });
 
-    router.get("/events/:eventId/attendees/:attendeeId.json", (req: Request, res: Response) => {
+    router.get("/:eventId/attendees/:attendeeId.json", (req: Request, res: Response) => {
         let attendee = getAttendee(req, res);
         if (attendee === null) {
             return;

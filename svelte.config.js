@@ -28,7 +28,6 @@ const config = {
 			base: process.env['ROOT_PATH'] ? process.env['ROOT_PATH'] : '',
 			assets: process.env['PUBLIC_ASSETS_PATH'] ? process.env['PUBLIC_ASSETS_PATH'] : ''
 		},
-		target: '#svelte',
 		vite: {
 			optimizeDeps: {
 				include: [

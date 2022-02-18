@@ -4,6 +4,9 @@ import type { Event } from '$lib/event';
 import type { Attendee } from './attendee';
 import { getAttendeesList } from './api/api';
 import { findAttendeeByID } from './utill';
+import { goto } from '$app/navigation';
+import { browser } from '$app/env';
+import { basePath } from './consts';
 
 
 let LOCAL_STORAGE_VERSION = 3;
@@ -26,22 +29,29 @@ function useLocalStorage<T>(store: Writable<T>, key: string) {
 	}
 }
 
-export const chosenEventID: Writable<string> = writable(null);
+export const chosenEventID: Writable<number> = writable(null);
 
 export const allEvents: Writable<Event[]> = writable([]);
 
 export const chosenEvent = derived([chosenEventID, allEvents], ([_chosenEventID, _allEvents]) => {
-	let potentialChosenEvent = _allEvents.filter((event) => event.id === _chosenEventID);
-	if (potentialChosenEvent.length === 1) {
-		console.log("Found event", _chosenEventID);
+	if (_chosenEventID !== null && _allEvents.length > 0) {
+		let potentialChosenEvent = _allEvents.filter((event) => event.id === _chosenEventID);
+		if (potentialChosenEvent.length === 1) {
+			console.log("Found event", _chosenEventID);
 
-		// Also need to get people for new chosen event
-		getAttendeesList(_chosenEventID.toString());
-		return potentialChosenEvent[0];
+			// Also need to get people for new chosen event
+			getAttendeesList(_chosenEventID.toString());
+			return potentialChosenEvent[0];
+		} else {
+			console.log("couldn't find event", _chosenEventID, "reset chosen event");
+			chosenEventID.set(null);
+			return null;
+		}
 	} else {
-		console.log("couldn't find event", _chosenEventID);
-		return null;
+		console.log("No event chosen");
+		return null
 	}
+
 });
 
 export const eventAttendees: Writable<Attendee[]> = writable([]);
@@ -63,7 +73,3 @@ export const prefersCameraOrTextScanning: Writable<string> = writable('camera');
 useLocalStorage(prefersCameraOrTextScanning, 'prefersCameraOrTextScanning');
 
 export const globalModalState: Writable<any> = writable(null);
-
-export const csrfAPIState: Writable<string> = writable(null);
-
-export const apiProduction: Writable<boolean> = writable(false);

@@ -1,5 +1,5 @@
 export interface Attendee {
-	id: string;
+	id: number;
 	booking_id: string;
 	ticket_id: string;
 	first_name: string;

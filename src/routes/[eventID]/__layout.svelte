@@ -3,7 +3,7 @@
 		const {eventID} = params;
 		return {
 			props: {
-				eventID: eventID || null
+				eventID: parseInt(eventID) || null
 			}
 		}
 	}
@@ -15,13 +15,15 @@
 	import { browser } from '$app/env';
 	import { basePath } from '$lib/consts';
 
-	export let eventID: string;
+	export let eventID: number;
 
 	chosenEventID.set(eventID);
-	console.log(eventID)
-	if (eventID === null && browser) {
-		goto(`${basePath}/`);
-	}
+	chosenEventID.subscribe(id => {
+		if ($chosenEventID === null && browser) {
+			goto(`${basePath}/eventNotFound`);
+		}
+	});
+	
 </script>
 
 <slot />

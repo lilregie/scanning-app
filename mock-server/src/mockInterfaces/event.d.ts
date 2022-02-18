@@ -1,5 +1,5 @@
 export interface LilRegieEvent {
-    id: string;
+    id: number;
     name: string;
     permalink: string;
     not_checked_in_count: number;

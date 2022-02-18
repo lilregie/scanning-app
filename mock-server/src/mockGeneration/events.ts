@@ -4,7 +4,7 @@ import faker from '@faker-js/faker';
 
 faker.seed(42);
 
-const genID = () => faker.datatype.number().toString();
+const genID = () => faker.datatype.number();
 
 export function generateEvent(): LilRegieEvent {
 	return {
