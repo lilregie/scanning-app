@@ -17,9 +17,9 @@
 	let attendeesTableData: [string[],TableRow[]];
 
 	$: {
-		// IMPORTANT: This console.log means that the entire block will reload when
+		// IMPORTANT: This empty function means that the entire block will reload when
 		// the $selectedAttendee changes. This is a hack, and should be fixed later on.
-		console.log('Selected Attendee', $selectedAttendee);
+		((_)=>{})($selectedAttendee);
 
 		attendeesTableData = attendeesTable($eventAttendees, $attendeesSearchTerm);
 	}
