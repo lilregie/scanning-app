@@ -18,12 +18,12 @@
 	export let eventID: number;
 
 	chosenEventID.set(eventID);
-	chosenEventID.subscribe(id => {
+	chosenEventID.subscribe(() => {
 		if ($chosenEventID === null && browser) {
 			goto(`${basePath}/eventNotFound`);
 		}
 	});
-	
+
 </script>
 
 <slot />

@@ -1,15 +1,23 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
 	import SuccessTick from '$lib/components/SuccessTick.svelte';
+	import FullAttendeeDetails from '$lib/components/modal/FullAttendeeDetails.svelte';
+	import InvalidCross from './InvalidCross.svelte';
+
 
 	import type { Attendee } from '$lib/attendee';
+	import { globalModalState } from '$lib/store';
+
 
 	import { createEventDispatcher } from 'svelte';
-	import InvalidCross from './InvalidCross.svelte';
-	import type { Readable } from 'svelte/store';
 	const dispatch = createEventDispatcher();
+	
+	import { Readable, Writable, writable } from 'svelte/store';
+	import { bind } from 'svelte-simple-modal';
 
 	export let attendee: Readable<Attendee>;
+	export let direction: 'horizontal' | 'vertical' = 'horizontal';
+	export let actionsAvailable: boolean = true;
 
 	// Live updating checklist for attendee
 	let checkedIn = false;
@@ -34,17 +42,45 @@
 
 	function moreDetails() {
 		dispatch('moreDetails', {});
+		// @ts-expect-error
+		globalModalState.set(bind(FullAttendeeDetails, {attendee: attendee}))
+	}
+
+	// Detail level manager
+	let detailLevel = writable(0);
+	let elementWidth = 0;
+
+	$: {
+		if (direction === 'horizontal') {
+
+			// 250px needed per column to stop overflow
+			let calculatedSpacing = Math.floor(elementWidth / 250);
+
+			// Limit the details colums, so there is at least the name, and a max of the number of details
+			let newDetailLevel = Math.min(Math.max(calculatedSpacing, 1), 3);
+
+			detailLevel.set(newDetailLevel);
+		}
+	}
+	if (direction === 'vertical') {
+		detailLevel.set(3);
 	}
 </script>
 
-<div class="details-container">
-	<div class="detail-column priority">
+<div
+	class="details-container"
+	class:horizontal={direction==="horizontal"}
+	class:vertical={direction==="vertical"}
+	style="--detailLevel: {$detailLevel}"
+	bind:clientWidth={elementWidth}
+>
+	<div class="detail-column">
 		<h2 class="attendee-name">
 			{$attendee.first_name}
 			{$attendee.last_name}
 		</h2>
 		<div class="attendee-org">
-			{$attendee.organisation || ''}
+			{$attendee.organisation || ''}&nbsp;
 		</div>
 		<div class="check-list">
 			{#each Object.entries(checkList) as check}
@@ -61,76 +97,97 @@
 			{/each}
 		</div>
 	</div>
-	<div class="detail-column">
-		<h3 class="detail-group-header">Requirements</h3>
-		{#if $attendee.requirements}
-			{$attendee.requirements}
-		{:else}
-			<span class="detail-missing">No Requirements Found</span>
-		{/if}
-		<h3 class="detail-group-header">Attendee Details</h3>
-		{#if $attendee.email_address}
-			<div class="detail-key-value">
-				<span class="detail-key">Email</span>
-				<span class="detail-value">{$attendee.email_address}</span>
-			</div>
-		{/if}
-		{#if $attendee.contact_phone}
-			<div class="detail-key-value">
-				<span class="detail-key">Phone</span>
-				<span class="detail-value">{$attendee.contact_phone}</span>
-			</div>
-		{/if}
-		{#if $attendee.ticket_type_name}
-			<div class="detail-key-value">
-				<span class="detail-key">Ticket Type</span>
-				<span class="detail-value">{$attendee.ticket_type_name}</span>
-			</div>
-		{/if}
-		<div class="detail-key-value">
-			<span class="detail-key">Custom Fields</span>
-			{#if $attendee.custom_fields.length > 0}
-				<div class="detail-value custom-fields">
-					{#each $attendee.custom_fields as field}
-						<div class="detail-key-value">
-							<span class="detail-key">{field.name}</span>
-							{#if field.values.length > 1}
-								{#each field.values as value}
-									<br />
-									<span class="detail-value custom-fields-multiple">{value}</span>
-								{/each}
-							{:else}
-								<span class="detail-value">{field.values[0]}</span>
-							{/if}
-						</div>
-					{/each}
-				</div>
+	{#if $detailLevel > 1}
+		<div class="detail-column">
+			<h3 class="detail-group-header">Requirements</h3>
+			{#if $attendee.requirements}
+				{$attendee.requirements}
 			{:else}
-				<span class="detail-missing">None</span>
+				<span class="detail-missing">No Requirements Found</span>
+			{/if}
+			<h3 class="detail-group-header">Attendee Details</h3>
+			{#if $attendee.email_address}
+				<div class="detail-key-value">
+					<span class="detail-key">Email</span>
+					<span class="detail-value">{$attendee.email_address}</span>
+				</div>
+			{/if}
+			{#if $attendee.contact_phone}
+				<div class="detail-key-value">
+					<span class="detail-key">Phone</span>
+					<span class="detail-value">{$attendee.contact_phone}</span>
+				</div>
+			{/if}
+			{#if $attendee.ticket_type_name}
+				<div class="detail-key-value">
+					<span class="detail-key">Ticket Type</span>
+					<span class="detail-value">{$attendee.ticket_type_name}</span>
+				</div>
 			{/if}
 		</div>
-	</div>
-</div>
-<div class="action-container">
-	{#if checkedIn}
-		<Button on:click={removeLatestCheckIn} color="warning">Remove Check In</Button>
-	{:else}
-		<Button on:click={checkIn}>Check In</Button>
 	{/if}
-	<Button on:click={moreDetails} color="secondary">More Details</Button>
+	{#if $detailLevel > 2}
+		<div class="detail-column">
+			<h3 class="detail-group-header">Custom Fields</h3>
+			<div class="detail-key-value">
+				{#if $attendee.custom_fields.length > 0}
+					<div class="custom-fields">
+						{#each $attendee.custom_fields as field}
+							<span class="detail-key">{field.name}</span>
+							<div class="detail-key-value">
+								{#each field.values as value}
+									<span class="detail-value custom-fields-multiple">{value}</span>
+								{/each}
+							</div>
+						{/each}
+					</div>
+				{:else}
+					<span class="detail-missing">No Custom Fields Found</span>
+				{/if}
+			</div>
+		</div>
+	{/if}
 </div>
+{#if actionsAvailable}
+	<div class="action-container">
+		{#if checkedIn}
+			<Button on:click={removeLatestCheckIn} color="warning">Remove Check In</Button>
+		{:else}
+			<Button on:click={checkIn}>Check In</Button>
+		{/if}
+		{#if $detailLevel < 3}
+			<Button on:click={moreDetails} color="secondary">More Details</Button>
+		{/if}
+	</div>
+{/if}
 
 <style lang="scss">
 	.details-container {
-		display: flex;
-		flex-direction: row;
-		justify-content: start;
-		align-items: center;
-		margin-bottom: 1rem;
-		.priority {
-			flex-basis: 20em;
+		height: 100%;
+		&.horizontal {
+			display: grid;
+			flex-direction: row;
+			grid-template-columns: repeat(var(--detailLevel), 1fr);
+			grid-template-rows: 1fr;
+			margin-bottom: 1rem;
+			box-sizing: border-box;
+			list-style: none;
+			.detail-column {
+				&:not(&:first-of-type) {
+					border-left: solid 1px black;
+				}
+			}
 		}
+		&.vertical {
+			.detail-column {
+				margin-bottom: 1rem;
+			}
+			
+		}
+
 		.detail-column {
+			position: relative;
+			padding: 0 0 0 1rem;
 			.attendee-name {
 				font-size: 2rem;
 				font-weight: bold;
@@ -171,17 +228,17 @@
 					content: ': ';
 				}
 			}
-			.detail-value.custom-fields {
+			.custom-fields-multiple {
 				margin-left: 1rem;
-				.custom-fields-multiple {
-					margin-left: 1rem;
-					&::before {
-						content: '- ';
-					}
+				&::before {
+					content: '- ';
 				}
+				display: block;
 			}
+
 		}
 	}
+
 	.action-container {
 		position: absolute;
 		bottom: 0;

@@ -4,7 +4,7 @@ import faker from '@faker-js/faker';
 faker.seed(42);
 
 
-const genID = () => faker.datatype.number(99999).toString().padStart(5, '0');
+const genID = () => faker.datatype.number(99999);
 function maybe<T>(x: T): T | null {
 	return faker.datatype.boolean() ? x : null;
 }
@@ -18,7 +18,7 @@ export function generateAttendeesForEvent(): Attendee[] {
 }
 
 
-export function generateAttendee(id: number = faker.datatype.number(99999)): Attendee {
+export function generateAttendee(id: number = genID()): Attendee {
 	let checkInCount = faker.datatype.boolean() ? 0 : faker.datatype.number(3);
 	return {
 		id,
@@ -64,10 +64,9 @@ export function generateAttendances(count: number) {
 function generateCustomFeilds(count: number): CustomField[] {
 	let customFields: CustomField[] = []
 	for (let i = 0; i < count; i++) {
-		let name = faker.lorem.word()
 		customFields.push({
 			input_type: faker.datatype.string(),
-			name: name.charAt(0).toUpperCase() + name.slice(1),
+			name: genID(),
 			values: faker.datatype.boolean() ? [faker.lorem.sentence()] : [faker.lorem.sentence(),faker.lorem.sentence()],
 		})
 	}

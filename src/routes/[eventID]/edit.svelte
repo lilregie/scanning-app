@@ -2,7 +2,7 @@
 	import AdminLayout from '$lib/components/AdminLayout.svelte';
 	import Scanner from '$lib/components/scanner/ScannerWrapper.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import Table from '$lib/components/Table.svelte';
+	import Table, { TableRow } from '$lib/components/Table.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
 	import Card from '$lib/components/Card.svelte';
 	import AttendeeDetails from '$lib/components/AttendeeDetails.svelte';
@@ -14,12 +14,12 @@
 	import { get, Writable, writable } from 'svelte/store';
 	import { fly, fade } from 'svelte/transition';
 
-	let attendeesTableData;
+	let attendeesTableData: [string[],TableRow[]];
 
 	$: {
-		// IMPORTANT: This console.log means that the entire block will reload when
+		// IMPORTANT: This empty function means that the entire block will reload when
 		// the $selectedAttendee changes. This is a hack, and should be fixed later on.
-		console.log('Selected Attendee', $selectedAttendee);
+		((_)=>{})($selectedAttendee);
 
 		attendeesTableData = attendeesTable($eventAttendees, $attendeesSearchTerm);
 	}
@@ -96,7 +96,7 @@
 		<h2 class="pannel-header">Attendee Details</h2>
 	</div>
 	<div slot="info-panel" class="info-panel">
-		<Card expand={true} scroll={true} background={!!$selectedAttendee}>
+		<Card expand={true} scroll={false} background={!!$selectedAttendee}>
 			{#if $selectedAttendee}
 				<AttendeeDetails
 					attendee={selectedAttendee}
