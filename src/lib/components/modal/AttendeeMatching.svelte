@@ -19,7 +19,7 @@
 	export let DOB: string;
 	export let vaccineCert: string;
 
-	const selectedAttendeeID: Writable<string> = writable(null);
+	const selectedAttendeeID: Writable<number> = writable(null);
 	const selectedAttendee: Readable<Attendee> = derived(
 		[selectedAttendeeID,eventAttendees],
 		([id,attendees]) => findAttendeeByID(attendees, id)

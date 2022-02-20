@@ -58,7 +58,7 @@ export const eventAttendees: Writable<Attendee[]> = writable([]);
 
 export const attendeesSearchTerm: Writable<string> = writable('');
 
-export const selectedAttendeeID: Writable<string> = writable(null);
+export const selectedAttendeeID: Writable<number> = writable(null);
 
 export const selectedAttendee: Readable<Attendee> = derived(
 	[selectedAttendeeID, eventAttendees],

@@ -96,7 +96,7 @@
 		<h2 class="pannel-header">Attendee Details</h2>
 	</div>
 	<div slot="info-panel" class="info-panel">
-		<Card expand={true} scroll={true} background={!!$selectedAttendee}>
+		<Card expand={true} scroll={false} background={!!$selectedAttendee}>
 			{#if $selectedAttendee}
 				<AttendeeDetails
 					attendee={selectedAttendee}

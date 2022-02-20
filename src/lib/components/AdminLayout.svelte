@@ -164,14 +164,16 @@
 		}
 		.info-panel {
 			flex: 1;
-			overflow: auto;
+			max-height: 50%;
 			display: flex;
 			flex-flow: column;
+			overflow: none;
 			.info-panel-header {
 				flex: 0 1 auto;
 			}
 			.info-panel-content {
 				flex: 1 1 auto;
+				overflow: auto;
 			}
 		}
 		.list-panel {
