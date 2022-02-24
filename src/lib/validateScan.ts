@@ -1,4 +1,4 @@
-import { verifyPassURI } from "@vaxxnz/nzcp";
+import { verifyPassURIOffline } from "@vaxxnz/nzcp";
 
 import type { VerificationResult } from "@vaxxnz/nzcp";
 
@@ -23,7 +23,7 @@ export interface ScanTypes {
 export async function validateScan(scanText: string, enabledScanTypes: ScanTypes): Promise<ScanResults> {
     if (scanText.startsWith("NZCP:") && enabledScanTypes.nzCovidPass) {
         // NZ Covid Pass
-        const passResult = await verifyPassURI(scanText)
+        const passResult = verifyPassURIOffline(scanText)
 
         if (passResult.success) {
             // const relevantPerson = searchPerson()
@@ -34,7 +34,7 @@ export async function validateScan(scanText: string, enabledScanTypes: ScanTypes
                 DOB: passResult.credentialSubject.dob,
                 covidPassInfo: passResult
             }
-            
+
         } else {
             return {
                 valid: false,
