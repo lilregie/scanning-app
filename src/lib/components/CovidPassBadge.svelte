@@ -3,7 +3,7 @@
 	import dayjs from 'dayjs';
 	import relativeTime from 'dayjs/plugin/relativeTime.js';
 
-	dayjs.extend(relativeTime);
+	dayjs.extend(relativeTime, { rounding: Math.floor });
 
 	export let name: string;
 	export let dob: string;
@@ -14,7 +14,7 @@
 	</div>
 	<div>
 		<div class="header">
-			COVID Pass Vaild
+			COVID Pass Valid
 		</div>
 		<div class="details">
 			{name}
