@@ -13,6 +13,7 @@ export function generateEvent(): LilRegieEvent {
         permalink: faker.lorem.slug(),
         not_checked_in_count: faker.datatype.number(),
         checked_in_count: faker.datatype.number(),
-        checkinable_count: faker.datatype.number()
+        checkinable_count: faker.datatype.number(),
+        ticket_limit: faker.datatype.boolean() ? null : faker.datatype.number(400),
 	};
 }

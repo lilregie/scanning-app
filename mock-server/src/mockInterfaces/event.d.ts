@@ -5,4 +5,5 @@ export interface LilRegieEvent {
     not_checked_in_count: number;
     checked_in_count: number;
     checkinable_count: number;
+    ticket_limit: number | null;
 } 
