@@ -54,7 +54,7 @@ export const chosenEvent = derived([chosenEventID, allEvents], ([_chosenEventID,
 
 });
 
-export const eventAttendees: Writable<Attendee[]> = writable([]);
+export const eventAttendees: Writable<Attendee[] | null> = writable(null);
 
 export const attendeesSearchTerm: Writable<string> = writable('');
 
@@ -66,6 +66,9 @@ export const selectedAttendee: Readable<Attendee> = derived(
 );
 
 export const checkedInCount: Readable<number> = derived(eventAttendees, (_eventAttendees) => {
+	if (_eventAttendees === null) {
+		return 0;
+	}
 	return _eventAttendees.filter((attendee) => attendee.checked_in_at !== null).length;
 });
 

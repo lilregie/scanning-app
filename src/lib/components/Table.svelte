@@ -10,7 +10,7 @@
 	export let tableData: TableRow[];
 	export let tableHeaders: string[];
 
-	// Used so that the rows can be selected by arrow keys or 
+	// Used so that the rows can be selected by arrow keys or
 	let currentlyClicked = 0;
 
 	let tableBody: HTMLTableSectionElement;

@@ -13,13 +13,14 @@
 
 	import { get, Writable, writable } from 'svelte/store';
 	import { fly, fade } from 'svelte/transition';
+	import { Circle } from 'svelte-loading-spinners';
 
-	let attendeesTableData: [string[],TableRow[]];
+	let attendeesTableData: [string[], TableRow[]];
 
 	$: {
 		// IMPORTANT: This empty function means that the entire block will reload when
 		// the $selectedAttendee changes. This is a hack, and should be fixed later on.
-		((_)=>{})($selectedAttendee);
+		((_) => {})($selectedAttendee);
 
 		attendeesTableData = attendeesTable($eventAttendees, $attendeesSearchTerm);
 	}
@@ -29,6 +30,9 @@
 	let leftBarState: 'ScanAny' | 'ValidateCovidPass' | 'CheckInSuccess' = 'ScanAny';
 	let leftBarHighlighted: Writable<boolean> = writable(false);
 	let leftBarHighlightedTimeout: NodeJS.Timeout;
+
+	// Used to highlight how the user should verify a covid pass, and the check-in button appears to do nothing
+	const highlightTimeMS = 1000;
 	leftBarHighlighted.subscribe((highlight) => {
 		if (highlight) {
 			if (leftBarHighlightedTimeout) {
@@ -36,7 +40,7 @@
 			}
 			leftBarHighlightedTimeout = setTimeout(() => {
 				leftBarHighlighted.set(false);
-			}, 500);
+			}, highlightTimeMS);
 		}
 	});
 </script>
@@ -49,29 +53,39 @@
 	}}
 >
 	<div slot="left-bar" class="left-bar">
+
 		{#if leftBarState === 'ValidateCovidPass'}
-			<div class="header-text" out:fade in:fly={{ y: -200, duration: 1000, delay: 500 }}>
+
+			<div
+				class="header-text"
+				out:fade|local
+				in:fly|local={{ y: -200, duration: 1000, delay: 500 }}
+			>
 				Booking for <b>{$selectedAttendee.first_name} {$selectedAttendee.last_name}</b>
 				<h2>Please Verify COVID Pass</h2>
 			</div>
+
 		{:else if leftBarState === 'ScanAny'}
-			<div class="header-text" out:fade in:fly={{ y: -200, duration: 1000 }}>
+
+		<div class="header-text" out:fade|local in:fly|local={{ y: -200, duration: 1000 }}>
 				<h2>Scan a Booking or COVID Pass</h2>
-			</div>
+		</div>
 		{/if}
+
 		<div class="scanner-container">
 			<Scanner />
 		</div>
+
 		{#if leftBarState === 'ValidateCovidPass'}
-			<div out:fade in:fly={{ y: 200, duration: 1000 }}>
+			<div out:fade|local in:fly|local={{ y: 200, duration: 1000 }}>
 				This will be a QR code provided by the government to verify eligibility for events. Scan
 				using the webcam above to start.
 			</div>
 
-			<hr class="hr-or" out:fade in:fly={{ y: 200, duration: 500 }} />
+			<hr class="hr-or" out:fade|local in:fly|local={{ y: 200, duration: 500 }} />
 		{:else if leftBarState === 'ScanAny'}
 			<h2>Scan a booking or COVID pass to begin</h2>
-			<div out:fade in:fly={{ y: 200, duration: 1000 }}>
+			<div out:fade|local in:fly|local={{ y: 200, duration: 1000 }}>
 				Not working or no code? Use the search to the right to bring up the attendee details and
 				mark them as checked in.
 			</div>
@@ -79,7 +93,7 @@
 	</div>
 	<div slot="left-bar-footer">
 		{#if leftBarState === 'ValidateCovidPass'}
-			<div out:fade in:fly={{ y: 200, duration: 1000 }}>
+			<div out:fade|local in:fly|local={{ y: 200, duration: 1000 }}>
 				<Button
 					expanded
 					on:click={() => {
@@ -128,8 +142,14 @@
 			/>
 		</div>
 	</div>
-	<div slot="list-panel" class="table">
-		<Table tableHeaders={attendeesTableData[0]} tableData={attendeesTableData[1]} />
+	<div slot="list-panel" class="table list-panel">
+		{#if $eventAttendees !== null}
+			<Table tableHeaders={attendeesTableData[0]} tableData={attendeesTableData[1]} />
+		{:else}
+			<div class="loading-spinner">
+				<Circle color="grey" size="5" unit="em" />
+			</div>
+		{/if}
 	</div>
 </AdminLayout>
 
@@ -205,5 +225,10 @@
 	.table {
 		border-radius: $radius-default;
 		overflow: hidden;
+	}
+	.loading-spinner {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 </style>

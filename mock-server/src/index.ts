@@ -4,13 +4,18 @@ import { apiInitializeWithRouter } from './api';
 import { csrfMiddleware } from './csrf';
 const router = express.Router()
 
+const API_DELAY_MS = 0;
+
 const app = express();
 app.use(cors({
     origin: '*',
 }))
 app.use(express.json());
 
-
+// Artificial Delay
+app.use((req, res, next) => {
+    setTimeout(next, API_DELAY_MS);
+});
 
 // Check Token
 app.use(csrfMiddleware);

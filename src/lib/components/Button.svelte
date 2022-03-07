@@ -74,10 +74,13 @@
 			&.#{$name} {
 				background-color: $color;
 				color: #fefefe;
-				&:focus,
-				&:hover {
+
+				&:hover,&:focus {
 					background-color: darken($color, $amount: 10%);
 					color: #fefefe;
+				}
+				&:active {
+					background-color: darken($color, $amount: 20%);
 				}
 			}
 		}
@@ -107,6 +110,9 @@
 					&:hover {
 						border-color: darken($color, $amount: 10%);
 						color: darken($color, $amount: 10%);
+					}
+					&:active {
+						border-color: darken($color, $amount: 20%);
 					}
 				}
 			}

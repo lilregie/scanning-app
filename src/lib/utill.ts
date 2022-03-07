@@ -21,7 +21,7 @@ export function findByKey<T>(list: T[], key: string, value: any): T | undefined 
 }
 
 export function findAttendeeByID(attendees: Attendee[], id: number): Attendee | null {
-	if (id === null) {
+	if (id === null || attendees === null) {
 		return null
 	}
 	let potentialSelectedAttendee = attendees.filter((attendee) => attendee.id === id);

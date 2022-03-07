@@ -11,9 +11,13 @@ import type { TableRow } from "$lib/components/Table.svelte";
 
 
 export function newestCheckInsTable(): [string[], TableRow[]] {
-	let checkedInAttendees: Attendee[] = newestCheckIns(get(eventAttendees));
-	let tableHeaders = ["Name", "ID", "Check In Time"];
-	let tableData = checkedInAttendees.map(checkedInAttendee => {
+	const tableHeaders = ["Name", "ID", "Check In Time"];
+
+	if (get(eventAttendees) === null) {return [tableHeaders,[]]};
+
+	const checkedInAttendees: Attendee[] = newestCheckIns(get(eventAttendees));
+
+	const tableData = checkedInAttendees.map(checkedInAttendee => {
 		return {
 			data: [
 				`${checkedInAttendee.first_name}  ${checkedInAttendee.last_name}`,
@@ -28,6 +32,10 @@ export function newestCheckInsTable(): [string[], TableRow[]] {
 /// Generates an table of all the attendees, based off a search term
 export function attendeesTable(attendees: Attendee[], searchTerm: string = ""): [string[], TableRow[]] {
 	let tableHeaders = ["Name", "ID", "Checked In"];
+
+	if (attendees === null) {return [tableHeaders,[]]};
+
+
 	let sortedAttendees: Attendee[];
 	if (searchTerm !== "") {
 		let fuse = new Fuse(attendees, {

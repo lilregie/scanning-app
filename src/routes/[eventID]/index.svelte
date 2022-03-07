@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Doughnut from 'svelte-chartjs/src/Doughnut.svelte';
+	import { Circle } from 'svelte-loading-spinners'
 
 	import AdminLayout from '$lib/components/AdminLayout.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -15,9 +16,9 @@
 		checkInTable = newestCheckInsTable();
 	});
 
-	$: checkedIn = $eventAttendees.filter((e) => e.checked_in_at !== null).length;
-	$: notCheckedIn = $eventAttendees.length - checkedIn;
-	$: availableTickets = $chosenEvent?.['total_tickets'] - $eventAttendees.length;
+	$: checkedIn = $eventAttendees?.filter((e) => e.checked_in_at !== null).length;
+	$: notCheckedIn = $eventAttendees?.length - checkedIn;
+	$: availableTickets = $chosenEvent?.['total_tickets'] - $eventAttendees?.length;
 
 	$: checkinChartData = {
 		labels: ['Checked in', 'Not Checked in', 'Available'],
@@ -55,18 +56,32 @@
 	}}
 >
 	<div slot="left-bar" class="latest-check-ins-container">
-		<!-- Check in list with example data for now -->
-		<Table tableHeaders={checkInTable[0]} tableData={checkInTable[1]} />
+		<h2 >Latest Check-Ins</h2>
+		{#if $eventAttendees !== null}
+			<div class="table-wrapper">
+				<Table tableHeaders={checkInTable[0]} tableData={checkInTable[1]} />
+			</div>
+		{:else}
+		<div class="loading-spinner">
+			<Circle color="grey" size="5" unit="em"/>
+		</div>
+		{/if}
 	</div>
 	<div slot="left-bar-footer">
 		<Button href="{basePath}/{$chosenEventID}/edit" expanded>Next</Button>
 	</div>
 	<div slot="right-bar" class="graph-container">
-		<Doughnut data={checkinChartData} options={chartOptions} />
-		<div class="stats">
-			<h2>{$eventAttendees.length} Registered</h2>
-			<h3>{availableTickets || '??'} Available Tickets</h3>
-		</div>
+		{#if $eventAttendees !== null}
+			<Doughnut data={checkinChartData} options={chartOptions} />
+			<div class="stats">
+				<h2>{$eventAttendees?.length} Registered</h2>
+				<h3>{availableTickets || '??'} Available Tickets</h3>
+			</div>
+		{:else}
+			<div class="loading-spinner">
+				<Circle color="grey" size="5" unit="em"/>
+			</div>
+		{/if}
 	</div>
 </AdminLayout>
 
@@ -74,6 +89,17 @@
 	@use '../../lib/styles/vars.scss' as *;
 	.latest-check-ins-container {
 		position: relative;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		.table-wrapper {
+			flex-grow: 1;
+			overflow: auto;
+		}
+
+		h2 {
+			text-align: center;
+		}
 	}
 	.graph-container {
 		display: flex;
@@ -101,4 +127,11 @@
 			}
 		}
 	}
+	.loading-spinner {
+			flex-grow: 1;
+			align-self: center;
+			display: flex;
+			align-items: center;
+		}
+
 </style>
