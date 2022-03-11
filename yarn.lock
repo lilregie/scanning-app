@@ -4234,6 +4234,11 @@ decode-uri-component@^0.2.0:
   resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.0.tgz#eb3913333458775cb84cd1a1fae062106bb87545"
   integrity sha1-6zkTMzRYd1y4TNGh+uBiEGu4dUU=
 
+dedent-js@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/dedent-js/-/dedent-js-1.0.1.tgz#bee5fb7c9e727d85dffa24590d10ec1ab1255305"
+  integrity sha1-vuX7fJ5yfYXf+iRZDRDsGrElUwU=
+
 deep-is@^0.1.3, deep-is@~0.1.3:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/deep-is/-/deep-is-0.1.4.tgz#a6f2dce612fadd2ef1f519b73551f17e85199831"
@@ -4952,7 +4957,7 @@ etag@~1.8.1:
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
 
-events@^3.0.0:
+events@^3.0.0, events@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
   integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
@@ -7103,10 +7108,20 @@ mkdirp@^1.0.3, mkdirp@^1.0.4:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
-modern-svelte-qr-scanner@^1.3.3:
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/modern-svelte-qr-scanner/-/modern-svelte-qr-scanner-1.3.3.tgz#80689393d999806866f5e82a8d9d59a2d3270dce"
-  integrity sha512-SKeptEmBtKk4zSqItRgSP6QB4ab+96KRZbO/UUh7mYgYGpfhTlG35mArkZkXSKczXAY4B4VzeY+YeaQIzJfB/w==
+modern-svelte-qr-scanner@^1.3.4:
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/modern-svelte-qr-scanner/-/modern-svelte-qr-scanner-1.3.4.tgz#7695b34c174a8ba6e67ec90e6cb37c5e39a763d6"
+  integrity sha512-aeile/OlmKJe3VspWpfrSz30mqCGFX5ejG2wzXPA0YOGmxyXWQrjbEDuN3qFlh3F2xqMYtNIEDtsPizltkCLtA==
+  dependencies:
+    events "^3.3.0"
+    jsqr "^1.4.0"
+    lodash "^4.17.21"
+    stampit "^4.3.2"
+    svelte-select "^4.4.4"
+    svelte2tsx "^0.5.2"
+    tslib "^2.3.1"
+    uuid "^8.3.2"
+    visibilityjs "^2.0.2"
 
 move-concurrently@^1.0.1:
   version "1.0.1"
@@ -7621,7 +7636,7 @@ parseurl@~1.3.2, parseurl@~1.3.3:
   resolved "https://registry.yarnpkg.com/parseurl/-/parseurl-1.3.3.tgz#9da19e7bee8d12dff0513ed5b76957793bc2e8d4"
   integrity sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==
 
-pascal-case@^3.1.2:
+pascal-case@^3.1.1, pascal-case@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/pascal-case/-/pascal-case-3.1.2.tgz#b48e0ef2b98e205e7c1dae747d0b1508237660eb"
   integrity sha512-uWlGT3YSnK9x3BQJaOdcZwrnV6hPpd8jFH1/ucpiLRPh/2zCVJKS19E4GvYHvaCcACn3foXZ0cLB9Wrx1KGe5g==
@@ -9274,7 +9289,7 @@ svelte-preprocess@^4.0.0, svelte-preprocess@^4.9.4:
     sorcery "^0.10.0"
     strip-indent "^3.0.0"
 
-svelte-select@^4.4.6:
+svelte-select@^4.4.4, svelte-select@^4.4.6:
   version "4.4.7"
   resolved "https://registry.yarnpkg.com/svelte-select/-/svelte-select-4.4.7.tgz#fc85414af070487d68e438f7249c653178860af3"
   integrity sha512-fIf9Z8rPI6F8naHZ9wjXT0Pv5gLyhdHAFkHFJnCfVVfELE8e82uOoF0xEVQP6Kir+b4Q5yOvNAzZ61WbSU6A0A==
@@ -9283,6 +9298,14 @@ svelte-simple-modal@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/svelte-simple-modal/-/svelte-simple-modal-1.3.0.tgz#924475f9b911c271875a3e3ae9449d4afca5c912"
   integrity sha512-8zYvIJWSoxpdWMKa+M14dLcBCHcEF6nOs/X20AqQ/gE4R3txGl484rKJXO4t7kbeWhPMdl6HQ1vgvBMOTHv9kw==
+
+svelte2tsx@^0.5.2:
+  version "0.5.5"
+  resolved "https://registry.yarnpkg.com/svelte2tsx/-/svelte2tsx-0.5.5.tgz#44d2593935b8a1d193ff1d047b96018b1798a088"
+  integrity sha512-5n8jP721bM3vXPk36AM9diZg2aasLvsfP/Zt9CQVrcqcnzexOYVeS8kpGk+3mofOPvPvXnOCLdff62usI/KOMw==
+  dependencies:
+    dedent-js "^1.0.1"
+    pascal-case "^3.1.1"
 
 svelte@^3.44.0:
   version "3.46.3"

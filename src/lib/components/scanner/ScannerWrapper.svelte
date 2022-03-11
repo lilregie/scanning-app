@@ -13,6 +13,7 @@
 	import { ScannerStatus } from './scannerStatus';
 	import ScanResult from './ScanResult.svelte';
 	import {bind} from "svelte-simple-modal";
+import Button from '../Button.svelte';
 
 	export let enabledScanTypes: ScanTypes = {
 		ticketBarcode: true,
@@ -42,6 +43,24 @@
 
 	let cameraScannerClientHeight: number;
 	let textScannerClientHeight: number;
+
+	let permissionForCameraState: PermissionState | null = null;
+	(async ()=>{
+		try {
+			let status = await navigator.permissions.query({name: 'camera' as PermissionName});
+			permissionForCameraState = status.state;
+		} catch {
+			permissionForCameraState = "denied";
+		}
+	})();
+
+	function promptCameraPermission() {
+		// Prompts user to grant camera permission
+		navigator.mediaDevices.getUserMedia({ audio: false, video: true});
+		// Assume everything went well, so they can see the full error
+		// Avoids situations where the button does nothing on non-compliant browsers
+		permissionForCameraState = "granted";
+	}
 </script>
 
 <div class="qr-container">
@@ -49,7 +68,7 @@
 	<div
 		class="qr-wrapper"
 		bind:clientWidth={previewWidth}
-		style="--fail-response-height: {textScannerClientHeight || cameraScannerClientHeight || 0}px"
+		style="--fail-response-height: {textScannerClientHeight || cameraScannerClientHeight || previewWidth / 1.77}px"
 	>
 		<Tabs defualtTab={$prefersCameraOrTextScanning}>
 			<TabList>
@@ -57,11 +76,24 @@
 				<Tab id="text" on:selected={() => prefersCameraOrTextScanning.set('text')}>Text</Tab>
 			</TabList>
 			<TabPanel id="camera">
-				<CameraScanner
-					on:scan={handleScan}
-					{previewWidth}
-					bind:clientHeight={cameraScannerClientHeight}
-				/>
+				{#if permissionForCameraState === "granted"}
+					<CameraScanner
+						on:scan={handleScan}
+						{previewWidth}
+						bind:clientHeight={cameraScannerClientHeight}
+					/>
+				{:else if permissionForCameraState === "prompt"}
+					<div class="permission-container">
+						<span class="permission-header">To scan, we need to use your camera</span>
+						<span class="permission-instructions">Select <b>Allow</b> when your browser asks for permissions.</span>
+						<Button color="primary" outline size="small" on:click={promptCameraPermission}>Give Permission</Button>
+					</div>
+				{:else if permissionForCameraState === "denied"}
+					<div class="permission-container">
+						<span class="permission-header">Camera Permission Denied</span>
+						<span>To use your camera, you will need to grant permission to use your camera with your browser.</span>
+					</div>
+				{/if}
 			</TabPanel>
 			<TabPanel id="text">
 				<TextScanner
@@ -102,6 +134,25 @@
 			.invalid-cross-wrapper {
 				:global(svg) {
 					width: 6em;
+				}
+			}
+
+			.permission-container {
+				height: var(--fail-response-height);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				flex-direction: column;
+				color: $text-dark;
+				background-color: $background-backdrop;
+				padding: 0 1em;
+				.permission-header {
+					font-size: 1.5rem;
+					font-weight: bold;
+					margin-bottom: 1rem;
+				}
+				.permission-instructions {
+					margin-bottom: 1rem;
 				}
 			}
 		}

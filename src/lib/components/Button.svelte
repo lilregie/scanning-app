@@ -109,7 +109,7 @@
 					&:focus,
 					&:hover {
 						border-color: darken($color, $amount: 10%);
-						color: darken($color, $amount: 10%);
+						background-color: rgba($color, 0.05);
 					}
 					&:active {
 						border-color: darken($color, $amount: 20%);

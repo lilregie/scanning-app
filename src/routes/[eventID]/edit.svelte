@@ -190,11 +190,6 @@
 			border-radius: 0.7rem;
 			:global#cam-preview {
 				border-radius: 0.7rem;
-				transform: scale(0.98);
-			}
-			:global.dialog-container {
-				border-radius: 0.7rem;
-				transform: scale(0.98);
 			}
 		}
 	}
