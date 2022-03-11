@@ -5,8 +5,7 @@
 	import { Tabs, TabList, TabPanel, Tab } from '$lib/components/tabs';
 
 	import { get, writable } from 'svelte/store';
-	import { fly, fade } from 'svelte/transition';
-	import { getContext, SvelteComponent } from 'svelte';
+
 	import InvalidCross from '../InvalidCross.svelte';
 	import CameraScanner from './CameraScanner.svelte';
 	import TextScanner from './TextScanner.svelte';

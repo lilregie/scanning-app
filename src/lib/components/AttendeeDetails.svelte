@@ -11,7 +11,7 @@
 
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
-	
+
 	import { Readable, Writable, writable } from 'svelte/store';
 	import { bind } from 'svelte-simple-modal';
 
@@ -25,7 +25,7 @@
 	$: {
 		checkList = {
 			'Booking Found': $attendee.booking_id,
-			'COVID Pass Verfied': false
+			'COVID Pass Verified': $attendee.vaccine_pass
 		};
 		// jankly adding in `Not` if not checked in
 		checkedIn = $attendee.checked_in_at !== null;
@@ -182,7 +182,7 @@
 			.detail-column {
 				margin-bottom: 1rem;
 			}
-			
+
 		}
 
 		.detail-column {

@@ -31,7 +31,7 @@ export function newestCheckInsTable(): [string[], TableRow[]] {
 
 /// Generates an table of all the attendees, based off a search term
 export function attendeesTable(attendees: Attendee[], searchTerm: string = ""): [string[], TableRow[]] {
-	let tableHeaders = ["Name", "ID", "Checked In"];
+	let tableHeaders = ["Name", "ID", "Checked In", "Vaccine Pass"];
 
 	if (attendees === null) {return [tableHeaders,[]]};
 
@@ -54,8 +54,9 @@ export function attendeesTable(attendees: Attendee[], searchTerm: string = ""): 
 		return {
 			data: [
 				`${attendee.first_name}  ${attendee.last_name}`,
-				`#${attendee.id}`,
-				`${attendee.checked_in_at === null ?"Not Checked In" : "Checked In"}`
+				attendee.id,
+				!!attendee.checked_in_at,
+				attendee.vaccine_pass
 			],
 			callback: () => {
 				selectedAttendeeID.set(attendee.id);

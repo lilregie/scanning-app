@@ -55,21 +55,50 @@ export async function getAttendeesList(eventID: string) {
 
 }
 
-export async function createCheckIn(attendee: Attendee, manually_checked_in: boolean, vaccine_certificate: string = null, ticket_id: string = null) {
+export async function createCheckIn(attendee: Attendee, manually_checked_in: boolean, vaccine_certificate: string = null, ticket_id: number = null) {
 	if (findByKey(get(eventAttendees), "id", attendee.id).checked_in_at !== null) {
 		console.warn("Tried to create check in, when attendee is already checked in");
 	}
 
+	// So we can revert changes
+	let startingAttendeeCheckInDate = null;
+	let startingAttendeeVaccinePass = null;
+
 	// Optimistically update UI
 	eventAttendees.update((_eventAttendees) => {
-		findByKey(_eventAttendees, "id", attendee.id).checked_in_at = new Date()
+		// Get mutable reference to attendee
+		let selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
+
+		// Save current state so we can revert if request fails
+		startingAttendeeCheckInDate = selectedAttendee.checked_in_at;
+		startingAttendeeVaccinePass = selectedAttendee.vaccine_pass;
+
+		// Apply changes
+		selectedAttendee.checked_in_at = new Date();
+		selectedAttendee.vaccine_pass = !!vaccine_certificate;
 
 		return _eventAttendees;
-	})
+	});
+
+	const requestHeaders: HeadersInit = new Headers();
+	requestHeaders.set('vaccine_pass', (!!vaccine_certificate).toString());
+	if (ticket_id) {
+		requestHeaders.set('ticket_id', ticket_id.toString());
+	}
+	console.log("Checking in with",requestHeaders)
+
 	try {
-		const checkInData = await request.post(`/${get(chosenEventID)}/attendees/${attendee.id}/checkin`, {}, {});
+
+		const checkInData = await request.post(
+			`/${get(chosenEventID)}/attendees/${attendee.id}/checkin`,
+			{},
+			{headers: requestHeaders}
+		);
+
 		if (checkInData.status !== 200) {
+
 			console.error("Failed to create checkin", checkInData.status, checkInData.text());
+
 			// Undo UI update
 			eventAttendees.update((_eventAttendees) => {
 				findByKey(_eventAttendees, "id", attendee.id).checked_in_at = null
@@ -77,10 +106,14 @@ export async function createCheckIn(attendee: Attendee, manually_checked_in: boo
 			})
 		}
 	} catch {
+
 		console.log("Failed to create checkin, server not responding");
+
 		// Undo UI update
 		eventAttendees.update((_eventAttendees) => {
-			findByKey(_eventAttendees, "id", attendee.id).checked_in_at = null
+			let selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
+			selectedAttendee.checked_in_at = startingAttendeeCheckInDate;
+			selectedAttendee.vaccine_pass = startingAttendeeVaccinePass;
 			return _eventAttendees;
 		})
 		errorAPICallbacks.update((_errorAPICallbacks) => {
@@ -99,10 +132,14 @@ export async function removeLatestCheckIn(attendee: Attendee) {
 		console.warn("Trying to remove check in, but attendee is not checked in");
 	}
 
+	// So we can undo the UI update
+	let checkInDate = null;
 
 	// Optimistically update UI
 	eventAttendees.update((_eventAttendees) => {
-		findByKey(_eventAttendees, "id", attendee.id).checked_in_at = null;
+		let selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
+		checkInDate = selectedAttendee.checked_in_at;
+		selectedAttendee.checked_in_at = null;
 		return _eventAttendees;
 	})
 	try {
@@ -116,7 +153,8 @@ export async function removeLatestCheckIn(attendee: Attendee) {
 		console.log("Failed to remove checkin");
 		// Undo UI update
 		eventAttendees.update((_eventAttendees) => {
-			findByKey(_eventAttendees, "id", attendee.id).checked_in_at = new Date();
+			let selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
+			selectedAttendee.checked_in_at = checkInDate;
 			return _eventAttendees;
 		})
 		errorAPICallbacks.update((_errorAPICallbacks) => {

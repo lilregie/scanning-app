@@ -1,5 +1,6 @@
 export interface CheckInCreation {
     ticket_id?: string;
+    vaccine_pass?: boolean;
 }
 
 export interface CheckIn {

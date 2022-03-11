@@ -1,12 +1,16 @@
 <script lang="ts" context="module">
 	export interface TableRow {
-		data: string[];
+		data: ( string | boolean )[];
 		hightlighted?: boolean;
 		callback?: () => void;
 	}
 </script>
 
 <script lang="ts">
+	import InvalidCross from "$lib/components/InvalidCross.svelte";
+	import SuccessTick from "$lib/components/SuccessTick.svelte";
+
+
 	export let tableData: TableRow[];
 	export let tableHeaders: string[];
 
@@ -79,7 +83,21 @@
 			<!-- data-row-id={id} is required to let the Enter key go from the currently selected element from the event to the row ID -->
 			<tr on:click={callbackWrapper(id,tableRow.callback)} class={`${tableRow.callback ? "clickable-row" : ""} ${tableRow.hightlighted ? "highlight" : ""}`} tabindex="0" data-row-id={id}>
 				{#each tableRow.data as element}
-					<td>{element}</td>
+				<td>
+					{#if typeof element === "string"}
+						{element}
+					{:else if typeof element === "boolean"}
+						{#if element}
+							<SuccessTick colour={tableRow.hightlighted ? "#fff" : "#2ba628"} />
+						{:else}
+							<InvalidCross colour={tableRow.hightlighted ? "#fff" : "#d0021b"} />
+						{/if}
+					{:else if typeof element === "number"}
+						{`#${element}`}
+					{:else}
+						<code>{JSON.stringify(element)}</code>
+					{/if}
+				</td>
 				{/each}
 			</tr>
 
@@ -125,6 +143,11 @@
 			td {
 				border-top: $border-light solid $border-weight;
 				padding: 0.5rem;
+				:global(svg) {
+					width: 1.25rem;
+					display: inline;
+					vertical-align: bottom;
+				}
 			}
 			&.clickable-row {
 				cursor: pointer;
@@ -134,13 +157,15 @@
 				color: $text-dark;
 			}
 		}
-		thead th {
-			font-weight: 600;
-			padding: 0.5rem;
-			background: $background-foreground;
+		thead {
 			position: sticky;
 			top: 0;
 
+			th {
+				font-weight: 600;
+				padding: 0.5rem;
+				background: rgba($background-foreground, 0.9);
+			}
 		}
 	}
 </style>

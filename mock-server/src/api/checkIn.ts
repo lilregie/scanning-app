@@ -11,10 +11,25 @@ export default function checkInInitialize(router: Router) {
             return;
         }
         
+        const extractOneHeader = (x: string): string | null => {
+            let header = req.headers[x];
+            if (Array.isArray(header)) {
+                header = header[0];
+            }
+            return header || null;
+        }
+
+        let ticketIdHeader = extractOneHeader("ticket_id");
+        let vaccinePassHeader = extractOneHeader("vaccine_pass");
+        console.log("asdasd",ticketIdHeader,vaccinePassHeader,req.headers)
+
         // Only validate ticket if included in request
-        if (!("ticket_id" in req.headers) || attendee.ticket_id === req.headers["ticket_id"]) {
-            console.log("New CheckIn:",attendee.id)
+        if ((ticketIdHeader === null) || attendee.ticket_id === parseInt(ticketIdHeader)) {
+            console.log("New CheckIn:",attendee.id);
+            
             attendee.checked_in_at = new Date();
+            attendee.vaccine_pass = attendee.vaccine_pass || vaccinePassHeader?.toLowerCase()==="true";
+
             res.json({
                 id: faker.datatype.number(),
                 attendee_id: attendee.id,

@@ -40,6 +40,7 @@ export function generateAttendee(id: number = genID()): Attendee {
 		cancelled_at: null,
 		voucher_name: null,
         checked_in_at: maybe(faker.date.recent(2)),
+		vaccine_pass: false,
 	};
 }
 

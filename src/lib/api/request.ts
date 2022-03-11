@@ -5,24 +5,25 @@ import { apiProduction, csrfAPIState } from "./statusStores";
 import { get as storeGet } from "svelte/store";
 import { v4 } from "uuid";
 import { apiTimers } from "./statusStores";
+import { mergeDeep } from "$lib/utill";
 
 export namespace request {
-	export function get(input: string, params: RequestInit = {}) {
-		return process(input, null, params, "GET");
+	export function get(input: string, customParams: RequestInit = {}) {
+		return process(input, null, customParams, "GET");
 	}
-	export function post(input: string, data: any, params: RequestInit = {}) {
-		return process(input, data, params, "POST");
+	export function post(input: string, data: any, customParams: RequestInit = {}) {
+		return process(input, data, customParams, "POST");
 	}
-	export function put(input: string, data: any, params: RequestInit = {}) {
-		return process(input, data, params, "PUT");
+	export function put(input: string, data: any, customParams: RequestInit = {}) {
+		return process(input, data, customParams, "PUT");
 	}
 
 	// delete is a reserved word
-	export function delete_(input: string, data: any, params: RequestInit = {}) {
-		return process(input, data, params, "DELETE");
+	export function delete_(input: string, data: any, customParams: RequestInit = {}) {
+		return process(input, data, customParams, "DELETE");
 	}
 
-	async function process(input: string, data: any | null, params: RequestInit = {}, method: "GET" | "POST" | "PUT" | "DELETE"): Promise<Response> {
+	async function process(input: string, data: any | null, customParams: RequestInit = {}, method: "GET" | "POST" | "PUT" | "DELETE"): Promise<Response> {
 
 		const origin = storeGet(apiProduction) ? "" : "http://localhost:8080";
 
@@ -36,7 +37,7 @@ export namespace request {
 		if (`${basePath}${input}`[0] !== "/") {
 			// Make relative
 			URL = `${origin}${basePath}/${input}`;
-			console.log("yes",URL)
+			console.log("yes", URL)
 		}
 
 		let requestID = v4();
@@ -50,18 +51,23 @@ export namespace request {
 
 		let result = null;
 
+		const params = mergeDeep(
+			{
+				method,
+				body: data && JSON.stringify(data) || null,
+				headers: {
+					"x-csrf-token": storeGet(csrfAPIState) || "",
+					"Accept": "application/json",
+				}
+			},
+			customParams
+		);
+		console.log(customParams,params)
+
 		try {
 			result = await fetch(
 				URL,
-				{
-					method,
-					body: data && JSON.stringify(data) || null,
-					...params,
-					headers: {
-						"x-csrf-token": storeGet(csrfAPIState) || "",
-						"Accept": "application/json",
-					}
-				}
+				params
 			);
 			console.log("Received header", result.headers.get("x-csrf-token"))
 			csrfAPIState.set(result.headers.get("x-csrf-token"));

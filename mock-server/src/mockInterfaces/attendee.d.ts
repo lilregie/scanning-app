@@ -18,6 +18,7 @@ export interface Attendee {
    attendances: Attendance[];
    cancelled_at: Date | null;
    voucher_name: string | null;
+   vaccine_pass: boolean;
 }
 export interface CustomField {
    name: number;

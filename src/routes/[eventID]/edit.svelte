@@ -224,7 +224,6 @@
 	.search-container :global(input),
 	.table {
 		border-radius: $radius-default;
-		overflow: hidden;
 	}
 	.loading-spinner {
 		display: flex;

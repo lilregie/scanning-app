@@ -33,10 +33,33 @@ export function findAttendeeByID(attendees: Attendee[], id: number): Attendee | 
 }
 
 /// Convert a string to title case, so it is "Like This".
-export function titleCase(str) {
+export function titleCase(str: string) {
 	let splitStr = str.toLowerCase().split(/[\s\-,_]+/);
 	for (var i = 0; i < splitStr.length; i++) {
 		splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
 	}
 	return splitStr.join(' ');
+}
+
+
+function isObject(item) {
+	return (item && typeof item === 'object' && !Array.isArray(item));
+}
+
+export function mergeDeep(target, ...sources) {
+	if (!sources.length) return target;
+	const source = sources.shift();
+
+	if (isObject(target) && isObject(source)) {
+		for (const key in source) {
+			if (isObject(source[key])) {
+				if (!target[key]) Object.assign(target, { [key]: {} });
+				mergeDeep(target[key], source[key]);
+			} else {
+				Object.assign(target, { [key]: source[key] });
+			}
+		}
+	}
+
+	return mergeDeep(target, ...sources);
 }
