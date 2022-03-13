@@ -156,14 +156,13 @@
 			<Button on:click={checkIn}>Check In</Button>
 		{/if}
 		{#if $detailLevel < 3}
-			<Button on:click={moreDetails} color="secondary">More Details</Button>
+			<Button on:click={moreDetails} color="secondary" outline>More Details</Button>
 		{/if}
 	</div>
 {/if}
 
 <style lang="scss">
 	.details-container {
-		height: 100%;
 		&.horizontal {
 			display: grid;
 			flex-direction: row;
@@ -188,6 +187,9 @@
 		.detail-column {
 			position: relative;
 			padding: 0 0 0 1rem;
+			&:first-of-type {
+				padding-left: 0;
+			}
 			.attendee-name {
 				font-size: 2rem;
 				font-weight: bold;
@@ -208,7 +210,6 @@
 				margin: 0 0 0.25em 0;
 			}
 			.check-list {
-				padding: 1em;
 				.check-item {
 					font-size: 1.15rem;
 					font-weight: bold;

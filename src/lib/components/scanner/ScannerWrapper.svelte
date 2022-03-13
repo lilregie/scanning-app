@@ -13,7 +13,7 @@
 	import { ScannerStatus } from './scannerStatus';
 	import ScanResult from './ScanResult.svelte';
 	import {bind} from "svelte-simple-modal";
-import Button from '../Button.svelte';
+	import Button from '../Button.svelte';
 
 	export let enabledScanTypes: ScanTypes = {
 		ticketBarcode: true,
@@ -38,11 +38,13 @@ import Button from '../Button.svelte';
 			}
 		}
 	}
+	let fullBrowserWidth: number;
+
 
 	let previewWidth;
+	$: previewWidthRatio = fullBrowserWidth < 650 ? 1 : 1.77;
 
-	let cameraScannerClientHeight: number;
-	let textScannerClientHeight: number;
+
 
 	let permissionForCameraState: PermissionState | null = null;
 	(async ()=>{
@@ -63,12 +65,14 @@ import Button from '../Button.svelte';
 	}
 </script>
 
+<svelte:window bind:innerWidth={fullBrowserWidth}/>
+
 <div class="qr-container">
 	<!-- Always render QR Scanner we enabled (so we hide it instead of remove it) -->
 	<div
 		class="qr-wrapper"
 		bind:clientWidth={previewWidth}
-		style="--fail-response-height: {textScannerClientHeight || cameraScannerClientHeight || previewWidth / 1.77}px"
+		style="--fail-response-height: {previewWidth / previewWidthRatio}px"
 	>
 		<Tabs defualtTab={$prefersCameraOrTextScanning}>
 			<TabList>
@@ -80,7 +84,6 @@ import Button from '../Button.svelte';
 					<CameraScanner
 						on:scan={handleScan}
 						{previewWidth}
-						bind:clientHeight={cameraScannerClientHeight}
 					/>
 				{:else if permissionForCameraState === "prompt"}
 					<div class="permission-container">
@@ -99,7 +102,6 @@ import Button from '../Button.svelte';
 				<TextScanner
 					on:scan={handleScan}
 					{previewWidth}
-					bind:clientHeight={textScannerClientHeight}
 					{scannerStatus}
 				/>
 			</TabPanel>

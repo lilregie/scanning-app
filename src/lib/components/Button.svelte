@@ -44,7 +44,7 @@
 		cursor: pointer;
 		-webkit-appearance: none;
 		text-decoration: none;
-		transition: background-color 0.25s ease-out, color 0.25s ease-out;
+		transition: background-color 0.15s ease-out, color 0.25s ease-out;
 		&.tiny {
 			font-size: 0.8rem;
 			padding-top: 0.48rem;
@@ -98,7 +98,7 @@
 			&:focus,
 			&:hover {
 				border-color: #681133;
-				color: #681133;
+				color: #fff;
 			}
 
 			@each $name, $color in $theme-colors {
@@ -108,11 +108,13 @@
 					border-width: 2px;
 					&:focus,
 					&:hover {
-						border-color: darken($color, $amount: 10%);
-						background-color: rgba($color, 0.05);
+						background-color: rgba($color, 0.15);
+						color: currentColor;
 					}
 					&:active {
 						border-color: darken($color, $amount: 20%);
+						background-color: rgba($color, 0.5);
+
 					}
 				}
 			}

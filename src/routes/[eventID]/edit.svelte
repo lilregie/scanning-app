@@ -107,7 +107,7 @@
 		{/if}
 	</div>
 	<div slot="info-panel-header">
-		<h2 class="pannel-header">Attendee Details</h2>
+		<h2 class="panel-header">Attendee Details</h2>
 	</div>
 	<div slot="info-panel" class="info-panel">
 		<Card expand={true} scroll={false} background={!!$selectedAttendee}>
@@ -133,7 +133,7 @@
 		</Card>
 	</div>
 	<div slot="list-panel-header">
-		<h2 class="pannel-header">Attendees</h2>
+		<h2 class="panel-header">Attendees</h2>
 		<div class="search-container">
 			<TextInput
 				placeholder="Search for name, email, booking number, etc"
@@ -193,7 +193,7 @@
 			}
 		}
 	}
-	.pannel-header {
+	.panel-header {
 		display: block;
 		color: $text-dark;
 		margin: 0;
@@ -224,5 +224,15 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+	.list-panel {
+		@media screen and (max-width: $breakpoint-mobile) {
+			:global(table td:nth-child(2)) {
+				display: none;
+			}
+			:global(table th:nth-child(2)) {
+				display: none;
+			}
+		}
 	}
 </style>

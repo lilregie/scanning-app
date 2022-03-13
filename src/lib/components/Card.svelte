@@ -50,17 +50,21 @@
 		}
 
 		&.margin {
+			--base-margin: 2rem;
 			.contents {
-				margin: 2rem;
+				margin: var(--base-margin);
 				position: relative;
 			}
 			&.has-footer .contents {
 				margin-bottom: 0;
-				padding-bottom: 2rem;
+				padding-bottom: var(--base-margin);
 			}
 			.footer {
-				padding: 2rem;
-				margin-top: -2rem;
+				padding: var(--base-margin);
+				margin-top: calc( var(--base-margin) * -1);
+			}
+			@media screen and (max-width: $breakpoint-mobile) {
+				--base-margin: 1rem;
 			}
 		}
 

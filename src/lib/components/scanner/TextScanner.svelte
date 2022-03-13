@@ -14,7 +14,6 @@
 	}
 
 	export let previewWidth;
-	export let clientHeight;
 	export let scannerStatus: Writable<ScannerStatus>;
 
 	let textBox: HTMLInputElement;
@@ -33,7 +32,6 @@
 	class="text-input"
 	style="--wrapper-height: {previewWidth / 1.77}px"
 	on:submit|preventDefault={onSubmit}
-	bind:clientHeight
 >
 	<span class="help-text">You can use a 2D barcode reader to scan tickets and vaccine passes!</span>
 	<TextInput

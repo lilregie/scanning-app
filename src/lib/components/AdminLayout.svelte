@@ -135,6 +135,13 @@
 				filter: brightness(0.8);
 			}
 		}
+		@media screen and (max-width: $breakpoint-mobile) {
+			position: relative;
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			left: unset;
+		}
 	}
 
 	.stats-container {
@@ -150,16 +157,23 @@
 				font-weight: bold;
 			}
 		}
+		@media screen and (max-width: $breakpoint-mobile) {
+			display: none;
+		}
 	}
 
 	.panel-container {
 		padding: $item-spacing * 2;
-		@media screen and (max-width: 650px) {
+		@media screen and (max-width: $breakpoint-mobile) {
 			padding: 1rem;
 			.left-bar,
 			.right-bar {
 				min-width: 100% !important;
 			}
+			.right-bar > div {
+				min-height: 50vh;
+			}
+			height: unset;
 		}
 		box-sizing: border-box;
 		display: flex;

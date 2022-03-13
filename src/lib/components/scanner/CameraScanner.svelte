@@ -5,10 +5,9 @@
 	let mediaErrorMessage = '';
 
 	export let previewWidth: number;
-    export let clientHeight: number;
 </script>
 
-<div class="background" bind:clientHeight={clientHeight}>
+<div class="background" >
 	<QR
 		on:scan
 		previewWidth_px={previewWidth}

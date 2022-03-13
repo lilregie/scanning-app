@@ -111,7 +111,9 @@
 	</div>
 </div>
 {#if countMatching > 0}
+<div class="attendee-matching-table-wrapper">
 	<Table tableHeaders={['Name', 'ID', 'Certainty', 'Checked In']} {tableData} />
+</div>
 {/if}
 <div class="action-container">
 	<div>
@@ -157,12 +159,12 @@
 		}
 	}
 
-	// Hide Certainty column on mobile, beacuse there isn't enough space
+	// Hide Certainty column on mobile, because there isn't enough space
 	@media (max-width: 768px) {
-		:global(table td:nth-child(3)) {
+		:global(.attendee-matching-table-wrapper table td:nth-child(3)) {
 			display: none;
 		}
-		:global(table th:nth-child(3)) {
+		:global(.attendee-matching-table-wrapper table th:nth-child(3)) {
 			display: none;
 		}
 	}
