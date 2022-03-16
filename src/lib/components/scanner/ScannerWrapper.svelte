@@ -46,13 +46,16 @@
 
 
 
-	let permissionForCameraState: PermissionState | null = null;
+	let permissionForCameraState: PermissionState | null | "unknown" = null;
 	(async ()=>{
 		try {
 			let status = await navigator.permissions.query({name: 'camera' as PermissionName});
 			permissionForCameraState = status.state;
 		} catch {
-			permissionForCameraState = "denied";
+			// API not supported by Safari on both desktop and mobile
+			// So we can just assume it's not allowed, as there are no alternative options
+			// https://developer.mozilla.org/en-US/docs/Web/API/Permissions/query#browser_compatibility
+			permissionForCameraState = "unknown";
 		}
 	})();
 
@@ -94,7 +97,14 @@
 				{:else if permissionForCameraState === "denied"}
 					<div class="permission-container">
 						<span class="permission-header">Camera Permission Denied</span>
-						<span>To use your camera, you will need to grant permission to use your camera with your browser.</span>
+						<span class="permission-instructions">To use your camera, you will need to grant permission to use your camera with your browser.</span>
+						<Button color="primary" outline size="small" on:click={promptCameraPermission}>Try Continue Anyway</Button>
+					</div>
+				{:else if permissionForCameraState === "unknown"}
+					<div class="permission-container">
+						<span class="permission-header">Start Camera</span>
+						<span class="permission-instructions">If prompted, select <b>Allow</b> when your browser asks for permissions.</span>
+						<Button color="primary" outline size="small" on:click={promptCameraPermission}>Start</Button>
 					</div>
 				{/if}
 			</TabPanel>
@@ -149,12 +159,13 @@
 				background-color: $background-backdrop;
 				padding: 0 1em;
 				.permission-header {
-					font-size: 1.5rem;
+					font-size: 1.25rem;
 					font-weight: bold;
 					margin-bottom: 1rem;
 				}
 				.permission-instructions {
 					margin-bottom: 1rem;
+					font-size: 1rem;
 				}
 			}
 		}
