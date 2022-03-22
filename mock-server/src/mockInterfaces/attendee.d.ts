@@ -14,8 +14,9 @@ export interface Attendee {
    attendee_type_id: number;
    attendee_type_name: string;
    custom_fields: CustomField[];
+   // Overall check-in status
    checked_in_at: Date | null;
-   attendances: Attendance[];
+   attendances: EventletAttendance[];
    cancelled_at: Date | null;
    voucher_name: string | null;
    vaccine_pass: boolean;
@@ -26,7 +27,7 @@ export interface CustomField {
    values: string[];
 }
 
-export interface Attendance {
+export interface EventletAttendance {
    id: number;
    eventlet_id: number;
    eventlet_name: string;
@@ -34,5 +35,9 @@ export interface Attendance {
    tax: string;
    amount_including_tax: string;
    ticket_number: number;
+   // A booking can for more than one person.
+   // The sequence number thus indicates the continuous
+   // numbering of those tickets/attendances on that booking.
    ticket_sequence: number;
+   checked_in_at: Date | null;
 }

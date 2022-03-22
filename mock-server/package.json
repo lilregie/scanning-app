@@ -14,17 +14,18 @@
   "nodeVersion": ">=16.10.0",
   "main": "./src/index.ts",
   "scripts": {
-    "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
+    "prebuild": "yarn run 'tslint -c tslint.json -p tsconfig.json --fix'",
     "build": "tsc",
     "prestart": "npm run build",
-    "start": "esr ./src/index.ts",
+    "start": "yarn run esr ./src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon -e ts --exec 'esr ./src/index.ts'"
+    "dev": "nodemon -e ts --exec 'yarn run esr ./src/index.ts'"
   },
   "devDependencies": {
     "@faker-js/faker": "^6.0.0-alpha.5",
     "@types/faker": "^6.6.9",
     "esbuild-runner": "^2.2.1",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "tslint": "^6.1.3"
   }
 }

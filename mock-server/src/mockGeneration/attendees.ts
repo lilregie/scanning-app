@@ -1,6 +1,8 @@
-import type { Attendee, Attendance, CustomField } from '../mockInterfaces/attendee';
+import type { Attendee, EventletAttendance, CustomField } from '../mockInterfaces/attendee';
 
 import faker from '@faker-js/faker';
+import { LilRegieEvent } from '../mockInterfaces/event';
+import { Eventlet } from '../mockInterfaces/event';
 faker.seed(42);
 
 
@@ -9,17 +11,25 @@ function maybe<T>(x: T): T | null {
 	return faker.datatype.boolean() ? x : null;
 }
 
-export function generateAttendeesForEvent(): Attendee[] {
+function shuffleArray<T>(array: T[]): T[] {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+	return array;
+}
+
+export function generateAttendeesForEvent(event: LilRegieEvent): Attendee[] {
 	let people = [];
 	for (let i = 0; i < faker.datatype.number(70) + 12; i++) {
-		people.push(generateAttendee(((i+1)*137)));
+		people.push(generateAttendee(((i+1)*137), event));
 	}
 	return people;
 }
 
 
-export function generateAttendee(id: number = genID()): Attendee {
-	let checkInCount = faker.datatype.boolean() ? 0 : faker.datatype.number(3);
+export function generateAttendee(id: number = genID(), event: LilRegieEvent): Attendee {
+	let checked_in = faker.datatype.boolean();
 	return {
 		id,
 		booking_id: genID(),
@@ -36,27 +46,31 @@ export function generateAttendee(id: number = genID()): Attendee {
 		attendee_type_id: faker.datatype.number(),
 		attendee_type_name: faker.datatype.boolean() ? "Student" : "Standard",
 		custom_fields: generateCustomFeilds(faker.datatype.number(3)),
-		attendances: generateAttendances(checkInCount),
+		attendances: generateAttendances(event, checked_in),
 		cancelled_at: null,
 		voucher_name: null,
-        checked_in_at: maybe(faker.date.recent(2)),
+        checked_in_at: checked_in ? faker.date.recent(2) : null,
 		vaccine_pass: faker.datatype.number(2)==1,
 	};
 }
 
-export function generateAttendances(count: number) {
-	let attendances: Attendance[] = []
+export function generateAttendances(event: LilRegieEvent, checked_in: boolean) {
+	let attendances: EventletAttendance[] = [];
+	let count = faker.datatype.number(event.eventlets.length);
+
+	let chosenEventlets = shuffleArray(event.eventlets).slice(0, count);
+	
 	for (let i=0; i < count; i++) {
 		attendances.push({
             id: genID(),
-            eventlet_id: genID(),
-            eventlet_name: faker.datatype.string(),
+            eventlet_id: chosenEventlets[i].id,
+            eventlet_name: chosenEventlets[i].name,
             amount_excluding_tax: faker.datatype.string(),
             tax: faker.datatype.string(),
             amount_including_tax: faker.datatype.string(),
             ticket_number: faker.datatype.number(9999),
-            ticket_sequence: faker.datatype.number(3)
-         
+            ticket_sequence: faker.datatype.number(3),
+			checked_in_at: checked_in && (faker.datatype.boolean() || i===0) ? faker.date.recent(2) : null,
 		})
 	}
 	return attendances
