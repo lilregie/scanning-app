@@ -49,20 +49,24 @@
 		out:fade={{duration: pageTransitionDuration }}
 	>
 		<div class="stats-container">
-			<div class="stat">
-				<span class="stat-value">{$checkedInCount}</span>
-				<span class="stat-label">Checked In</span>
-			</div>
+			{#if $eventAttendees !== null}
+				<div class="stat">
+					<span class="stat-value">{$checkedInCount}</span>
+					<span class="stat-label">Checked In</span>
+				</div>
 
-			<div class="stat">
-				<span class="stat-value">{$chosenEvent?.total_tickets - $checkedInCount || '??'}</span>
-				<span class="stat-label">Available Tickets</span>
-			</div>
+				{#if $chosenEvent?.ticket_limit}
+					<div class="stat">
+						<span class="stat-value">{$chosenEvent?.ticket_limit - $checkedInCount || '??'}</span>
+						<span class="stat-label">Available Tickets</span>
+					</div>
+				{/if}
 
-			<div class="stat">
-				<span class="stat-value">{$eventAttendees?.length || '??'}</span>
-				<span class="stat-label">Registered</span>
-			</div>
+				<div class="stat">
+					<span class="stat-value">{$eventAttendees?.length || '??'}</span>
+					<span class="stat-label">Registrations</span>
+				</div>
+			{/if}
 		</div>
 		<div class="panel-container">
 			<div class="left-bar" class:highlighted={cards.left && cards.left.highlighted}>

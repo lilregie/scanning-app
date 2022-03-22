@@ -18,7 +18,7 @@
 
 	$: checkedIn = $eventAttendees?.filter((e) => e.checked_in_at !== null).length;
 	$: notCheckedIn = $eventAttendees?.length - checkedIn;
-	$: availableTickets = $chosenEvent?.['total_tickets'] - $eventAttendees?.length;
+	$: availableTickets = $chosenEvent?.ticket_limit - $eventAttendees?.length;
 
 	$: checkinChartData = {
 		labels: ['Checked in', 'Not Checked in', 'Available'],
@@ -74,8 +74,11 @@
 		{#if $eventAttendees !== null}
 			<Doughnut data={checkinChartData} options={chartOptions} />
 			<div class="stats">
-				<h2>{$eventAttendees?.length} Registered</h2>
-				<h3>{availableTickets || '??'} Available Tickets</h3>
+				<h2>{$eventAttendees?.length} Registrations</h2>
+				{#if availableTickets}
+					<h3>{availableTickets} Available Tickets</h3>
+				{/if}
+				<h3>{checkedIn} Checked In</h3>
 			</div>
 		{:else}
 			<div class="loading-spinner">
