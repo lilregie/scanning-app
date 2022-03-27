@@ -1,8 +1,12 @@
+<script context="module">
+	/** @type {import('@sveltejs/kit').Load} */
+	export const load = async ({ url }) => ({ props: { url: url.pathname } });
+</script>
+
 <script lang="ts">
-	import Doughnut from 'svelte-chartjs/src/Doughnut.svelte';
 	import { Circle } from 'svelte-loading-spinners';
 
-	import AdminLayout from '$lib/components/AdminLayout.svelte';
+	import AdminLayout from '$lib/components/layouts/AdminLayout.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Table from '$lib/components/Table.svelte';
 	import { newestCheckInsTable } from '$lib/generateDataVis';
@@ -11,7 +15,9 @@
 	import type { TableRow } from '$lib/components/Table.svelte';
 	import { basePath } from '$lib/consts';
 	import EventletManager from '$lib/components/EventletManager.svelte';
-import StatsView from '$lib/components/StatsView.svelte';
+	import StatsView from '$lib/components/StatsView.svelte';
+
+	export let url: string;
 
 	let checkInTable: [string[], TableRow[]] = [[], []];
 	eventletAttendees.subscribe((_) => {
@@ -27,6 +33,8 @@ import StatsView from '$lib/components/StatsView.svelte';
 		rightBottom: false,
 		rightTop: false
 	}}
+	backPath={`${basePath}/`}
+	{url}
 >
 	<div slot="left-bar" class="latest-check-ins-container">
 		<h2>Latest Check-Ins</h2>

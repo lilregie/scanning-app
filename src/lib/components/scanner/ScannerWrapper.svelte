@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { validateScan, ScanTypes } from '$lib/validateScan';
+	import type { ScanTypes } from '$lib/validateScan';
+	
+	import { validateScan } from '$lib/validateScan';
 	import SuccessTick from '$lib/components/SuccessTick.svelte';
-	import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
+	import AttendeeMatching from '$lib/components/checkInSteps/AttendeeMatching.svelte';
 	import { Tabs, TabList, TabPanel, Tab } from '$lib/components/tabs';
 
 	import { get, writable } from 'svelte/store';

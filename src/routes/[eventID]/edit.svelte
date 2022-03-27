@@ -1,25 +1,44 @@
+<script context="module">
+	/** @type {import('@sveltejs/kit').Load} */
+	export const load = async ({ url }) => ({ props: { url: url.pathname } });
+</script>
+
 <script lang="ts">
-	import AdminLayout from '$lib/components/AdminLayout.svelte';
+	import type { TableRow } from '$lib/components/Table.svelte';
+
+	import AdminLayout from '$lib/components/layouts/AdminLayout.svelte';
 	import Scanner from '$lib/components/scanner/ScannerWrapper.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import Table, { TableRow } from '$lib/components/Table.svelte';
+	import Table from '$lib/components/Table.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
 	import Card from '$lib/components/Card.svelte';
 	import AttendeeDetails from '$lib/components/AttendeeDetails.svelte';
+	import EventletManager from '$lib/components/EventletManager.svelte';
+	import StepManager from '$lib/components/checkInSteps/StepManager.svelte';
 
 	import { attendeesTable } from '$lib/generateDataVis';
 	import { createCheckIn, removeLatestCheckIn } from '$lib/api/api';
 	import {
 		attendeesSearchTerm,
 		eventletAttendees,
+		globalModalState,
 		selectedAttendee,
-		selectedAttendeeID
+		selectedAttendeeID,
+		currentEventID
 	} from '$lib/store';
+	import { basePath } from '$lib/consts';
 
-	import { get, Writable, writable } from 'svelte/store';
+	import { get, writable } from 'svelte/store';
+	import type {Readable, Writable} from 'svelte/store';
 	import { fly, fade } from 'svelte/transition';
+
 	import { Circle } from 'svelte-loading-spinners';
-	import EventletManager from '$lib/components/EventletManager.svelte';
+	import { bind } from 'svelte-simple-modal';
+	import { goto } from '$app/navigation';
+import { onDestroy } from 'svelte';
+
+	export let url: string;
+
 
 	let attendeesTableData: [string[], TableRow[]];
 
@@ -39,7 +58,7 @@
 
 	// Used to highlight how the user should verify a covid pass, and the check-in button appears to do nothing
 	const highlightTimeMS = 1000;
-	leftBarHighlighted.subscribe((highlight) => {
+	const leftBarHighlightedDestroy = leftBarHighlighted.subscribe((highlight) => {
 		if (highlight) {
 			if (leftBarHighlightedTimeout) {
 				clearTimeout(leftBarHighlightedTimeout);
@@ -49,6 +68,13 @@
 			}, highlightTimeMS);
 		}
 	});
+
+	onDestroy(() => {
+		if (leftBarHighlightedTimeout) {
+			clearTimeout(leftBarHighlightedTimeout);
+		}
+		leftBarHighlightedDestroy();
+	});
 </script>
 
 <AdminLayout
@@ -57,6 +83,8 @@
 		rightBottom: false,
 		rightTop: false
 	}}
+	backPath={`${basePath}/${$currentEventID}`}
+	{url}
 >
 	<div slot="left-bar" class="left-bar">
 		{#if leftBarState === 'ValidateCovidPass'}
@@ -118,8 +146,13 @@
 					attendee={selectedAttendee}
 					closeable
 					on:checkIn={() => {
-						leftBarState = 'ValidateCovidPass';
-						leftBarHighlighted.set(true);
+						// leftBarState = 'ValidateCovidPass';
+						// leftBarHighlighted.set(true);
+						
+						// // @ts-expect-error
+						// globalModalState.set(bind(StepManager, { attendee: selectedAttendee }))
+
+						goto(`${basePath}/${$currentEventID}/check-in/${$selectedAttendeeID}`);
 					}}
 					on:removeLatestCheckIn={() => {
 						removeLatestCheckIn(get(selectedAttendee));

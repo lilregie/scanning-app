@@ -15,7 +15,7 @@ import { writable } from 'svelte/store';
         let queueFuture = [];
         let queuePast = [];
 		$currentEvent?.eventlets?.map((eventlet) => {
-			const startDate = dayjs(eventlet.datetime_start).format('MMM DD, h:mm A');
+			const startDate = dayjs(eventlet.datetime_start).format('MMM DD, ha');
             let isRightnow = dayjs().isBetween(eventlet.datetime_start, eventlet.datetime_end);
             
             let group = "";
@@ -105,9 +105,12 @@ import { writable } from 'svelte/store';
 		.header {
 			font-size: 2rem;
 			margin: 1rem;
+            text-align: center;
 		}
 		.select {
 			width: 80%;
+            margin-bottom: 2em;
+            
             --border: 3px solid white;
             --background: none;
             --listBackground: #{$background-intermediate-dark};

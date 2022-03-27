@@ -1,6 +1,10 @@
 body {
 	font-family: 'Open Sans', Roboto, sans-serif, Arial;
 	margin: 0;
+	min-height: 100vh;
+}
+#svelte {
+	min-height: 100vh;
 }
 
 h2 {

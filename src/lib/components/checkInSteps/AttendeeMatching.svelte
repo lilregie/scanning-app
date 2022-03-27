@@ -1,17 +1,19 @@
 <script lang="ts">
-	import Table from '$lib/components/Table.svelte';
-	import CovidPassBadge from '$lib/components/CovidPassBadge.svelte';
 
 	import type { TableRow } from '$lib/components/Table.svelte';
 	import type { Attendee } from '$lib/attendee';
 
+	import type {Readable, Writable} from 'svelte/store';
+
+	import Table from '$lib/components/Table.svelte';
+	import CovidPassBadge from '$lib/components/CovidPassBadge.svelte';
+
+
 	import { findAttendeeByID, titleCase } from '$lib/utill';
-	import { eventletAttendees, selectedAttendeeID as globalSelectedAttendeeID } from '$lib/store';
-	import { createCheckIn } from '$lib/api/api';
+	import { eventletAttendees } from '$lib/store';
 
 	import Fuse from 'fuse.js';
-	import { getContext, onMount } from 'svelte';
-	import { derived, get, Readable, Writable, writable } from 'svelte/store';
+	import { derived, get, writable } from 'svelte/store';
 	import Button from '../Button.svelte';
 
 	export let givenName: string;
@@ -25,7 +27,6 @@
 		([id,attendees]) => findAttendeeByID(attendees, id)
 	);
 
-	let { close } = getContext('simple-modal');
 
 	let matchingAttendees = [];
 
@@ -76,17 +77,6 @@
 		});
 	}
 	selectedAttendee.subscribe(generateTable);
-
-	function checkInAttendee() {
-		let attendee = get(selectedAttendee);
-		if (attendee) {
-			createCheckIn(attendee, false, vaccineCert);
-			globalSelectedAttendeeID.set(attendee.id)
-			close();
-		} else {
-			console.log('No attendee selected, but somehow we are trying to check in someone');
-		}
-	}
 </script>
 
 <div class="header">
@@ -123,11 +113,6 @@
 			{:else}
 				Search for Attendee
 			{/if}
-		</Button>
-	</div>
-	<div>
-		<Button size="large" disabled={$selectedAttendee === null} on:click={checkInAttendee}>
-			Check In attendee
 		</Button>
 	</div>
 </div>

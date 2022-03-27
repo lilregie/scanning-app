@@ -1,17 +1,20 @@
 <script lang="ts">
+	import type { Readable } from 'svelte/store';
+	import type { Attendee } from '$lib/attendee';
+
 	import Button from '$lib/components/Button.svelte';
 	import SuccessTick from '$lib/components/SuccessTick.svelte';
 	import FullAttendeeDetails from '$lib/components/modal/FullAttendeeDetails.svelte';
 	import InvalidCross from './InvalidCross.svelte';
 
-	import type { Attendee } from '$lib/attendee';
 	import { globalModalState, selectedAttendee } from '$lib/store';
 
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 
-	import { Readable, Writable, writable } from 'svelte/store';
+	import { writable } from 'svelte/store';
 	import { bind } from 'svelte-simple-modal';
+	import CloseButton from './CloseButton.svelte';
 
 	export let attendee: Readable<Attendee>;
 	export let direction: 'horizontal' | 'vertical' = 'horizontal';
@@ -70,9 +73,7 @@
 </script>
 
 {#if closeable}
-	<button on:click={close} class="closeButton" alt="Close Attendee Details">
-		<InvalidCross colour="#000" />
-	</button>
+	<CloseButton on:click={close} altText="Close Attendee Details" spacing={['0', '0']} />
 {/if}
 
 <div
@@ -174,7 +175,7 @@
 <style lang="scss">
 	@use '../styles/vars.scss' as *;
 	@use '../styles/functions.scss' as *;
-	@use "sass:list";
+	@use 'sass:list';
 
 	.details-container {
 		&.horizontal {
@@ -256,24 +257,4 @@
 		position: absolute;
 		bottom: 0;
 	}
-	.closeButton {
-		position: absolute;
-		top: 0;
-		right: 0;
-		z-index: 2;
-		background: none;
-		border: none;
-		cursor: pointer;
-		width: 2.5rem;
-		transition: all 200ms ease-in-out;
-		&:hover {
-			transform: scale(1.1);
-			filter: boxShadowsToDropShadows(map-get($shadows, 'highlight-tight'));
-		}
-		&:active {
-			transform: scale(1.05);
-		}
-	}
-
-
 </style>
