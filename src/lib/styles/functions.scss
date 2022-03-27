@@ -1,0 +1,17 @@
+@use './vars.scss' as *;
+
+@function boxShadowsToDropShadows($list) {
+    $filters: ();
+    @for $i from 1 through length($list) {
+        $filters: append($filters, drop-shadow(nth($list, $i)));
+    }
+    @return $filters;
+}
+
+@function text-clr($color) {
+	@if (lightness($color) > 50) {
+		@return $text-light;
+	} @else {
+		@return $text-dark;
+	}
+}

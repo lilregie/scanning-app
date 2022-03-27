@@ -1,10 +1,11 @@
 import { get } from "svelte/store";
-import { eventAttendees, selectedAttendeeID } from "./store";
+import { eventletAttendees, selectedAttendeeID } from "./store";
 import { newestCheckIns } from "./utill";
 import Fuse from 'fuse.js';
 
-
-import { formatDistance } from "date-fns";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime)
 
 import type { Attendee } from "./attendee";
 import type { TableRow } from "$lib/components/Table.svelte";
@@ -13,16 +14,16 @@ import type { TableRow } from "$lib/components/Table.svelte";
 export function newestCheckInsTable(): [string[], TableRow[]] {
 	const tableHeaders = ["Name", "ID", "Check In Time"];
 
-	if (get(eventAttendees) === null) {return [tableHeaders,[]]};
+	if (get(eventletAttendees) === null) {return [tableHeaders,[]]};
 
-	const checkedInAttendees: Attendee[] = newestCheckIns(get(eventAttendees));
+	const checkedInAttendees: Attendee[] = newestCheckIns(get(eventletAttendees));
 
 	const tableData = checkedInAttendees.map(checkedInAttendee => {
 		return {
 			data: [
 				`${checkedInAttendee.first_name}  ${checkedInAttendee.last_name}`,
 				`#${checkedInAttendee.id}`,
-				`${formatDistance(checkedInAttendee.checked_in_at, new Date(), { addSuffix: true })}`
+				`${dayjs(checkedInAttendee.checked_in_at).from(new Date())}`
 			]
 		}
 	});

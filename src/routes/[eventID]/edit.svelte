@@ -9,11 +9,17 @@
 
 	import { attendeesTable } from '$lib/generateDataVis';
 	import { createCheckIn, removeLatestCheckIn } from '$lib/api/api';
-	import { attendeesSearchTerm, eventAttendees, selectedAttendee } from '$lib/store';
+	import {
+		attendeesSearchTerm,
+		eventletAttendees,
+		selectedAttendee,
+		selectedAttendeeID
+	} from '$lib/store';
 
 	import { get, Writable, writable } from 'svelte/store';
 	import { fly, fade } from 'svelte/transition';
 	import { Circle } from 'svelte-loading-spinners';
+	import EventletManager from '$lib/components/EventletManager.svelte';
 
 	let attendeesTableData: [string[], TableRow[]];
 
@@ -22,7 +28,7 @@
 		// the $selectedAttendee changes. This is a hack, and should be fixed later on.
 		((_) => {})($selectedAttendee);
 
-		attendeesTableData = attendeesTable($eventAttendees, $attendeesSearchTerm);
+		attendeesTableData = attendeesTable($eventletAttendees, $attendeesSearchTerm);
 	}
 
 	// $: selectedAttendeeCheckedIn = $selectedAttendee &&  $selectedAttendee.check_ins.length === 0;
@@ -53,9 +59,7 @@
 	}}
 >
 	<div slot="left-bar" class="left-bar">
-
 		{#if leftBarState === 'ValidateCovidPass'}
-
 			<div
 				class="header-text"
 				out:fade|local
@@ -64,12 +68,10 @@
 				Booking for <b>{$selectedAttendee.first_name} {$selectedAttendee.last_name}</b>
 				<h2>Please Verify COVID Pass</h2>
 			</div>
-
 		{:else if leftBarState === 'ScanAny'}
-
-		<div class="header-text" out:fade|local in:fly|local={{ y: -200, duration: 1000 }}>
+			<div class="header-text" out:fade|local in:fly|local={{ y: -200, duration: 1000 }}>
 				<h2>Scan a Booking or COVID Pass</h2>
-		</div>
+			</div>
 		{/if}
 
 		<div class="scanner-container">
@@ -110,10 +112,11 @@
 		<h2 class="panel-header">Attendee Details</h2>
 	</div>
 	<div slot="info-panel" class="info-panel">
-		<Card expand={true} scroll={false} background={!!$selectedAttendee}>
-			{#if $selectedAttendee}
+		{#if $selectedAttendee}
+			<Card expand={true} scroll={false} background={!!$selectedAttendee}>
 				<AttendeeDetails
 					attendee={selectedAttendee}
+					closeable
 					on:checkIn={() => {
 						leftBarState = 'ValidateCovidPass';
 						leftBarHighlighted.set(true);
@@ -124,13 +127,20 @@
 					on:moreDetails={() => {
 						// TODO: Implement detailed attendee deatails page
 					}}
+					on:close={() => {
+						console.log('closing');
+						$selectedAttendeeID = null;
+					}}
 				/>
-			{:else if leftBarState === 'ScanAny'}
-				<p class="noSelect">
+			</Card>
+		{:else}
+			<div class="empty-attendee-details-container">
+				<EventletManager />
+				<p class="no-select-instructions">
 					Scan a booking or COVID pass, or search attendees to access their details.
 				</p>
-			{/if}
-		</Card>
+			</div>
+		{/if}
 	</div>
 	<div slot="list-panel-header">
 		<h2 class="panel-header">Attendees</h2>
@@ -143,7 +153,7 @@
 		</div>
 	</div>
 	<div slot="list-panel" class="table list-panel">
-		{#if $eventAttendees !== null}
+		{#if $eventletAttendees !== null}
 			<Table tableHeaders={attendeesTableData[0]} tableData={attendeesTableData[1]} />
 		{:else}
 			<div class="loading-spinner">
@@ -200,20 +210,29 @@
 	}
 	.info-panel {
 		height: 100%;
-		.noSelect {
-			font-size: 2em;
-			text-align: center;
-			opacity: 40%;
-			font-weight: 700;
-			max-width: 700px;
-			margin: auto;
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			right: 0;
+		.empty-attendee-details-container {
 			display: flex;
+			flex-direction: column;
 			align-items: center;
+			justify-content: space-between;
+			height: 100%;
+			padding: 2em;
+			box-sizing: border-box;
+			border: $background-intermediate-dark solid 0.5em;
+			border-radius: 0.5em;
+			color: $text-dark;
+			p {
+				margin: 0;
+				font-size: 1.5rem;
+				color: $text-dark;
+			}
+			.no-select-instructions {
+				font-size: 2em;
+				opacity: 40%;
+				font-weight: 700;
+				max-width: 700px;
+				text-align: center;
+			}
 		}
 	}
 	.search-container :global(input),

@@ -7,7 +7,7 @@
 	import Card from './Card.svelte';
 	import logo from '../assets/logo/wordmark-white.svg';
 
-	import { checkedInCount, eventAttendees, chosenEvent, chosenEventID } from '$lib/store';
+	import { checkedInCount, eventletAttendees, currentEvent, currentEventID, selectedEventletCombo } from '$lib/store';
 
 	import { fade, fly } from 'svelte/transition';
 	import { basePath } from '$lib/consts';
@@ -37,7 +37,7 @@
 </script>
 
 <div class="brand">
-	<a href={`${basePath}/${$chosenEventID}`}>
+	<a href={`${basePath}/${$currentEventID}`}>
 		<img src={logo} alt="Lil Regie logo" />
 	</a>
 </div>
@@ -49,21 +49,21 @@
 		out:fade={{duration: pageTransitionDuration }}
 	>
 		<div class="stats-container">
-			{#if $eventAttendees !== null}
+			{#if $eventletAttendees !== null}
 				<div class="stat">
 					<span class="stat-value">{$checkedInCount}</span>
 					<span class="stat-label">Checked In</span>
 				</div>
 
-				{#if $chosenEvent?.ticket_limit}
+				{#if $selectedEventletCombo?.ticket_limit}
 					<div class="stat">
-						<span class="stat-value">{$chosenEvent?.ticket_limit - $checkedInCount || '??'}</span>
+						<span class="stat-value">{$selectedEventletCombo?.ticket_limit - $checkedInCount || '??'}</span>
 						<span class="stat-label">Available Tickets</span>
 					</div>
 				{/if}
 
 				<div class="stat">
-					<span class="stat-value">{$eventAttendees?.length || '??'}</span>
+					<span class="stat-value">{$eventletAttendees?.length || '??'}</span>
 					<span class="stat-label">Registrations</span>
 				</div>
 			{/if}

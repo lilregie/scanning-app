@@ -1,4 +1,4 @@
-import type { Attendee, EventletAttendance, CustomField } from '../mockInterfaces/attendee';
+import type { Attendee, EventletAttendance, CustomField, AttendeePersonal } from '../mockInterfaces/attendee';
 
 import faker from '@faker-js/faker';
 import { LilRegieEvent } from '../mockInterfaces/event';
@@ -28,19 +28,26 @@ export function generateAttendeesForEvent(event: LilRegieEvent): Attendee[] {
 }
 
 
-export function generateAttendee(id: number = genID(), event: LilRegieEvent): Attendee {
+export function generateAttendee(id: number = genID(), event: LilRegieEvent): Attendee | Attendee & AttendeePersonal {
 	let checked_in = faker.datatype.boolean();
+
+	let attendeePersonal: AttendeePersonal | {} = {}
+	if (event.event_type === 'attendee') {
+		attendeePersonal = {
+			first_name: faker.name.firstName(),
+			last_name: faker.name.lastName(),
+			contact_phone: maybe(faker.phone.phoneNumber()),
+			email_address: maybe(faker.internet.email()),
+			organisation: maybe(faker.company.companyName()),
+			position: maybe(faker.name.jobType()),
+			requirements: maybe(faker.datatype.boolean() ? faker.lorem.sentence() : null),
+		}
+	}
+
 	return {
 		id,
 		booking_id: genID(),
         ticket_id: genID(),
-		first_name: faker.name.firstName(),
-		last_name: faker.name.lastName(),
-		contact_phone: maybe(faker.phone.phoneNumber()),
-		email_address: maybe(faker.internet.email()),
-		organisation: maybe(faker.company.companyName()),
-		position: maybe(faker.name.jobType()),
-		requirements: maybe(faker.datatype.boolean() ? faker.lorem.sentence() : null),
 		ticket_type_id: faker.datatype.number(),
 		ticket_type_name: faker.datatype.boolean() ? "Early Bird" : "Standard",
 		attendee_type_id: faker.datatype.number(),
@@ -51,6 +58,7 @@ export function generateAttendee(id: number = genID(), event: LilRegieEvent): At
 		voucher_name: null,
         checked_in_at: checked_in ? faker.date.recent(2) : null,
 		vaccine_pass: faker.datatype.number(2)==1,
+		...attendeePersonal,
 	};
 }
 

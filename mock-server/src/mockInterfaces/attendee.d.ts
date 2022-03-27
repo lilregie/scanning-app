@@ -2,13 +2,6 @@ export interface Attendee {
    id: number;
    booking_id: number;
    ticket_id: number;
-   first_name: string;
-   last_name: string;
-   contact_phone: string | null;
-   email_address: string | null;
-   organisation: string | null;
-   position: string | null;
-   requirements: string | null;
    ticket_type_id: number;
    ticket_type_name: string;
    attendee_type_id: number;
@@ -21,6 +14,18 @@ export interface Attendee {
    voucher_name: string | null;
    vaccine_pass: boolean;
 }
+
+// Details not collected in a ticket only event
+export interface AttendeePersonal {
+   first_name: string;
+   last_name: string;
+   contact_phone: string | null;
+   email_address: string | null;
+   organisation: string | null;
+   position: string | null;
+   requirements: string | null;
+}
+
 export interface CustomField {
    name: number;
    input_type: string;

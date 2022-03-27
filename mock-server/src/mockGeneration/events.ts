@@ -7,23 +7,25 @@ faker.seed(42);
 const genID = () => faker.datatype.number();
 
 export function generateEvent(event_type: 'attendee' | 'ticket_only'): LilRegieEvent {
-    let evenletCount = faker.datatype.number({
-        min: 1,
-        max: 3
-    });
+    const standalone = faker.datatype.boolean();
+    const evenletCount = standalone ? faker.datatype.number({
+        min: 2,
+        max: 10
+    }) : 1;
+    const eventID = genID();
 	return {
-		id: genID(),
-		name: faker.commerce.productName(),
+		id: eventID,
+		name: `Genned Event | ${event_type} | ${evenletCount} eventlets | #${eventID}`,
         permalink: faker.lorem.slug(),
         event_type,
-        stand_alone: evenletCount === 1,
+        stand_alone: standalone,
         vaccine_pass_enabled: true,
-        eventlets: generateEventlet(evenletCount),
+        eventlets: generateEventlets(evenletCount),
         
 	};
 }
 
-function generateEventlet(count: number): [Eventlet, ...Eventlet[]] {
+function generateEventlets(count: number): [Eventlet, ...Eventlet[]] {
     let eventlets: Eventlet[] = [];
     for (let i = 0; i < count; i++) {
         let ticket_limit = faker.datatype.number(400);

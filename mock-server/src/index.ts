@@ -4,7 +4,7 @@ import { apiInitializeWithRouter } from './api';
 import { csrfMiddleware } from './csrf';
 const router = express.Router()
 
-const API_DELAY_MS = 0;
+const API_DELAY_MS = 1000;
 
 const app = express();
 app.use(cors({

@@ -6,7 +6,7 @@
 	import type { Attendee } from '$lib/attendee';
 
 	import { findAttendeeByID, titleCase } from '$lib/utill';
-	import { eventAttendees, selectedAttendeeID as globalSelectedAttendeeID } from '$lib/store';
+	import { eventletAttendees, selectedAttendeeID as globalSelectedAttendeeID } from '$lib/store';
 	import { createCheckIn } from '$lib/api/api';
 
 	import Fuse from 'fuse.js';
@@ -21,7 +21,7 @@
 
 	const selectedAttendeeID: Writable<number> = writable(null);
 	const selectedAttendee: Readable<Attendee> = derived(
-		[selectedAttendeeID,eventAttendees],
+		[selectedAttendeeID,eventletAttendees],
 		([id,attendees]) => findAttendeeByID(attendees, id)
 	);
 
@@ -37,7 +37,7 @@
 	// givenName usually also includes middle name, so we will remove that
 	let firstName = givenName.split(' ')[0];
 
-	const attendees_with_fullname = get(eventAttendees).map((attendee) => ({
+	const attendees_with_fullname = get(eventletAttendees).map((attendee) => ({
 		full_name: `${attendee.first_name} ${attendee.last_name}`,
 		...attendee
 	}));

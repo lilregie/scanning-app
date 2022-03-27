@@ -4,10 +4,8 @@
 	import FullAttendeeDetails from '$lib/components/modal/FullAttendeeDetails.svelte';
 	import InvalidCross from './InvalidCross.svelte';
 
-
 	import type { Attendee } from '$lib/attendee';
-	import { globalModalState } from '$lib/store';
-
+	import { globalModalState, selectedAttendee } from '$lib/store';
 
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
@@ -18,17 +16,18 @@
 	export let attendee: Readable<Attendee>;
 	export let direction: 'horizontal' | 'vertical' = 'horizontal';
 	export let actionsAvailable: boolean = true;
+	export let closeable: boolean = false;
 
 	// Live updating checklist for attendee
 	let checkedIn = false;
 	let checkList = {};
 	$: {
 		checkList = {
-			'Booking Found': $attendee.booking_id,
-			'COVID Pass Verified': $attendee.vaccine_pass
+			'Booking Found': $attendee?.booking_id,
+			'COVID Pass Verified': $attendee?.vaccine_pass
 		};
 		// jankly adding in `Not` if not checked in
-		checkedIn = $attendee.checked_in_at !== null;
+		checkedIn = $attendee?.checked_in_at !== null;
 		checkList[checkedIn ? 'Checked In' : 'Not Checked In'] = checkedIn;
 	}
 
@@ -40,10 +39,14 @@
 		dispatch('removeLatestCheckIn', {});
 	}
 
+	function close() {
+		dispatch('close', {});
+	}
+
 	function moreDetails() {
 		dispatch('moreDetails', {});
 		// @ts-expect-error
-		globalModalState.set(bind(FullAttendeeDetails, {attendee: attendee}))
+		globalModalState.set(bind(FullAttendeeDetails, { attendee: attendee }));
 	}
 
 	// Detail level manager
@@ -52,7 +55,6 @@
 
 	$: {
 		if (direction === 'horizontal') {
-
 			// 250px needed per column to stop overflow
 			let calculatedSpacing = Math.floor(elementWidth / 250);
 
@@ -67,85 +69,93 @@
 	}
 </script>
 
+{#if closeable}
+	<button on:click={close} class="closeButton" alt="Close Attendee Details">
+		<InvalidCross colour="#000" />
+	</button>
+{/if}
+
 <div
 	class="details-container"
-	class:horizontal={direction==="horizontal"}
-	class:vertical={direction==="vertical"}
+	class:horizontal={direction === 'horizontal'}
+	class:vertical={direction === 'vertical'}
 	style="--detailLevel: {$detailLevel}"
 	bind:clientWidth={elementWidth}
 >
-	<div class="detail-column">
-		<h2 class="attendee-name">
-			{$attendee.first_name}
-			{$attendee.last_name}
-		</h2>
-		<div class="attendee-org">
-			{$attendee.organisation || ''}&nbsp;
-		</div>
-		<div class="check-list">
-			{#each Object.entries(checkList) as check}
-				<div class="check-item">
-					<span class="check-status">
-						{#if check[1]}
-							<SuccessTick colour="#2ba628" />
-						{:else}
-							<InvalidCross colour="#d0021b" />
-						{/if}
-					</span>
-					<span class="check-item-label">{check[0]}</span>
-				</div>
-			{/each}
-		</div>
-	</div>
-	{#if $detailLevel > 1}
+	{#if $selectedAttendee}
 		<div class="detail-column">
-			<h3 class="detail-group-header">Requirements</h3>
-			{#if $attendee.requirements}
-				{$attendee.requirements}
-			{:else}
-				<span class="detail-missing">No Requirements Found</span>
-			{/if}
-			<h3 class="detail-group-header">Attendee Details</h3>
-			{#if $attendee.email_address}
-				<div class="detail-key-value">
-					<span class="detail-key">Email</span>
-					<span class="detail-value">{$attendee.email_address}</span>
-				</div>
-			{/if}
-			{#if $attendee.contact_phone}
-				<div class="detail-key-value">
-					<span class="detail-key">Phone</span>
-					<span class="detail-value">{$attendee.contact_phone}</span>
-				</div>
-			{/if}
-			{#if $attendee.ticket_type_name}
-				<div class="detail-key-value">
-					<span class="detail-key">Ticket Type</span>
-					<span class="detail-value">{$attendee.ticket_type_name}</span>
-				</div>
-			{/if}
-		</div>
-	{/if}
-	{#if $detailLevel > 2}
-		<div class="detail-column">
-			<h3 class="detail-group-header">Custom Fields</h3>
-			<div class="detail-key-value">
-				{#if $attendee.custom_fields.length > 0}
-					<div class="custom-fields">
-						{#each $attendee.custom_fields as field}
-							<span class="detail-key">{field.name}</span>
-							<div class="detail-key-value">
-								{#each field.values as value}
-									<span class="detail-value custom-fields-multiple">{value}</span>
-								{/each}
-							</div>
-						{/each}
+			<h2 class="attendee-name">
+				{$attendee?.first_name}
+				{$attendee?.last_name}
+			</h2>
+			<div class="attendee-org">
+				{$attendee?.organisation || ''}&nbsp;
+			</div>
+			<div class="check-list">
+				{#each Object.entries(checkList) as check}
+					<div class="check-item">
+						<span class="check-status">
+							{#if check[1]}
+								<SuccessTick colour="#2ba628" />
+							{:else}
+								<InvalidCross colour="#d0021b" />
+							{/if}
+						</span>
+						<span class="check-item-label">{check[0]}</span>
 					</div>
-				{:else}
-					<span class="detail-missing">No Custom Fields Found</span>
-				{/if}
+				{/each}
 			</div>
 		</div>
+		{#if $detailLevel > 1}
+			<div class="detail-column">
+				<h3 class="detail-group-header">Requirements</h3>
+				{#if $attendee?.requirements}
+					{$attendee.requirements}
+				{:else}
+					<span class="detail-missing">No Requirements Found</span>
+				{/if}
+				<h3 class="detail-group-header">Attendee Details</h3>
+				{#if $attendee?.email_address}
+					<div class="detail-key-value">
+						<span class="detail-key">Email</span>
+						<span class="detail-value">{$attendee.email_address}</span>
+					</div>
+				{/if}
+				{#if $attendee?.contact_phone}
+					<div class="detail-key-value">
+						<span class="detail-key">Phone</span>
+						<span class="detail-value">{$attendee.contact_phone}</span>
+					</div>
+				{/if}
+				{#if $attendee?.ticket_type_name}
+					<div class="detail-key-value">
+						<span class="detail-key">Ticket Type</span>
+						<span class="detail-value">{$attendee.ticket_type_name}</span>
+					</div>
+				{/if}
+			</div>
+		{/if}
+		{#if $detailLevel > 2}
+			<div class="detail-column">
+				<h3 class="detail-group-header">Custom Fields</h3>
+				<div class="detail-key-value">
+					{#if $attendee?.custom_fields.length > 0}
+						<div class="custom-fields">
+							{#each $attendee.custom_fields as field}
+								<span class="detail-key">{field.name}</span>
+								<div class="detail-key-value">
+									{#each field.values as value}
+										<span class="detail-value custom-fields-multiple">{value}</span>
+									{/each}
+								</div>
+							{/each}
+						</div>
+					{:else}
+						<span class="detail-missing">No Custom Fields Found</span>
+					{/if}
+				</div>
+			</div>
+		{/if}
 	{/if}
 </div>
 {#if actionsAvailable}
@@ -162,6 +172,10 @@
 {/if}
 
 <style lang="scss">
+	@use '../styles/vars.scss' as *;
+	@use '../styles/functions.scss' as *;
+	@use "sass:list";
+
 	.details-container {
 		&.horizontal {
 			display: grid;
@@ -181,7 +195,6 @@
 			.detail-column {
 				margin-bottom: 1rem;
 			}
-
 		}
 
 		.detail-column {
@@ -236,7 +249,6 @@
 				}
 				display: block;
 			}
-
 		}
 	}
 
@@ -244,4 +256,24 @@
 		position: absolute;
 		bottom: 0;
 	}
+	.closeButton {
+		position: absolute;
+		top: 0;
+		right: 0;
+		z-index: 2;
+		background: none;
+		border: none;
+		cursor: pointer;
+		width: 2.5rem;
+		transition: all 200ms ease-in-out;
+		&:hover {
+			transform: scale(1.1);
+			filter: boxShadowsToDropShadows(map-get($shadows, 'highlight-tight'));
+		}
+		&:active {
+			transform: scale(1.05);
+		}
+	}
+
+
 </style>
