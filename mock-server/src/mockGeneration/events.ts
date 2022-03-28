@@ -1,6 +1,6 @@
 import type { Eventlet, LilRegieEvent } from '../mockInterfaces/event';
 
-import faker from '@faker-js/faker';
+import {faker} from '@faker-js/faker';
 
 faker.seed(42);
 

@@ -39,6 +39,7 @@
 
 <style lang="scss">
 	.scanner-wrapper {
-
+		width: 80%;
+		margin: 0 auto;
 	}
 </style>

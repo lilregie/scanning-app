@@ -1,8 +1,8 @@
 import type { Attendee, EventletAttendance, CustomField, AttendeePersonal } from '../mockInterfaces/attendee';
 
-import faker from '@faker-js/faker';
+import {faker} from '@faker-js/faker';
 import { LilRegieEvent } from '../mockInterfaces/event';
-import { Eventlet } from '../mockInterfaces/event';
+
 faker.seed(42);
 
 
