@@ -7,7 +7,7 @@
 	import FullAttendeeDetails from '$lib/components/modal/FullAttendeeDetails.svelte';
 	import InvalidCross from './InvalidCross.svelte';
 
-	import { globalModalState, selectedAttendee } from '$lib/store';
+	import { globalModalState, selectedAttendee, selectedEventletIDs } from '$lib/store';
 
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
@@ -42,10 +42,6 @@
 		dispatch('removeLatestCheckIn', {});
 	}
 
-	function close() {
-		dispatch('close', {});
-	}
-
 	function moreDetails() {
 		dispatch('moreDetails', {});
 		// @ts-expect-error
@@ -73,7 +69,7 @@
 </script>
 
 {#if closeable}
-	<CloseButton on:click={close} altText="Close Attendee Details" spacing={['0', '0']} />
+	<CloseButton on:close altText="Close Attendee Details" spacing={['0', '0']} />
 {/if}
 
 <div
@@ -134,13 +130,9 @@
 						<span class="detail-value">{$attendee.ticket_type_name}</span>
 					</div>
 				{/if}
-			</div>
-		{/if}
-		{#if $detailLevel > 2}
-			<div class="detail-column">
-				<h3 class="detail-group-header">Custom Fields</h3>
-				<div class="detail-key-value">
-					{#if $attendee?.custom_fields.length > 0}
+				{#if $attendee?.custom_fields.length > 0}
+					<h3 class="detail-group-header">Custom Fields</h3>
+					<div class="detail-key-value">
 						<div class="custom-fields">
 							{#each $attendee.custom_fields as field}
 								<span class="detail-key">{field.name}</span>
@@ -151,10 +143,27 @@
 								</div>
 							{/each}
 						</div>
-					{:else}
-						<span class="detail-missing">No Custom Fields Found</span>
-					{/if}
+					</div>
+				{:else}
+					<span class="detail-missing">No Custom Fields Found</span>
+				{/if}
+			</div>
+		{/if}
+		{#if $detailLevel > 2}
+			<div class="detail-column">
+				<h3 class="detail-group-header">Bookings</h3>
+				{#if $attendee?.attendances.length > 0}
+				<div class="bookings-container">
+					{#each $attendee.attendances.sort((a,b)=>(a.eventlet_name > b.eventlet_name)?1:-1) as attendance}
+						{@const eventlet_selected = $selectedEventletIDs.includes(attendance.eventlet_id)}
+						<div class="booking" alt={`#${attendance.eventlet_id}`} class:booking-selected={eventlet_selected}>
+							<span class="booking-name">{attendance.eventlet_name}</span>
+						</div>
+					{/each}
 				</div>
+				{:else}
+					<span class="detail-missing">No Bookings Found</span>
+				{/if}
 			</div>
 		{/if}
 	{/if}
@@ -249,6 +258,31 @@
 					content: '- ';
 				}
 				display: block;
+			}
+
+			.bookings-container {
+				display: grid;
+				grid-template-columns: repeat(var(--detailLevel), 1fr);
+				grid-template-rows: repeat(auto-fill, 1fr);
+				grid-gap: 1rem;
+				.booking {
+					display: grid;
+					grid-template-columns: 1fr;
+					grid-template-rows: 1fr;
+					grid-gap: 1rem;
+					padding: 1rem;
+					border-radius: 0.25rem;
+					background-color: #fff;
+					box-shadow: map-get($map: $shadows, $key: "small");
+					&.booking-selected {
+						border: map-get($map: $theme-colors, $key: "primary") solid 2px;
+					}
+					.booking-name {
+						font-size: 1.25rem;
+						font-weight: bold;
+					}
+				}
+				
 			}
 		}
 	}

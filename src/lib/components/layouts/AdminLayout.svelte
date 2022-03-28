@@ -82,6 +82,8 @@
 	@use './vars.scss' as *;
 
 	.panel-container {
+		height: 100%;
+		
 		@media screen and (max-width: $breakpoint-mobile) {
 			.left-bar,
 			.right-bar {

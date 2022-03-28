@@ -2,24 +2,26 @@
 	import SuccessTick from "$lib/components/SuccessTick.svelte";
 	import dayjs from 'dayjs';
 	import relativeTime from 'dayjs/plugin/relativeTime.js';
+	import type { NZCovidPass } from "./scanner/validateScan";
 
 	dayjs.extend(relativeTime, { rounding: Math.floor });
 
-	export let name: string;
-	export let dob: string;
+	export let data: NZCovidPass;
+
+	$: name = `${data.givenName} ${data.lastName}`.toLowerCase();
 </script>
 <div class="container">
 	<div class="tick-wrapper">
 		<SuccessTick colour="green"/>
 	</div>
 	<div>
-		<div class="header">
+		<div class="header" title={`Until ${dayjs(data.covidPassInfo.expires).format("YYYY-MM-DD")}`}>
 			COVID Pass Valid
 		</div>
 		<div class="details">
-			{name}
+			<span class="name" title={`${data.givenName} ${data.lastName}`}>{name}</span>
 			<br/>
-			Age: <span title={dob}>{dayjs(dob).toNow(true)}</span>
+			<span title={`DOB: ${data.DOB}`}>Age: {dayjs(data.DOB).toNow(true)}</span>
 		</div>
 	</div>
 </div>
@@ -41,6 +43,9 @@
 			:global(svg) {
 				height: 40px;
 			}
+		}
+		.name {
+			text-transform: capitalize;
 		}
 	}
 

@@ -14,12 +14,12 @@
 
 	import Fuse from 'fuse.js';
 	import { derived, get, writable } from 'svelte/store';
-	import Button from '../Button.svelte';
+	import Button from '../../Button.svelte';
+import type { NZCovidPass } from '$lib/components/scanner/validateScan';
 
-	export let givenName: string;
-	export let lastName: string;
-	export let DOB: string;
+
 	export let vaccineCert: string;
+	export let data: NZCovidPass;
 
 	const selectedAttendeeID: Writable<number> = writable(null);
 	const selectedAttendee: Readable<Attendee> = derived(
@@ -36,7 +36,7 @@
 	let countMatching = 0;
 
 	// givenName usually also includes middle name, so we will remove that
-	let firstName = givenName.split(' ')[0];
+	let firstName = data.givenName.split(' ')[0];
 
 	const attendees_with_fullname = get(eventletAttendees).map((attendee) => ({
 		full_name: `${attendee.first_name} ${attendee.last_name}`,
@@ -49,7 +49,7 @@
 		threshold: 0.6,
 		isCaseSensitive: false
 	});
-	matchingAttendees = fuse.search(`${firstName} ${lastName}`);
+	matchingAttendees = fuse.search(`${firstName} ${data.lastName}`);
 	if (matchingAttendees.length > 0) {
 		selectedAttendeeID.set(matchingAttendees[0].item.id);
 	}
@@ -97,7 +97,7 @@
 		{/if}
 	</div>
 	<div class="covid-pass-badge-wrapper">
-		<CovidPassBadge name={titleCase(`${givenName} ${lastName}`)} dob={DOB} />
+		<CovidPassBadge {data} />
 	</div>
 </div>
 {#if countMatching > 0}

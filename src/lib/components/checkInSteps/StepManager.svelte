@@ -5,38 +5,41 @@
 	import { Steps as StepsViewer } from 'svelte-steps';
 	import { generateSteps, Steps } from './stepManager';
 	import { onMount } from 'svelte';
-import ScanVaccinePass from './ScanVaccinePass.svelte';
-import ScanBarcodeTicket from './ScanBarcodeTicket.svelte';
-import AttendeeDetails from '../AttendeeDetails.svelte';
-import Card from '../Card.svelte';
+	import ScanVaccinePass from './steps/ScanVaccinePass.svelte';
+	import ScanBarcodeTicket from './steps/ScanBarcodeTicket.svelte';
 
 	export let attendee: Readable<Attendee>;
 
 	let steps = generateSteps();
 
-    let currentStepID = 0;
-    $: currentStep = steps[currentStepID].step;
+	let currentStepID = 0;
+	$: currentStep = steps[currentStepID].step;
+
+	function skip() {
+		currentStepID++;
+    }
+    function next() {
+		currentStepID++;
+    }
+	function back() {
+		currentStepID--;
+	}
 </script>
 
 <div class="container">
 	<div class="stepper-wrapper">
-		<StepsViewer {steps} bind:current={currentStepID}/>
+		<StepsViewer {steps} bind:current={currentStepID} />
 	</div>
 
-    <div class="content-slider">
-        {#if currentStep===Steps.ScanVaccinePass}
-            <ScanVaccinePass/>
-        {:else if currentStep===Steps.ScanTicket}
-            <ScanBarcodeTicket/>
-        {:else if currentStep===Steps.Confirm}
-            haha yes {$attendee.first_name}
-        {/if}
-    </div>
-
-	<div class="attendee-details">
-		<AttendeeDetails {attendee} actionsAvailable={false}/>
+	<div class="content-slider">
+		{#if currentStep === Steps.ScanVaccinePass}
+			<ScanVaccinePass on:next={next} on:skip={skip} on:back={back}/>
+		{:else if currentStep === Steps.ScanTicket}
+			<ScanBarcodeTicket on:next={next} on:skip={skip} on:back={back}/>
+		{:else if currentStep === Steps.Confirm}
+			haha yes {$attendee.first_name}
+		{/if}
 	</div>
-
 </div>
 
 <style lang="scss">
@@ -54,15 +57,9 @@ import Card from '../Card.svelte';
 			margin-bottom: 2em;
 			width: 50%;
 		}
-
-		.attendee-details {
-			margin: 2em;
-			padding: 2em;
-			border: $background-intermediate-dark solid 4px;
-			background-color: $background-intermediate-light;
-			border-radius: 1em;
-			box-sizing: border-box;
-			width: 90%;
+		.content-slider {
+			height: 85%;
+			width: 100%;
 		}
 	}
 </style>

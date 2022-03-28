@@ -12,9 +12,11 @@
 
 <script lang="ts">
 	import { goto } from '$app/navigation';
+import AttendeeDetails from '$lib/components/AttendeeDetails.svelte';
 import Card from '$lib/components/Card.svelte';
 
 	import StepManager from '$lib/components/checkInSteps/StepManager.svelte';
+import AdminLayout from '$lib/components/layouts/AdminLayout.svelte';
 	import OuterRingLayout from '$lib/components/layouts/OuterRingLayout.svelte';
 	import { basePath } from '$lib/consts';
 	import {
@@ -44,15 +46,19 @@ import { onMount } from 'svelte';
 
 </script>
 
-<OuterRingLayout {backPath} {url}>
-	<div class="container">
+<AdminLayout {backPath} {url}>
+	<div slot="right-bar" class="container">
 		<Card expand allowClosing on:close={onClose}>
 			{#if $eventletAttendees}
 				<StepManager attendee={selectedAttendee} />
 			{/if}
 		</Card>
 	</div>
-</OuterRingLayout>
+
+	<div class="attendee-details" slot="left-bar">
+		<AttendeeDetails attendee={selectedAttendee} actionsAvailable={false} direction={"vertical"}/>
+	</div>
+</AdminLayout>
 
 <style lang="scss">
 	.container {

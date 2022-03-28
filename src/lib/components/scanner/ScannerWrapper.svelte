@@ -1,9 +1,8 @@
 <script lang="ts">
-	import type { ScanTypes } from '$lib/validateScan';
+	import { ScanTypes } from '$lib/components/scanner/validateScan';
 	
-	import { validateScan } from '$lib/validateScan';
+	import { validateScan } from '$lib/components/scanner/validateScan';
 	import SuccessTick from '$lib/components/SuccessTick.svelte';
-	import AttendeeMatching from '$lib/components/checkInSteps/AttendeeMatching.svelte';
 	import { Tabs, TabList, TabPanel, Tab } from '$lib/components/tabs';
 
 	import { get, writable } from 'svelte/store';
@@ -11,32 +10,31 @@
 	import InvalidCross from '../InvalidCross.svelte';
 	import CameraScanner from './CameraScanner.svelte';
 	import TextScanner from './TextScanner.svelte';
-	import { globalModalState, prefersCameraOrTextScanning } from '$lib/store';
+	import { prefersCameraOrTextScanning } from '$lib/store';
 	import { ScannerStatus } from './scannerStatus';
 	import ScanResult from './ScanResult.svelte';
-	import {bind} from "svelte-simple-modal";
 	import Button from '../Button.svelte';
+	import { createEventDispatcher } from 'svelte';
 
-	export let enabledScanTypes: ScanTypes = {
-		ticketBarcode: true,
-		nzCovidPass: true
-	};
+	export let enabledScanTypes: ScanTypes[] = [ScanTypes.TicketBarcode, ScanTypes.CovidPass];
 
 	let covidPassFailReason: string = '';
 
 	let scannerStatus = writable(ScannerStatus.Scanning);
 
+	const dispatch = createEventDispatcher();
+
+
+
 	async function handleScan(event: CustomEvent) {
 		if (get(scannerStatus) === ScannerStatus.Scanning) {
 			let validator = await validateScan(event.detail.qrContent, enabledScanTypes);
-			if (validator.valid) {
-				scannerStatus.set(ScannerStatus.ConfirmScan);
-
-				// @ts-ignore
-				setTimeout(()=>{globalModalState.set(bind(AttendeeMatching, { ...validator, vaccineCert: event.detail.qrContent }))},500);
+			if (validator.valid===true) {
+				scannerStatus.set(ScannerStatus.Success);
+				dispatch('scan-complete', validator);
 			} else {
 				scannerStatus.set(ScannerStatus.Invalid);
-				covidPassFailReason = validator.violates;
+				covidPassFailReason = validator.violation;
 			}
 		}
 	}
@@ -118,7 +116,7 @@
 				/>
 			</TabPanel>
 		</Tabs>
-		{#if $scannerStatus === ScannerStatus.ConfirmScan}
+		{#if $scannerStatus === ScannerStatus.Success}
 			<ScanResult bind:scannerStatus backgroundColour="#2ba628">
 					<div style="width: 30%">
 						<SuccessTick />

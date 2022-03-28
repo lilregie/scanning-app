@@ -1,5 +1,5 @@
 export enum ScannerStatus {
     Scanning,
-    ConfirmScan,
+    Success,
     Invalid
 }
