@@ -22,13 +22,23 @@
 		rightBottom: {}
 	};
 
+	export let overflowType = {
+		left: "auto",
+		rightTop: "auto",
+		rightBottom: "auto"
+	}
+
 	export let backPath: string;
 	export let url: string;
 </script>
 
 <OuterRingLayout {backPath} {url}>
 	<div class="panel-container">
-		<div class="left-bar" class:highlighted={cards.left && cards.left.highlighted}>
+		<div
+			class="left-bar"
+			class:highlighted={cards.left && cards.left.highlighted}
+			style={`--overflow-type: ${overflowType.left}`}
+		>
 			<slot name="left-bar-header" />
 			{#if cards.left}
 				<Card expand={true} {...cards.left}>
@@ -41,7 +51,11 @@
 		</div>
 		<div class="right-bar">
 			<slot name="right-bar">
-				<div class="info-panel" class:highlighted={cards.rightTop && cards.rightTop.highlighted}>
+				<div
+					class="info-panel"
+					class:highlighted={cards.rightTop && cards.rightTop.highlighted}
+					style={`--overflow-type: ${overflowType.rightTop}`}
+				>
 					<div class="info-panel-header">
 						<slot name="info-panel-header" />
 					</div>
@@ -58,6 +72,7 @@
 				<div
 					class="list-panel"
 					class:highlighted={cards.rightBottom && cards.rightBottom.highlighted}
+					style={`--overflow-type: ${overflowType.rightBottom}`}
 				>
 					<div class="list-panel-header">
 						<slot name="list-panel-header" />
@@ -110,7 +125,7 @@
 		.left-bar {
 			flex: 1;
 			min-width: 400px;
-			overflow: auto;
+			overflow: var(--overflow-type);
 		}
 		.right-bar {
 			min-width: 400px;
@@ -120,26 +135,24 @@
 			align-items: stretch;
 			row-gap: $item-spacing;
 			column-gap: $item-spacing;
-			overflow: auto;
 		}
 		.info-panel {
 			flex: 1;
 			max-height: 50%;
 			display: flex;
 			flex-flow: column;
-			overflow: none;
 			.info-panel-header {
 				flex: 0 1 auto;
 			}
 			.info-panel-content {
 				flex: 1 1 auto;
-				overflow: auto;
+				overflow: var(--overflow-type);
 			}
 		}
 		.list-panel {
 			flex: 1;
 			max-height: 50vh;
-			overflow: auto;
+			overflow: var(--overflow-type);
 			display: flex;
 			flex-flow: column;
 			.list-panel-header {
@@ -147,7 +160,7 @@
 			}
 			.list-panel-content {
 				flex: 1 1 auto;
-				overflow: auto;
+				overflow: var(--overflow-type);
 			}
 		}
 	}

@@ -41,6 +41,7 @@ export function generateAttendee(id: number = genID(), event: LilRegieEvent): At
 			organisation: maybe(faker.company.companyName()),
 			position: maybe(faker.name.jobType()),
 			requirements: maybe(faker.datatype.boolean() ? faker.lorem.sentence() : null),
+			custom_fields: generateCustomFeilds(faker.datatype.number(3)),
 		}
 	}
 
@@ -52,7 +53,6 @@ export function generateAttendee(id: number = genID(), event: LilRegieEvent): At
 		ticket_type_name: faker.datatype.boolean() ? "Early Bird" : "Standard",
 		attendee_type_id: faker.datatype.number(),
 		attendee_type_name: faker.datatype.boolean() ? "Student" : "Standard",
-		custom_fields: generateCustomFeilds(faker.datatype.number(3)),
 		attendances: generateAttendances(event, checked_in),
 		cancelled_at: null,
 		voucher_name: null,

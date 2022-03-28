@@ -6,7 +6,6 @@ export interface Attendee {
    ticket_type_name: string;
    attendee_type_id: number;
    attendee_type_name: string;
-   custom_fields: CustomField[];
    // Overall check-in status
    checked_in_at: Date | null;
    attendances: EventletAttendance[];
@@ -24,6 +23,7 @@ export interface AttendeePersonal {
    organisation: string | null;
    position: string | null;
    requirements: string | null;
+   custom_fields: CustomField[];
 }
 
 export interface CustomField {

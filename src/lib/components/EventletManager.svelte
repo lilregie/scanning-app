@@ -110,9 +110,10 @@ import { writable } from 'svelte/store';
 		.select {
 			width: 80%;
             margin-bottom: 2em;
+            z-index: 2;
             
             --border: 3px solid white;
-            --background: none;
+            --background: #{$background-backdrop};
             --listBackground: #{$background-intermediate-dark};
             --itemHoverBG: #{$background-intermediate-light};
             --itemHoverColor: #{$text-light};
@@ -147,7 +148,16 @@ import { writable } from 'svelte/store';
             :global(.multiSelectItem_clear) {
                 cursor: pointer;
             }
-
 		}
+
+        @media screen and (max-width: $breakpoint-mobile) {
+            .header {
+                font-size: 1.25rem;
+            }
+            .select {
+                width: 100%;
+                --listMaxHeight: 12em;
+            }
+        }
 	}
 </style>

@@ -1,7 +1,7 @@
 export interface LilRegieEvent {
     id: number;
     name: string;
-    // some events are fully managed by the regie ("attendee"),
+    // some events are fully managed by Lil Regie ("attendee"),
     // others are just using Lil Regie for ticketing ("ticket_only").
     event_type: "ticket_only" | "attendee";
     // snake case version of name - used for signup URL
@@ -15,7 +15,7 @@ export interface LilRegieEvent {
 } 
 
 export interface Eventlet {
-    id: number | null; // only null for combined eventlets
+    id: number | null; // only null for combined Eventlets
     name: string;
     // users can set a max total number of tickets for this event
     ticket_limit: number | null;
@@ -25,6 +25,6 @@ export interface Eventlet {
     datetime_start: Date;
     datetime_end: Date;
 
-    // for combo eventlets
+    // for combo Eventlets
     combo_ids?: number[];
 }

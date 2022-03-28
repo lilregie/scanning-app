@@ -111,7 +111,7 @@
 				{:else}
 					<span class="detail-missing">No Requirements Found</span>
 				{/if}
-				<h3 class="detail-group-header">Attendee Details</h3>
+				<h3 class="detail-group-header">Booking Details</h3>
 				{#if $attendee?.email_address}
 					<div class="detail-key-value">
 						<span class="detail-key">Email</span>
@@ -130,7 +130,7 @@
 						<span class="detail-value">{$attendee.ticket_type_name}</span>
 					</div>
 				{/if}
-				{#if $attendee?.custom_fields.length > 0}
+				{#if $attendee?.custom_fields?.length > 0}
 					<h3 class="detail-group-header">Custom Fields</h3>
 					<div class="detail-key-value">
 						<div class="custom-fields">
@@ -144,8 +144,6 @@
 							{/each}
 						</div>
 					</div>
-				{:else}
-					<span class="detail-missing">No Custom Fields Found</span>
 				{/if}
 			</div>
 		{/if}
@@ -261,15 +259,17 @@
 			}
 
 			.bookings-container {
-				display: grid;
-				grid-template-columns: repeat(var(--detailLevel), 1fr);
-				grid-template-rows: repeat(auto-fill, 1fr);
-				grid-gap: 1rem;
+				$spacing: 0.5em;
+				position: relative;
+				display: flex;
+				flex-wrap: wrap;
+				top: -$spacing;
+				left: -$spacing;
 				.booking {
-					display: grid;
-					grid-template-columns: 1fr;
-					grid-template-rows: 1fr;
-					grid-gap: 1rem;
+					margin: $spacing;
+					display: flex;
+					align-items: center;
+					justify-content: center;
 					padding: 1rem;
 					border-radius: 0.25rem;
 					background-color: #fff;

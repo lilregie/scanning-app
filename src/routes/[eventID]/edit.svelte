@@ -83,6 +83,11 @@ import { onDestroy } from 'svelte';
 		rightBottom: false,
 		rightTop: false
 	}}
+	overflowType={{
+		left: "auto",
+		rightTop: "unset",
+		rightBottom: "auto"
+	}}
 	backPath={`${basePath}/${$currentEventID}`}
 	{url}
 >
@@ -245,6 +250,7 @@ import { onDestroy } from 'svelte';
 		height: 100%;
 		.empty-attendee-details-container {
 			display: flex;
+			position: relative;
 			flex-direction: column;
 			align-items: center;
 			justify-content: space-between;
@@ -254,17 +260,29 @@ import { onDestroy } from 'svelte';
 			border: $background-intermediate-dark solid 0.5em;
 			border-radius: 0.5em;
 			color: $text-dark;
+
+			@media screen and (max-width: $breakpoint-mobile) {
+				padding: 1em;
+				p.no-select-instructions {
+					position: absolute;
+					bottom: 0;
+					font-size: 1.5rem;
+					margin: 1em;
+				}
+			}
 			p {
 				margin: 0;
 				font-size: 1.5rem;
 				color: $text-dark;
 			}
 			.no-select-instructions {
+				
 				font-size: 2em;
 				opacity: 40%;
 				font-weight: 700;
 				max-width: 700px;
 				text-align: center;
+
 			}
 		}
 	}
