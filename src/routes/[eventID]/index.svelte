@@ -24,7 +24,7 @@
 		checkInTable = newestCheckInsTable();
 	});
 
-	$: displayEvenetletManager = $currentEvent?.stand_alone;
+	$: displayEvenetletManager = $currentEvent?.standalone;
 </script>
 
 <AdminLayout

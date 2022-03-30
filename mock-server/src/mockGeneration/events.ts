@@ -18,7 +18,7 @@ export function generateEvent(event_type: 'attendee' | 'ticket_only'): LilRegieE
 		name: `Genned Event | ${event_type} | ${evenletCount} eventlets | #${eventID}`,
         permalink: faker.lorem.slug(),
         event_type,
-        stand_alone: standalone,
+        standalone: standalone,
         vaccine_pass_enabled: true,
         eventlets: generateEventlets(evenletCount),
         

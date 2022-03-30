@@ -84,7 +84,7 @@ currentEvent.subscribe((currentEvent) => {
 	}
 	// If only one eventlet, we need to force it to be just that one eventlet
 	// Because when it is standalone, we want to hide the eventlet UI
-	if (currentEvent?.stand_alone && currentEvent?.eventlets.length === 1) {
+	if (currentEvent?.standalone && currentEvent?.eventlets.length === 1) {
 		selectedEventletIDs.set([currentEvent.eventlets[0].id]);
 	} else if (firstTimeSelectedEventlet) {
 		// First time loading event, so default to all eventlets

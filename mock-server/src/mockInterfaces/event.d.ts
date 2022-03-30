@@ -7,7 +7,7 @@ export interface LilRegieEvent {
     // snake case version of name - used for signup URL
     permalink: string;
     // decides if we should display the eventlet UI elements
-    stand_alone: boolean;
+    standalone: boolean;
     // events can contain multiple datetimes - like a multi-day event
     eventlets: [Eventlet, ...Eventlet[]]; // Min of one eventlet
     // required for NZ events - but not for other countries
