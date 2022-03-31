@@ -125,6 +125,8 @@ import { writable } from 'svelte/store';
             --spinnerColor: #{map-get($theme-colors, "primary")};
             --listEmptyColor: #{$text-dark};
             --groupTitleColor:  #a7a7a7;
+            --clearSelectFocusColor: #{map-get($theme-colors, "primary")};
+            --clearSelectHoverColor: #{$text-dark};
 
             // Libaray missing multiItemColor
             :global(.multiSelectItem_label) {

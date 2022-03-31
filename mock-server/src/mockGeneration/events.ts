@@ -37,7 +37,7 @@ function generateEventlets(count: number): [Eventlet, ...Eventlet[]] {
             ticket_limit: faker.datatype.boolean() ? null : ticket_limit,
             checked_in_count: Math.round(faker.datatype.float(1) * faker.datatype.number(400)),
             id: genID(),
-            name: faker.commerce.department(),
+            name: capitalizeFirstLetter(faker.company.bs()),
             total_ticket_count,
             datetime_start: new Date(center_time.getTime() - (1000 * 60 * 60 * faker.datatype.number(3))),
             datetime_end: new Date(center_time.getTime() + (1000 * 60 * 60 * faker.datatype.number(3))),
@@ -45,3 +45,8 @@ function generateEventlets(count: number): [Eventlet, ...Eventlet[]] {
     }
     return eventlets as [Eventlet, ...Eventlet[]];
 }
+
+function capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+  

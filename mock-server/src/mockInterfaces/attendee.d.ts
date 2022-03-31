@@ -27,7 +27,7 @@ export interface AttendeePersonal {
 }
 
 export interface CustomField {
-   name: number;
+   name: string;
    input_type: string;
    values: string[];
 }

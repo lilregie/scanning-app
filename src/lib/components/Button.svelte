@@ -6,10 +6,11 @@
 	export let disabled: boolean = false;
 	export let outline: boolean = false;
 	export let expanded: boolean = false;
+	export let title: string = null;
 </script>
 
 {#if href}
-	<a on:click class="{color} {size}" class:outline class:expanded disabled={disabled ? true : null} {href}>
+	<a on:click class="{color} {size}" class:outline class:expanded disabled={disabled ? true : null} {href} {title}>
 		<slot>Submit</slot>
 	</a>
 {:else}
@@ -20,6 +21,7 @@
 		disabled={disabled ? true : null}
 		type={submit ? 'submit' : ''}
 		class:expanded
+		{title}
 	>
 		<slot>Submit</slot>
 	</button>

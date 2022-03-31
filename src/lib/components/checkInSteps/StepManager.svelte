@@ -1,45 +1,58 @@
 <script lang="ts">
 	import type { Attendee } from '$lib/attendee';
-	import type { Readable, writable } from 'svelte/store';
+	import { get, writable, type Readable, type Writable } from 'svelte/store';
 
 	import { Steps as StepsViewer } from 'svelte-steps';
-	import { generateSteps, Steps } from './stepManager';
+	import { generateSteps, Steps, type AttendeeProfile } from './stepManager';
 	import { onMount } from 'svelte';
-	import ScanVaccinePass from './steps/ScanVaccinePass.svelte';
-	import ScanBarcodeTicket from './steps/ScanBarcodeTicket.svelte';
+	import { fly } from 'svelte/transition';
 
 	export let attendee: Readable<Attendee>;
 
-	let steps = generateSteps();
+	let attendeeProfile: Writable<AttendeeProfile> = writable({
+		attendee: get(attendee),
+		eventlet: null,
+		ticket_eventlet_id: null,
+		covidPassInfo: null
+	});
+
+	let steps = [];
 
 	let currentStepID = 0;
-	$: currentStep = steps[currentStepID].step;
+	$: currentStep = steps[currentStepID];
 
 	function skip() {
 		currentStepID++;
-    }
-    function next() {
+	}
+	function next() {
 		currentStepID++;
-    }
+	}
 	function back() {
 		currentStepID--;
 	}
+
+	onMount(() => {
+		steps = generateSteps(get(attendeeProfile));
+	});
 </script>
 
 <div class="container">
-	<div class="stepper-wrapper">
-		<StepsViewer {steps} bind:current={currentStepID} />
-	</div>
-
-	<div class="content-slider">
-		{#if currentStep === Steps.ScanVaccinePass}
-			<ScanVaccinePass on:next={next} on:skip={skip} on:back={back}/>
-		{:else if currentStep === Steps.ScanTicket}
-			<ScanBarcodeTicket on:next={next} on:skip={skip} on:back={back}/>
-		{:else if currentStep === Steps.Confirm}
-			haha yes {$attendee.first_name}
-		{/if}
-	</div>
+	{#if steps.length > 0}
+		<div class="stepper-wrapper">
+			<StepsViewer {steps} bind:current={currentStepID} />
+		</div>
+		<div class="content-slider">
+			<!-- All of the step modules dynamicaly render here -->
+			<svelte:component
+				this={currentStep.component}
+				on:next={next}
+				on:skip={skip}
+				on:back={back}
+				on:force={next}
+				{attendeeProfile}
+			/>
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">

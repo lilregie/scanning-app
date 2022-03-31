@@ -30,7 +30,12 @@
 		if (get(scannerStatus) === ScannerStatus.Scanning) {
 			let validator = await validateScan(event.detail.qrContent, enabledScanTypes);
 			if (validator.valid===true) {
-				scannerStatus.set(ScannerStatus.Success);
+				const type = validator.data.type;
+				if (type === ScanTypes.CovidPass) {
+					scannerStatus.set(ScannerStatus.SuccessCovidPass);
+				} else if (type === ScanTypes.TicketBarcode) {
+					scannerStatus.set(ScannerStatus.SuccessTicket);
+				}
 				dispatch('scan-complete', validator);
 			} else {
 				scannerStatus.set(ScannerStatus.Invalid);
@@ -116,12 +121,19 @@
 				/>
 			</TabPanel>
 		</Tabs>
-		{#if $scannerStatus === ScannerStatus.Success}
+		{#if $scannerStatus === ScannerStatus.SuccessCovidPass}
 			<ScanResult bind:scannerStatus backgroundColour="#2ba628">
 					<div style="width: 30%">
 						<SuccessTick />
 					</div>
 					COVID Pass Verified
+			</ScanResult>
+		{:else if $scannerStatus === ScannerStatus.SuccessTicket}
+			<ScanResult bind:scannerStatus backgroundColour="#2ba628">
+					<div style="width: 30%">
+						<SuccessTick />
+					</div>
+					Ticket Verified
 			</ScanResult>
 		{:else if $scannerStatus === ScannerStatus.Invalid}
 			<ScanResult bind:scannerStatus backgroundColour="#911d14">

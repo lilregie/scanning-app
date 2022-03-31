@@ -22,7 +22,7 @@ export interface Attendee {
 	vaccine_pass: boolean;
  }
  export interface CustomField {
-	name: number;
+	name: string;
 	input_type: string;
 	values: string[];
  }

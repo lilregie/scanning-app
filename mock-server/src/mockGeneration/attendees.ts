@@ -41,7 +41,7 @@ export function generateAttendee(id: number = genID(), event: LilRegieEvent): At
 			organisation: maybe(faker.company.companyName()),
 			position: maybe(faker.name.jobType()),
 			requirements: maybe(faker.datatype.boolean() ? faker.lorem.sentence() : null),
-			custom_fields: generateCustomFeilds(faker.datatype.number(3)),
+			custom_fields: generateCustomFields(faker.datatype.number(3)),
 		}
 	}
 
@@ -84,12 +84,12 @@ export function generateAttendances(event: LilRegieEvent, checked_in: boolean) {
 	return attendances
 }
 
-function generateCustomFeilds(count: number): CustomField[] {
+function generateCustomFields(count: number): CustomField[] {
 	let customFields: CustomField[] = []
 	for (let i = 0; i < count; i++) {
 		customFields.push({
 			input_type: faker.datatype.string(),
-			name: genID(),
+			name: faker.lorem.words(faker.datatype.number(2)+1),
 			values: faker.datatype.boolean() ? [faker.lorem.sentence()] : [faker.lorem.sentence(),faker.lorem.sentence()],
 		})
 	}
