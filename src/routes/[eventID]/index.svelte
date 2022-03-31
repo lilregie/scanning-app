@@ -14,7 +14,7 @@
 	import { currentEvent, currentEventID, eventletAttendees } from '$lib/store';
 	import type { TableRow } from '$lib/components/Table.svelte';
 	import { basePath } from '$lib/consts';
-	import EventletManager from '$lib/components/EventletManager.svelte';
+	import EventletManager from '$lib/components/eventlet/EventletManager.svelte';
 	import StatsView from '$lib/components/StatsView.svelte';
 
 	export let url: string;

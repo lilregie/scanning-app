@@ -15,6 +15,7 @@
 	import { writable } from 'svelte/store';
 	import { bind } from 'svelte-simple-modal';
 	import CloseButton from './CloseButton.svelte';
+	import EventletBox from './eventlet/EventletBox.svelte';
 
 	export let attendee: Readable<Attendee>;
 	export let direction: 'horizontal' | 'vertical' = 'horizontal';
@@ -153,10 +154,7 @@
 				{#if $attendee?.attendances.length > 0}
 				<div class="bookings-container">
 					{#each $attendee.attendances.sort((a,b)=>(a.eventlet_name > b.eventlet_name)?1:-1) as attendance}
-						{@const eventlet_selected = $selectedEventletIDs.includes(attendance.eventlet_id)}
-						<div class="booking" alt={`#${attendance.eventlet_id}`} class:booking-selected={eventlet_selected}>
-							<span class="booking-name">{attendance.eventlet_name}</span>
-						</div>
+						<EventletBox eventletId={attendance.eventlet_id}/>
 					{/each}
 				</div>
 				{:else}
@@ -265,22 +263,8 @@
 				flex-wrap: wrap;
 				top: -$spacing;
 				left: -$spacing;
-				.booking {
+				:global(div) {
 					margin: $spacing;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					padding: 1rem;
-					border-radius: 0.25rem;
-					background-color: #fff;
-					box-shadow: map-get($map: $shadows, $key: "small");
-					&.booking-selected {
-						border: map-get($map: $theme-colors, $key: "primary") solid 2px;
-					}
-					.booking-name {
-						font-size: 1.25rem;
-						font-weight: bold;
-					}
 				}
 				
 			}

@@ -13,7 +13,7 @@
 	import TextInput from '$lib/components/TextInput.svelte';
 	import Card from '$lib/components/Card.svelte';
 	import AttendeeDetails from '$lib/components/AttendeeDetails.svelte';
-	import EventletManager from '$lib/components/EventletManager.svelte';
+	import EventletManager from '$lib/components/eventlet/EventletManager.svelte';
 	import StepManager from '$lib/components/checkInSteps/StepManager.svelte';
 
 	import { attendeesTable } from '$lib/generateDataVis';

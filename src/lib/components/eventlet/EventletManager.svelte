@@ -94,7 +94,7 @@ import { writable } from 'svelte/store';
 </div>
 
 <style lang="scss">
-	@use '../styles/vars.scss' as *;
+	@use '../../styles/vars.scss' as *;
 
 	.container {
 		display: flex;
