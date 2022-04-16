@@ -5,6 +5,7 @@
 	import { StageState } from './stepManager';
 
 	export let stageState: StageState;
+	export let lastStep: boolean;
 
 	const dispatch = createEventDispatcher();
 
@@ -32,19 +33,26 @@
 		</div>
 		<div>
 			{#if stageState == StageState.Complete}
-				<Button on:click={next} size="large">Next</Button>
+				<Button on:click={next} size="large">
+					{lastStep ? "Finish" : "Next"}
+				</Button>
 			{:else if stageState == StageState.Warning}
-				<Button on:click={force} size="large" color="warning">Force</Button>
+				<Button on:click={force} size="large" color="warning">
+					{lastStep ? "Force Finish" : "Force"}
+				</Button>
 			{:else if stageState == StageState.Incomplete}
-				<Button color="secondary" on:click={skip} size="large">Skip</Button>
+				<Button color="secondary" on:click={skip} size="large">
+					{lastStep ? "Skip & Finish" : "Skip"}
+				</Button>
 			{:else if stageState == StageState.Stay}
 				<Button
 					color="secondary"
 					on:click={skip}
 					size="large"
 					disabled
-					title="You cannot continue without completing this step">Skip</Button
-				>
+					title="You cannot continue without at least completing this step">
+					{lastStep ? "Skip & Finish" : "Skip"}
+				</Button>
 			{/if}
 		</div>
 	</div>

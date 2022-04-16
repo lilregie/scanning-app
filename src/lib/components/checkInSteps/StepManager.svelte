@@ -3,16 +3,18 @@
 	import { get, writable, type Readable, type Writable } from 'svelte/store';
 
 	import { Steps as StepsViewer } from 'svelte-steps';
-	import { generateSteps, Steps, type AttendeeProfile } from './stepManager';
-	import { onMount } from 'svelte';
+	import { generateSteps, initiateCheckIn, Steps, type AttendeeProfile } from './stepManager';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
+
+	const dispatch = createEventDispatcher();
 
 	export let attendee: Readable<Attendee>;
 
 	let attendeeProfile: Writable<AttendeeProfile> = writable({
 		attendee: get(attendee),
 		eventlet: null,
-		ticket_eventlet_id: null,
+		ticket_eventlet: null,
 		covidPassInfo: null
 	});
 
@@ -21,11 +23,13 @@
 	let currentStepID = 0;
 	$: currentStep = steps[currentStepID];
 
-	function skip() {
-		currentStepID++;
-	}
 	function next() {
-		currentStepID++;
+		if (currentStepID < steps.length - 1) {
+			currentStepID++;
+		} else {
+			initiateCheckIn(get(attendeeProfile));
+			dispatch('close');
+		}
 	}
 	function back() {
 		currentStepID--;
@@ -46,10 +50,11 @@
 			<svelte:component
 				this={currentStep.component}
 				on:next={next}
-				on:skip={skip}
+				on:skip={next}
 				on:back={back}
 				on:force={next}
 				{attendeeProfile}
+				lastStep={currentStepID>=steps.length-1}
 			/>
 		</div>
 	{/if}

@@ -14,14 +14,15 @@
 	import Table, { type TableRow } from '$lib/components/Table.svelte';
 
 	export let attendeeProfile: Writable<AttendeeProfile>;
+	export let lastStep: boolean;
 
 	const dispatch = createEventDispatcher();
 
 	function next() {
 		dispatch('next');
 	}
-	function scan(event) {
-		let data = event.detail as ScanResults;
+	function scan(event: { detail: ScanResults; }) {
+		let data = event.detail;
 		if (!data.valid || data.data.type !== ScanTypes.CovidPass) {
 			$attendeeProfile.covidPassInfo = null;
 			return;
@@ -80,7 +81,7 @@
 	}
 </script>
 
-<StepLayout {stageState} on:next={next} on:skip on:back on:force={next}>
+<StepLayout {stageState} on:next={next} on:skip on:back on:force={next} {lastStep}>
 	<div class="scanner-wrapper">
 		<Scanner enabledScanTypes={[ScanTypes.CovidPass]} on:scan-complete={scan} />
 		{#if $attendeeProfile.covidPassInfo}

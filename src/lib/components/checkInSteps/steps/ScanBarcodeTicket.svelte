@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onDestroy } from 'svelte';
 
 	import Scanner from '$lib/components//scanner/ScannerWrapper.svelte';
 	import StepLayout from '../StepLayout.svelte';
@@ -8,18 +8,18 @@
 	import type { ScanResults } from '$lib/components/scanner/validateScan';
 	import { StageState, type AttendeeProfile } from '../stepManager';
 	import type { Writable } from 'svelte/store';
-	import { selectedEventletIDs } from '$lib/store';
+	import { currentEvent, selectedEventletIDs } from '$lib/store';
 	import EventletBox from '$lib/components/eventlet/EventletBox.svelte';
 	import SuccessTick from '$lib/components/SuccessTick.svelte';
 
 	export let attendeeProfile: Writable<AttendeeProfile>;
+	export let lastStep: boolean;
 
 	const dispatch = createEventDispatcher();
 
 	let ticketInfo: Ticket = null;
 
 	function next() {
-		$attendeeProfile.ticket_eventlet_id = ticketInfo.eventletID;
 		dispatch('next');
 	}
 
@@ -30,23 +30,13 @@
 		}
 
 		ticketInfo = data.data;
+		$attendeeProfile.ticket_eventlet = $currentEvent.eventlets.find(
+			(eventlet) => eventlet.id === ticketInfo.eventletID
+		);
+
 	}
 
 	let stageState: StageState = StageState.Incomplete;
-
-	
-
-	// function showWarning() {
-	// 	const attendee = $attendeeProfile.attendee;
-
-	// 	if (!ticketInfo || !$attendeeProfile.attendee) {
-	// 		return false;
-	// 	}
-	// 	return (
-	// 		ticketInfo.attendee.id !== attendee.id ||
-	// 		!$selectedEventletIDs.includes(ticketInfo.eventletID)
-	// 	);
-	// }
 
 	interface warning {
 		title: string;
@@ -64,12 +54,8 @@
 	}
 
 	$: {
-		(() => {
-			ticketWarnings = [];
-			if (!ticketInfo || !$attendeeProfile.attendee) {
-				return;
-			}
-
+		ticketWarnings = [];
+		if (ticketInfo && $attendeeProfile.attendee) {
 			if (ticketInfo.attendee.id !== $attendeeProfile.attendee.id) {
 				ticketWarnings.push({
 					title: 'Attendee Mismatch',
@@ -83,11 +69,15 @@
 					message: `The ticket scanned does not match any of the selected eventlets.`
 				});
 			}
-		})();
+		}
 	}
+
+	onDestroy(() => {
+		console.log("Yeeting Barcode Ticket yes")
+	});
 </script>
 
-<StepLayout {stageState} on:next={next} on:skip on:back on:force={next}>
+<StepLayout {stageState} on:next={next} on:skip on:back on:force={next} {lastStep}>
 	<div class="scanner-wrapper">
 		<Scanner enabledScanTypes={[ScanTypes.TicketBarcode]} on:scan-complete={scan} />
 		{#if ticketInfo}
@@ -119,8 +109,6 @@
 			</div>
 		{/if}
 	</div>
-
-	
 </StepLayout>
 
 <style lang="scss">
@@ -162,5 +150,4 @@
 			}
 		}
 	}
-	
 </style>

@@ -9,6 +9,7 @@ import ScanVaccinePassSvelte from "./steps/ScanVaccinePass.svelte";
 import ScanBarcodeTicketSvelte from "./steps/ScanBarcodeTicket.svelte";
 import AttendeeMatchingSvelte from "./steps/AttendeeMatching.svelte";
 import SelectEventletsSvelte from "./steps/SelectEventlets.svelte";
+import type { Eventlet } from "$lib/event";
 
 export enum Steps {
     ScanVaccinePass = "Scan Vaccine Pass",
@@ -65,6 +66,10 @@ export function generateSteps(attendeeProfile: AttendeeProfile) {
     return steps
 }
 
+export function initiateCheckIn(attendeeProfile: AttendeeProfile) {
+    console.log("Starting check in");
+}
+
 
 export enum StageState {
     Incomplete,
@@ -76,6 +81,6 @@ export enum StageState {
 export interface AttendeeProfile {
     attendee: Attendee | null,
     covidPassInfo: NZCovidPass | null,
-    ticket_eventlet_id: number | null,
+    ticket_eventlet: Eventlet | null,
     eventlet: number[]
 }
