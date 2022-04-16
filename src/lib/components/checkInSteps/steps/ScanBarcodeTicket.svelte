@@ -34,25 +34,19 @@
 
 	let stageState: StageState = StageState.Incomplete;
 
-	$: {
-		if (!$attendeeProfile.ticket_eventlet_id) {
-			stageState = StageState.Incomplete;
-		} else {
-			stageState = showWarning() ? StageState.Warning : StageState.Complete;
-		}
-	}
+	
 
-	function showWarning() {
-		const attendee = $attendeeProfile.attendee;
+	// function showWarning() {
+	// 	const attendee = $attendeeProfile.attendee;
 
-		if (!ticketInfo || !$attendeeProfile.attendee) {
-			return false;
-		}
-		return (
-			ticketInfo.attendee.id !== attendee.id ||
-			!$selectedEventletIDs.includes(ticketInfo.eventletID)
-		);
-	}
+	// 	if (!ticketInfo || !$attendeeProfile.attendee) {
+	// 		return false;
+	// 	}
+	// 	return (
+	// 		ticketInfo.attendee.id !== attendee.id ||
+	// 		!$selectedEventletIDs.includes(ticketInfo.eventletID)
+	// 	);
+	// }
 
 	interface warning {
 		title: string;
@@ -62,7 +56,14 @@
 	let ticketWarnings: warning[] = [];
 
 	$: {
-		// new function scope
+		if (!ticketInfo?.eventletID) {
+			stageState = StageState.Incomplete;
+		} else {
+			stageState = ticketWarnings.length > 0 ? StageState.Warning : StageState.Complete;
+		}
+	}
+
+	$: {
 		(() => {
 			ticketWarnings = [];
 			if (!ticketInfo || !$attendeeProfile.attendee) {
@@ -109,15 +110,17 @@
 				<div>
 					<EventletBox eventletId={ticketInfo.eventletID} />
 				</div>
+				{#each ticketWarnings as warning}
+					<span class="missmatch-warning">
+						<span class="title"><strong>Warning:</strong> {warning.title}</span>
+						<span class="message">{warning.message}</span>
+					</span>
+				{/each}
 			</div>
 		{/if}
 	</div>
 
-	{#if ticketWarnings.length > 0}
-		<span class="missmatch-warning">
-			<strong>Warning:</strong> The name on this pass does not match selected Attendee.
-		</span>
-	{/if}
+	
 </StepLayout>
 
 <style lang="scss">
@@ -147,11 +150,17 @@
 			.name {
 				text-transform: capitalize;
 			}
+			.header {
+				font-size: 1.5rem;
+				font-weight: bold;
+				margin-bottom: 0.5rem;
+			}
+			.missmatch-warning {
+				font-size: 1.2rem;
+				position: absolute;
+				bottom: 1em;
+			}
 		}
 	}
-	.missmatch-warning {
-		font-size: 1.2rem;
-		position: absolute;
-		bottom: 1em;
-	}
+	
 </style>
