@@ -2,7 +2,7 @@
 	import SuccessTick from "$lib/components/SuccessTick.svelte";
 	import dayjs from 'dayjs';
 	import relativeTime from 'dayjs/plugin/relativeTime.js';
-import InvalidCross from "./InvalidCross.svelte";
+	import InvalidCross from "./InvalidCross.svelte";
 	import type { NZCovidPass } from "./scanner/validateScan";
 
 	dayjs.extend(relativeTime, { rounding: Math.floor });
@@ -29,7 +29,7 @@ import InvalidCross from "./InvalidCross.svelte";
 		<div class="details">
 			<span class="name" title={`${data.givenName} ${data.lastName}`}>{name}</span>
 			<br/>
-			<span title={`DOB: ${data.DOB}`}>Age: {dayjs(data.DOB).toNow(true)}</span>
+			<span title={`DOB: ${data.DOB}`}>Age: {dayjs().diff(dayjs(data.DOB),"years")}</span>
 		</div>
 	</div>
 </div>

@@ -9,12 +9,17 @@
 	import type { ScanResults } from '$lib/components/scanner/validateScan';
 	import CovidPassBadge from '$lib/components/CovidPassBadge.svelte';
 	import { StageState, type AttendeeProfile } from '../stepManager';
-	import type { Writable } from 'svelte/store';
+	import { writable, type Writable } from 'svelte/store';
 	import { normString, titleCase } from '$lib/utill';
 	import Table, { type TableRow } from '$lib/components/Table.svelte';
 
 	export let attendeeProfile: Writable<AttendeeProfile>;
 	export let lastStep: boolean;
+
+	const fullAttendeeInfo: Writable<NZCovidPass | null> = writable(null);
+	// On step load, it will remove any previous covid pass scans
+	// TODO: Add UI and skip step if the attendee has already checked there covid pass
+	$: $attendeeProfile.covidPass = Boolean($fullAttendeeInfo);
 
 	const dispatch = createEventDispatcher();
 
@@ -24,17 +29,17 @@
 	function scan(event: { detail: ScanResults; }) {
 		let data = event.detail;
 		if (!data.valid || data.data.type !== ScanTypes.CovidPass) {
-			$attendeeProfile.covidPassInfo = null;
+			$fullAttendeeInfo = null;
 			return;
 		}
 
-		$attendeeProfile.covidPassInfo = data.data;
+		$fullAttendeeInfo = data.data;
 	}
 
 	let stageState: StageState = StageState.Incomplete;
 
 	$: {
-		if (!$attendeeProfile.covidPassInfo) {
+		if (!$fullAttendeeInfo) {
 			stageState = StageState.Incomplete;
 		} else {
 			stageState = covidPassNameMatch() ? StageState.Complete : StageState.Warning;
@@ -42,7 +47,7 @@
 	}
 
 	function covidPassNameMatch() {
-		const pass = $attendeeProfile.covidPassInfo;
+		const pass = $fullAttendeeInfo;
 		const attendee = $attendeeProfile.attendee;
 
 		if (!pass || !attendee) {
@@ -68,7 +73,7 @@
 	}
 
 	$: normalisedNames = normalisedNamesFromPass(
-		$attendeeProfile.covidPassInfo,
+		$fullAttendeeInfo,
 		$attendeeProfile.attendee
 	);
 	// For name mismatch warning dialog
@@ -84,9 +89,9 @@
 <StepLayout {stageState} on:next={next} on:skip on:back on:force={next} {lastStep}>
 	<div class="scanner-wrapper">
 		<Scanner enabledScanTypes={[ScanTypes.CovidPass]} on:scan-complete={scan} />
-		{#if $attendeeProfile.covidPassInfo}
+		{#if $fullAttendeeInfo}
 			<CovidPassBadge
-				data={$attendeeProfile.covidPassInfo}
+				data={$fullAttendeeInfo}
 				icon={stageState === StageState.Warning ? 'tick' : 'warning'}
 			/>
 		{/if}

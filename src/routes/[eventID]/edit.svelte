@@ -14,7 +14,6 @@
 	import Card from '$lib/components/Card.svelte';
 	import AttendeeDetails from '$lib/components/AttendeeDetails.svelte';
 	import EventletManager from '$lib/components/eventlet/GlobalEventletManager.svelte';
-	import StepManager from '$lib/components/checkInSteps/StepManager.svelte';
 
 	import { attendeesTable } from '$lib/generateDataVis';
 	import { createCheckIn, removeLatestCheckIn } from '$lib/api/api';
@@ -24,21 +23,27 @@
 		globalModalState,
 		selectedAttendee,
 		selectedAttendeeID,
-		currentEventID
+		currentEventID,
+		currentEvent
 	} from '$lib/store';
 	import { basePath } from '$lib/consts';
+	import { encode_url } from '$lib/components/checkInSteps/encodeAttendeeProfileURL';
+	import type { AttendeeProfile } from '$lib/components/checkInSteps/stepManager';
 
 	import { get, writable } from 'svelte/store';
-	import type {Readable, Writable} from 'svelte/store';
+	import type { Writable } from 'svelte/store';
 	import { fly, fade } from 'svelte/transition';
 
-	import { Circle } from 'svelte-loading-spinners';
 	import { bind } from 'svelte-simple-modal';
+	import { Circle } from 'svelte-loading-spinners';
 	import { goto } from '$app/navigation';
-import { onDestroy } from 'svelte';
+	import { onDestroy } from 'svelte';
+	import ScanResult from '$lib/components/scanner/ScanResult.svelte';
+	import { ScanTypes, type ScanResults } from '$lib/components/scanner/validateScan';
+	import { findEventletByID } from '$lib/utill';
+import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
 
 	export let url: string;
-
 
 	let attendeesTableData: [string[], TableRow[]];
 
@@ -69,6 +74,37 @@ import { onDestroy } from 'svelte';
 		}
 	});
 
+	async function checkinAttendee() {
+		let attendeeProfile: AttendeeProfile = {
+			attendee: $selectedAttendee,
+			covidPass: $selectedAttendee.vaccine_pass,
+			check_in_eventlet: null,
+			ticket_eventlet: null
+		};
+
+		goto(`${basePath}/${$currentEventID}/check-in${await encode_url(attendeeProfile)}`);
+	}
+
+	async function checkinScan(event: CustomEvent<ScanResults>) {
+		let scanResults = event.detail;
+
+		if (scanResults.data.type === ScanTypes.CovidPass) {
+			// The vaccine pass name matching windows manages the check-in process
+
+			// @ts-expect-error
+			globalModalState.set(bind(AttendeeMatching, { data: scanResults.data }));
+		} else if (scanResults.data.type === ScanTypes.TicketBarcode) {
+			// If it's a ticket, we can go straight to the check-in process
+			let attendeeProfile: AttendeeProfile = {
+				attendee: scanResults.data.attendee,
+				covidPass: scanResults.data.attendee.vaccine_pass,
+				check_in_eventlet: null,
+				ticket_eventlet: findEventletByID(get(currentEvent), scanResults.data.eventletID)
+			};
+			goto(`${basePath}/${$currentEventID}/check-in${await encode_url(attendeeProfile)}`);
+		}
+	}
+
 	onDestroy(() => {
 		if (leftBarHighlightedTimeout) {
 			clearTimeout(leftBarHighlightedTimeout);
@@ -84,9 +120,9 @@ import { onDestroy } from 'svelte';
 		rightTop: false
 	}}
 	overflowType={{
-		left: "auto",
-		rightTop: "unset",
-		rightBottom: "auto"
+		left: 'auto',
+		rightTop: 'unset',
+		rightBottom: 'auto'
 	}}
 	backPath={`${basePath}/${$currentEventID}`}
 	{url}
@@ -108,7 +144,7 @@ import { onDestroy } from 'svelte';
 		{/if}
 
 		<div class="scanner-container">
-			<Scanner />
+			<Scanner on:scan-complete={checkinScan} />
 		</div>
 
 		{#if leftBarState === 'ValidateCovidPass'}
@@ -150,15 +186,7 @@ import { onDestroy } from 'svelte';
 				<AttendeeDetails
 					attendee={selectedAttendee}
 					closeable
-					on:checkIn={() => {
-						// leftBarState = 'ValidateCovidPass';
-						// leftBarHighlighted.set(true);
-						
-						// // @ts-expect-error
-						// globalModalState.set(bind(StepManager, { attendee: selectedAttendee }))
-
-						goto(`${basePath}/${$currentEventID}/check-in/${$selectedAttendeeID}`);
-					}}
+					on:checkIn={checkinAttendee}
 					on:removeLatestCheckIn={() => {
 						removeLatestCheckIn(get(selectedAttendee));
 					}}
@@ -276,13 +304,11 @@ import { onDestroy } from 'svelte';
 				color: $text-dark;
 			}
 			.no-select-instructions {
-				
 				font-size: 2em;
 				opacity: 40%;
 				font-weight: 700;
 				max-width: 700px;
 				text-align: center;
-
 			}
 		}
 	}

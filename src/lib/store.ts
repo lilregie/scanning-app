@@ -137,7 +137,6 @@ export const selectedEventletCombo: Readable<Eventlet> = derived([selectedEventl
 });
 
 export const allEventAttendees: Writable<Attendee[] | null> = writable(null);
-// we want to hide this attendeeList, to force the use of evenletAttndees
 
 export const eventletAttendees: Readable<Attendee[] | null> = derived([selectedEventletCombo, allEventAttendees], ([_selectedEventletCombo, _allEventAttendees]) => {
 	if (_selectedEventletCombo && _allEventAttendees) {

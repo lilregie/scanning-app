@@ -17,7 +17,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 1rem;
+		padding: 0.5rem;
 		border-radius: 0.25rem;
 		background-color: #fff;
 		box-shadow: map-get($map: $shadows, $key: 'small');
@@ -25,7 +25,7 @@
 			border: map-get($map: $theme-colors, $key: 'primary') solid 2px;
 		}
 		.eventlet-name {
-			font-size: 1.25rem;
+			font-size: 1.2rem;
 			font-weight: bold;
 		}
 	}

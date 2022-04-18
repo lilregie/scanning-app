@@ -41,19 +41,23 @@ const stepIcons: StepIcons = {
     "Attendee Matching": null,
 }
 
-export function generateSteps(attendeeProfile: AttendeeProfile) {
+export function generateSteps(attendeeProfile: AttendeeProfile): [StepItem[], number] {
     let stepOrder: Steps[] = [];
+    let completedSteps: Steps[] = [];
+
+    const addStep = (step: Steps,completed: any) => (completed ? completedSteps.push(step) : stepOrder.push(step));
     
+    addStep(Steps.ScanTicket, attendeeProfile.ticket_eventlet);
+
     if (get(currentEvent).vaccine_pass_enabled) {
-        stepOrder.push(Steps.ScanVaccinePass);
+        addStep(Steps.ScanVaccinePass, attendeeProfile.covidPass);
     }
 
-    stepOrder = stepOrder.concat([
-        Steps.ScanTicket,
-        Steps.ConfirmEventlets
-    ])
+    addStep(Steps.ConfirmEventlets, false); // always confirm eventlets
 
-    console.log("step order, ", stepOrder);
+    stepOrder = [...completedSteps, ...stepOrder];
+    console.log("step order",stepOrder, completedSteps);
+
     let steps: StepItem[] = stepOrder.map(step => {
         return {
             step,
@@ -63,7 +67,7 @@ export function generateSteps(attendeeProfile: AttendeeProfile) {
         }
     });
     
-    return steps
+    return [steps, completedSteps.length];
 }
 
 export function initiateCheckIn(attendeeProfile: AttendeeProfile) {
@@ -80,7 +84,7 @@ export enum StageState {
 
 export interface AttendeeProfile {
     attendee: Attendee | null,
-    covidPassInfo: NZCovidPass | null,
+    covidPass: boolean,
     ticket_eventlet: Eventlet | null,
-    eventlet: number[]
+    check_in_eventlet: Eventlet | null
 }

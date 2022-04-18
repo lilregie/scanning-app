@@ -6,17 +6,12 @@
 	import { generateSteps, initiateCheckIn, Steps, type AttendeeProfile } from './stepManager';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
+import { selectedAttendeeID } from '$lib/store';
 
 	const dispatch = createEventDispatcher();
 
-	export let attendee: Readable<Attendee>;
-
-	let attendeeProfile: Writable<AttendeeProfile> = writable({
-		attendee: get(attendee),
-		eventlet: null,
-		ticket_eventlet: null,
-		covidPassInfo: null
-	});
+	export let attendeeProfile: Writable<AttendeeProfile>;
+	
 
 	let steps = [];
 
@@ -35,8 +30,16 @@
 		currentStepID--;
 	}
 
+	function updateSelectedAttendee(attendeeProfile: AttendeeProfile) {
+		if (attendeeProfile.attendee) {
+			$selectedAttendeeID = attendeeProfile.attendee.id;
+		}
+	}
+	
+	$: updateSelectedAttendee($attendeeProfile);
+
 	onMount(() => {
-		steps = generateSteps(get(attendeeProfile));
+		[steps,currentStepID] = generateSteps(get(attendeeProfile));
 	});
 </script>
 
