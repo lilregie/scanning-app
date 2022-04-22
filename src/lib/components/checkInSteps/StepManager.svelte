@@ -4,74 +4,105 @@
 	import { generateSteps, initiateCheckIn, type AttendeeProfile } from './stepManager';
 
 	import { get, writable, type Readable, type Writable } from 'svelte/store';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 
 	import { Steps as StepsViewer } from 'svelte-steps';
-import type { CurrentSteps } from './currentStepStore';
+	import { tick } from 'svelte';
+	import type { StepItem } from './stepManager';
 
 	const dispatch = createEventDispatcher();
 
 	export let attendeeProfile: Writable<AttendeeProfile>;
-	
 
-	let stepManager: CurrentSteps = null;
+	let allSteps: StepItem[] = null;
+	let idStore: Writable<number> = null;
+	let currentStep: StepItem = null;
+	let currentStepID: number = 0;
 
-	// function next() {
-	// 	if (currentStepID < steps.length - 1) {
-	// 		currentStepID++;
-	// 	} else {
-	// 		initiateCheckIn(get(attendeeProfile));
-	// 		dispatch('close');
-	// 	}
-	// }
+	let idUnsubscribe = null;
 
 	function updateSelectedAttendee(attendeeProfile: AttendeeProfile) {
 		if (attendeeProfile.attendee) {
 			$selectedAttendeeID = attendeeProfile.attendee.id;
 		}
-		console.log("attendeeProfile", attendeeProfile.attendee);
+		console.log('attendeeProfile', attendeeProfile.attendee);
 	}
-	
+
 	$: updateSelectedAttendee($attendeeProfile);
 
-	// Step memory
-	// We want to remember full details about the current step state, so the user can easily backtrack.
-	// Each optionaly step exposes a writable store, which is preloaded with the current step state.
-	let stepMemory: {
-		[key: string]: Writable<any>;
-	} = {};
+	function nextStep() {
+		idStore.update((id) => {
+			if (id < allSteps.length - 1) {
+				return id + 1;
+			} else {
+				setTimeout(()=>{
+					initiateCheckIn(get(attendeeProfile));
+					dispatch('close');
+				})
+				return id;
+			}
+		});
+	}
+
+	function previousStep() {
+		idStore.update((id) => {
+			if (id > 0) {
+				return id - 1;
+			}
+			return id;
+		});
+	}
 
 	onMount(() => {
-		stepManager = generateSteps(get(attendeeProfile));
+		const [startingID, newSteps] = generateSteps(get(attendeeProfile));
+		idStore = writable(startingID);
+		allSteps = newSteps;
+
+		idStore.subscribe(async (id) => {
+			currentStepID = id;
+
+			// By waiting a tick before setting the current step, we ensure that the previous step has had a chance to destory itself
+			// Workaround for following issues
+			//
+			// https://github.com/sveltejs/svelte/issues/7458
+			// https://github.com/sveltejs/svelte/issues/7119
+			//
+			// TODO: Remove once these issues are resolved
+			currentStep = null;
+			await tick();
+			currentStep = allSteps[id];
+		});
+	});
+
+	onDestroy(() => {
+		idUnsubscribe();
 	});
 </script>
 
 <div class="container">
-	{#if stepManager }
-		<div class="stepper-wrapper">
-			{#if stepManager.steps.length > 0}
-				<StepsViewer steps={stepManager.steps} bind:current={stepManager.currentStepID} />
-			{/if}
-		</div>
-		<div class="content-slider">
-			{#if stepManager.currentStep}
-				<!-- All of the step modules dynamicaly render here -->
-				<svelte:component
-					this={stepManager.currentStep.component}
-					memory={stepManager.currentStep.memory}
-					on:next={stepManager.nextStep}
-					on:skip={stepManager.nextStep}
-					on:back={stepManager.previousStep}
-					on:force={stepManager.nextStep}
-					{attendeeProfile}
-					lastStep={false}
-				/>
-			{:else}
+	<div class="stepper-wrapper">
+		{#if allSteps && allSteps.length > 0}
+			<StepsViewer steps={allSteps} bind:current={currentStepID} />
+		{/if}
+	</div>
+	<div class="content-slider">
+		{#if currentStep}
+			<!-- All of the step modules dynamicaly render here -->
+			<svelte:component
+				this={currentStep.component}
+				memory={currentStep.memory}
+				on:next={nextStep}
+				on:skip={nextStep}
+				on:back={previousStep}
+				on:force={nextStep}
+				{attendeeProfile}
+				lastStep={false}
+			/>
+		{:else}
 			loading
-			{stepManager.currentStep}
-			{/if}
-		</div>
-	{/if}
+			{currentStep}
+		{/if}
+	</div>
 </div>
 
 <style lang="scss">

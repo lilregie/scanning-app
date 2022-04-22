@@ -10,7 +10,6 @@ import ScanBarcodeTicketSvelte from "./steps/ScanBarcodeTicket.svelte";
 import AttendeeMatchingSvelte from "./steps/AttendeeMatching.svelte";
 import SelectEventletsSvelte from "./steps/SelectEventlets.svelte";
 import type { Eventlet } from "$lib/event";
-import { CurrentSteps } from "./currentStepStore";
 
 export enum Steps {
     ScanVaccinePass = "Scan Vaccine Pass",
@@ -43,7 +42,9 @@ const stepIcons: StepIcons = {
     "Attendee Matching": null,
 }
 
-export function generateSteps(attendeeProfile: AttendeeProfile): CurrentSteps {
+export type StepData = [number, StepItem[]];
+
+export function generateSteps(attendeeProfile: AttendeeProfile): StepData {
     let stepOrder: Steps[] = [];
     let completedSteps: Steps[] = [];
 
@@ -70,7 +71,7 @@ export function generateSteps(attendeeProfile: AttendeeProfile): CurrentSteps {
         }
     });
     
-    return new CurrentSteps(completedSteps.length, steps);
+    return [completedSteps.length, steps];
 }
 
 export function initiateCheckIn(attendeeProfile: AttendeeProfile) {
