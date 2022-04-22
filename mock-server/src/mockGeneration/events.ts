@@ -8,19 +8,19 @@ const genID = () => faker.datatype.number();
 
 export function generateEvent(event_type: 'attendee' | 'ticket_only'): LilRegieEvent {
     const standalone = faker.datatype.boolean();
-    const evenletCount = standalone ? faker.datatype.number({
-        min: 2,
+    const eventletCount = standalone ? 1 : faker.datatype.number({
+        min: 1,
         max: 10
-    }) : 1;
+    });
     const eventID = genID();
 	return {
 		id: eventID,
-		name: `Genned Event | ${event_type} | ${evenletCount} eventlets | #${eventID}`,
+		name: `Genned Event | ${event_type} | ${standalone ? "standalone" : `${eventletCount} eventlets`} | #${eventID}`,
         permalink: faker.lorem.slug(),
         event_type,
         standalone: standalone,
         vaccine_pass_enabled: true,
-        eventlets: generateEventlets(evenletCount),
+        eventlets: generateEventlets(eventletCount),
         
 	};
 }
