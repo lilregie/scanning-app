@@ -45,6 +45,7 @@ const stepIcons: StepIcons = {
 export type StepData = [number, StepItem[]];
 
 export function generateSteps(attendeeProfile: AttendeeProfile): StepData {
+    const event = get(currentEvent);
     let stepOrder: Steps[] = [];
     let completedSteps: Steps[] = [];
 
@@ -52,11 +53,13 @@ export function generateSteps(attendeeProfile: AttendeeProfile): StepData {
     
     addStep(Steps.ScanTicket, attendeeProfile.ticket_eventlet);
 
-    if (get(currentEvent).vaccine_pass_enabled) {
+    if (event.vaccine_pass_enabled) {
         addStep(Steps.ScanVaccinePass, attendeeProfile.covidPass);
     }
 
-    addStep(Steps.ConfirmEventlets, false); // always confirm eventlets
+    if (!event.standalone) {
+        addStep(Steps.ConfirmEventlets, false); // always confirm eventlets if enabled
+    }
 
     stepOrder = [...completedSteps, ...stepOrder];
     console.log("step order",stepOrder, completedSteps);

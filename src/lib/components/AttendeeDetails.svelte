@@ -7,7 +7,7 @@
 	import FullAttendeeDetails from '$lib/components/modal/FullAttendeeDetails.svelte';
 	import InvalidCross from './InvalidCross.svelte';
 
-	import { globalModalState, selectedAttendee, selectedEventletIDs } from '$lib/store';
+	import { currentEvent, globalModalState, selectedAttendee, selectedEventletIDs } from '$lib/store';
 
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
@@ -53,20 +53,25 @@
 	let detailLevel = writable(0);
 	let elementWidth = 0;
 
+	$: maxDetailLevel = $currentEvent?.standalone ? 2 : 3;
+
 	$: {
 		if (direction === 'horizontal') {
 			// 250px needed per column to stop overflow
 			let calculatedSpacing = Math.floor(elementWidth / 250);
 
 			// Limit the details colums, so there is at least the name, and a max of the number of details
-			let newDetailLevel = Math.min(Math.max(calculatedSpacing, 1), 3);
+			let newDetailLevel = Math.min(Math.max(calculatedSpacing, 1), maxDetailLevel);
 
 			detailLevel.set(newDetailLevel);
 		}
 	}
-	if (direction === 'vertical') {
-		detailLevel.set(3);
+	$: {
+		if (direction === 'vertical') {
+			detailLevel.set(maxDetailLevel);
+		}
 	}
+
 </script>
 
 {#if closeable}
@@ -148,7 +153,7 @@
 				{/if}
 			</div>
 		{/if}
-		{#if $detailLevel > 2}
+		{#if $detailLevel > 2 && !$currentEvent?.standalone}
 			<div class="detail-column">
 				<h3 class="detail-group-header">Bookings</h3>
 				{#if $attendee?.attendances.length > 0}
@@ -171,7 +176,7 @@
 		{:else}
 			<Button on:click={checkIn}>Check In</Button>
 		{/if}
-		{#if $detailLevel < 3}
+		{#if $detailLevel < maxDetailLevel}
 			<Button on:click={moreDetails} color="secondary" outline>More Details</Button>
 		{/if}
 	</div>

@@ -201,10 +201,13 @@ import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
 			</Card>
 		{:else}
 			<div class="empty-attendee-details-container">
-				<EventletManager />
-				<p class="no-select-instructions">
-					Scan a booking or COVID pass, or search attendees to access their details.
-				</p>
+				{#if $currentEvent && !$currentEvent.standalone}
+					<EventletManager />
+				{:else}
+					<p class="no-select-instructions">
+						Scan a booking or COVID pass, or search attendees to access their details.
+					</p>
+				{/if}
 			</div>
 		{/if}
 	</div>

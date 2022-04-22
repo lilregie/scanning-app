@@ -53,7 +53,13 @@
 	</div>
 
 	<div slot="info-panel" class="info-panel">
-		<EventletManager/>
+		{#if $currentEvent !== null && !$currentEvent.standalone}
+			<EventletManager/>
+		{:else if $currentEvent !== null && $currentEvent.standalone}
+			<span class="standalone-info">
+				Standalone Event
+			</span>
+		{/if}
 	</div>
 
 	<div slot="list-panel" class="stats-view">
@@ -66,6 +72,17 @@
 	@use '../../lib/styles/vars.scss' as *;
 	.info-panel {
 		color: $text-dark;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		.standalone-info {
+			font-size: 2em;
+			opacity: 40%;
+			font-weight: 700;
+			max-width: 700px;
+			text-align: center;
+		}
 	}
 	.latest-check-ins-container {
 		position: relative;
