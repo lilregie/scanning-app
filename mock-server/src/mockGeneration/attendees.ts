@@ -24,13 +24,13 @@ export function generateAttendeesForEvent(event: LilRegieEvent): Attendee[] {
 	for (let i = 0; i < faker.datatype.number(70) + 12; i++) {
 		people.push(generateAttendee(((i + 1) * 137), event));
 	}
+	people.push(generateAttendee(2831, event,{first_name: "Jasper", last_name: "Miller-Waugh"}));
 	return people;
 }
 
 type attendeeOpts = { first_name: string, last_name: string };
 export function generateAttendee(id: number = genID(), event: LilRegieEvent, opts: attendeeOpts = { first_name: faker.name.firstName(), last_name: faker.name.lastName() }): Attendee | Attendee & AttendeePersonal {
 	let checked_in = faker.datatype.boolean();
-	console.log(opts.first_name)
 
 	let attendeePersonal: AttendeePersonal | {} = {}
 	if (event.event_type === 'attendee') {
@@ -65,7 +65,7 @@ export function generateAttendee(id: number = genID(), event: LilRegieEvent, opt
 
 export function generateAttendances(event: LilRegieEvent, checked_in: boolean) {
 	let attendances: EventletAttendance[] = [];
-	let count = faker.datatype.number(event.eventlets.length);
+	let count = faker.datatype.number(event.eventlets.length - 1) + 1;
 
 	let chosenEventlets = shuffleArray(event.eventlets).slice(0, count);
 

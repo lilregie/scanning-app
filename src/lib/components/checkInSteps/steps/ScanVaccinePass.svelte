@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Attendee } from '$lib/attendee';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 
 	import Scanner from '$lib/components//scanner/ScannerWrapper.svelte';
 	import StepLayout from '../StepLayout.svelte';
@@ -15,31 +15,36 @@
 
 	export let attendeeProfile: Writable<AttendeeProfile>;
 	export let lastStep: boolean;
+	export let memory: Writable<NZCovidPass>;
 
-	const fullAttendeeInfo: Writable<NZCovidPass | null> = writable(null);
+	const covidPass: Writable<NZCovidPass | null> = writable(null);
 	// On step load, it will remove any previous covid pass scans
 	// TODO: Add UI and skip step if the attendee has already checked there covid pass
-	$: $attendeeProfile.covidPass = Boolean($fullAttendeeInfo);
+	$: $attendeeProfile.covidPass = $attendeeProfile.covidPass || Boolean($covidPass);
+
+	const desubMemory = covidPass.subscribe((value) => {
+		if (value) {
+			memory.set(value);
+		}
+	});
 
 	const dispatch = createEventDispatcher();
 
-	function next() {
-		dispatch('next');
-	}
+
 	function scan(event: { detail: ScanResults; }) {
 		let data = event.detail;
 		if (!data.valid || data.data.type !== ScanTypes.CovidPass) {
-			$fullAttendeeInfo = null;
+			$covidPass = null;
 			return;
 		}
 
-		$fullAttendeeInfo = data.data;
+		$covidPass = data.data;
 	}
 
 	let stageState: StageState = StageState.Incomplete;
 
 	$: {
-		if (!$fullAttendeeInfo) {
+		if (!$covidPass) {
 			stageState = StageState.Incomplete;
 		} else {
 			stageState = covidPassNameMatch() ? StageState.Complete : StageState.Warning;
@@ -47,7 +52,7 @@
 	}
 
 	function covidPassNameMatch() {
-		const pass = $fullAttendeeInfo;
+		const pass = $covidPass;
 		const attendee = $attendeeProfile.attendee;
 
 		if (!pass || !attendee) {
@@ -73,7 +78,7 @@
 	}
 
 	$: normalisedNames = normalisedNamesFromPass(
-		$fullAttendeeInfo,
+		$covidPass,
 		$attendeeProfile.attendee
 	);
 	// For name mismatch warning dialog
@@ -84,14 +89,22 @@
 			[{ data: normalisedNames.map((x) => titleCase(x)) }]
 		];
 	}
+
+	onMount(() => {
+		covidPass.set($memory);
+	});
+
+	// onDestroy(() => {
+	// 	desubMemory();
+	// });
 </script>
 
-<StepLayout {stageState} on:next={next} on:skip on:back on:force={next} {lastStep}>
+<StepLayout {stageState} on:next on:skip on:back on:force {lastStep}>
 	<div class="scanner-wrapper">
 		<Scanner enabledScanTypes={[ScanTypes.CovidPass]} on:scan-complete={scan} />
-		{#if $fullAttendeeInfo}
+		{#if $covidPass}
 			<CovidPassBadge
-				data={$fullAttendeeInfo}
+				data={$covidPass}
 				icon={stageState === StageState.Warning ? 'tick' : 'warning'}
 			/>
 		{/if}

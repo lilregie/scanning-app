@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher, onDestroy } from 'svelte';
+	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 
 	import Scanner from '$lib/components//scanner/ScannerWrapper.svelte';
 	import StepLayout from '../StepLayout.svelte';
@@ -14,6 +14,7 @@
 
 	export let attendeeProfile: Writable<AttendeeProfile>;
 	export let lastStep: boolean;
+	export let memory: Writable<Ticket>;
 
 	const dispatch = createEventDispatcher();
 
@@ -30,6 +31,8 @@
 		}
 
 		ticketInfo = data.data;
+		memory.set(ticketInfo);
+
 		$attendeeProfile.ticket_eventlet = $currentEvent.eventlets.find(
 			(eventlet) => eventlet.id === ticketInfo.eventletID
 		);
@@ -72,9 +75,11 @@
 		}
 	}
 
-	onDestroy(() => {
-		console.log("Yeeting Barcode Ticket yes")
-	});
+	onMount(()=>{
+		if ($memory !== null) {
+			ticketInfo = $memory;
+		}
+	})
 </script>
 
 <StepLayout {stageState} on:next={next} on:skip on:back on:force={next} {lastStep}>

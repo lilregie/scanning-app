@@ -12,6 +12,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import {
+allEventAttendees,
 currentEvent,
 		currentEventID,
 		eventletAttendees,
@@ -35,8 +36,8 @@ currentEvent,
 
 	const backPath = `${basePath}/${$currentEventID}/edit`;
 	
-	const bootstrapAttendeeProfile: Readable<AttendeeProfile> = derived([page, currentEvent],([_page,_currentEvent], set)=>{
-		if (!_currentEvent) {
+	const bootstrapAttendeeProfile: Readable<AttendeeProfile> = derived([page, allEventAttendees],([_page,_allEventAttendees], set)=>{
+		if (!_allEventAttendees) {
 			set(null);
 			return;
 		}

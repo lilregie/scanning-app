@@ -1,7 +1,7 @@
 import type { Attendee } from "$lib/attendee";
 import { currentEvent } from "$lib/store";
 import type { SvelteComponent } from "svelte";
-import { get } from "svelte/store";
+import { get, writable, type Writable } from "svelte/store";
 import type { NZCovidPass } from "../scanner/validateScan";
 
 // Steps
@@ -10,6 +10,7 @@ import ScanBarcodeTicketSvelte from "./steps/ScanBarcodeTicket.svelte";
 import AttendeeMatchingSvelte from "./steps/AttendeeMatching.svelte";
 import SelectEventletsSvelte from "./steps/SelectEventlets.svelte";
 import type { Eventlet } from "$lib/event";
+import { CurrentSteps } from "./currentStepStore";
 
 export enum Steps {
     ScanVaccinePass = "Scan Vaccine Pass",
@@ -26,9 +27,10 @@ export const StepComponents = {
 }
 
 
-interface StepItem {
+export interface StepItem {
     step: Steps;
     text: string;
+    memory: Writable<any>;
     icon: typeof SvelteComponent | null;
     component: typeof SvelteComponent;
 }
@@ -41,7 +43,7 @@ const stepIcons: StepIcons = {
     "Attendee Matching": null,
 }
 
-export function generateSteps(attendeeProfile: AttendeeProfile): [StepItem[], number] {
+export function generateSteps(attendeeProfile: AttendeeProfile): CurrentSteps {
     let stepOrder: Steps[] = [];
     let completedSteps: Steps[] = [];
 
@@ -62,12 +64,13 @@ export function generateSteps(attendeeProfile: AttendeeProfile): [StepItem[], nu
         return {
             step,
             text: step.toString(),
+            memory: writable(null),
             icon: stepIcons[step],
             component: StepComponents[step],
         }
     });
     
-    return [steps, completedSteps.length];
+    return new CurrentSteps(completedSteps.length, steps);
 }
 
 export function initiateCheckIn(attendeeProfile: AttendeeProfile) {

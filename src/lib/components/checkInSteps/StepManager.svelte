@@ -1,64 +1,75 @@
 <script lang="ts">
 	import type { Attendee } from '$lib/attendee';
+	import { selectedAttendeeID } from '$lib/store';
+	import { generateSteps, initiateCheckIn, type AttendeeProfile } from './stepManager';
+
 	import { get, writable, type Readable, type Writable } from 'svelte/store';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	import { Steps as StepsViewer } from 'svelte-steps';
-	import { generateSteps, initiateCheckIn, Steps, type AttendeeProfile } from './stepManager';
-	import { createEventDispatcher, onMount } from 'svelte';
-	import { fly } from 'svelte/transition';
-import { selectedAttendeeID } from '$lib/store';
+import type { CurrentSteps } from './currentStepStore';
 
 	const dispatch = createEventDispatcher();
 
 	export let attendeeProfile: Writable<AttendeeProfile>;
 	
 
-	let steps = [];
+	let stepManager: CurrentSteps = null;
 
-	let currentStepID = 0;
-	$: currentStep = steps[currentStepID];
-
-	function next() {
-		if (currentStepID < steps.length - 1) {
-			currentStepID++;
-		} else {
-			initiateCheckIn(get(attendeeProfile));
-			dispatch('close');
-		}
-	}
-	function back() {
-		currentStepID--;
-	}
+	// function next() {
+	// 	if (currentStepID < steps.length - 1) {
+	// 		currentStepID++;
+	// 	} else {
+	// 		initiateCheckIn(get(attendeeProfile));
+	// 		dispatch('close');
+	// 	}
+	// }
 
 	function updateSelectedAttendee(attendeeProfile: AttendeeProfile) {
 		if (attendeeProfile.attendee) {
 			$selectedAttendeeID = attendeeProfile.attendee.id;
 		}
+		console.log("attendeeProfile", attendeeProfile.attendee);
 	}
 	
 	$: updateSelectedAttendee($attendeeProfile);
 
+	// Step memory
+	// We want to remember full details about the current step state, so the user can easily backtrack.
+	// Each optionaly step exposes a writable store, which is preloaded with the current step state.
+	let stepMemory: {
+		[key: string]: Writable<any>;
+	} = {};
+
 	onMount(() => {
-		[steps,currentStepID] = generateSteps(get(attendeeProfile));
+		stepManager = generateSteps(get(attendeeProfile));
 	});
 </script>
 
 <div class="container">
-	{#if steps.length > 0}
+	{#if stepManager }
 		<div class="stepper-wrapper">
-			<StepsViewer {steps} bind:current={currentStepID} />
+			{#if stepManager.steps.length > 0}
+				<StepsViewer steps={stepManager.steps} bind:current={stepManager.currentStepID} />
+			{/if}
 		</div>
 		<div class="content-slider">
-			<!-- All of the step modules dynamicaly render here -->
-			<svelte:component
-				this={currentStep.component}
-				on:next={next}
-				on:skip={next}
-				on:back={back}
-				on:force={next}
-				{attendeeProfile}
-				lastStep={currentStepID>=steps.length-1}
-			/>
+			{#if stepManager.currentStep}
+				<!-- All of the step modules dynamicaly render here -->
+				<svelte:component
+					this={stepManager.currentStep.component}
+					memory={stepManager.currentStep.memory}
+					on:next={stepManager.nextStep}
+					on:skip={stepManager.nextStep}
+					on:back={stepManager.previousStep}
+					on:force={stepManager.nextStep}
+					{attendeeProfile}
+					lastStep={false}
+				/>
+			{:else}
+			loading
+			{stepManager.currentStep}
+			{/if}
 		</div>
 	{/if}
 </div>
