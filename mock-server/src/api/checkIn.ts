@@ -8,15 +8,19 @@ export default function checkInInitialize(router: Router) {
     router.post("/:eventId/attendees/:attendeeId/checkin", (req, res) => {
         let attendee = getAttendee(req, res);
         if (attendee === null) {
+            res.status(400);
+            res.json({ "error": "attendee not found" });
             return;
         }
         
         let ticketIdHeader = extractOneHeader(req, "ticket_id");
         let vaccinePassHeader = extractOneHeader(req, "vaccine_pass");
+        console.log(ticketIdHeader, vaccinePassHeader);
 
         if (!parseInt(ticketIdHeader as string) || !vaccinePassHeader) {
             res.status(400);
             res.json({ "error": "missing valid ticket_id or vaccine_pass" });
+            return;
         }
 
         let eventlet = attendee.attendances.find((x) => x.id === parseInt(ticketIdHeader as string));

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import EventletSelector from '$lib/components/eventlet/EventletSelector.svelte';
+import type { Eventlet } from '$lib/event';
 	import type { Writable } from 'svelte/store';
 	import StepLayout from '../StepLayout.svelte';
 	import { StageState, type AttendeeProfile } from '../stepManager';
@@ -10,6 +11,12 @@
 
 	let stageState = StageState.Complete;
     let selectedValues: Writable<SelectorValue>;
+
+    function selectEventlet(detail: { detail: Eventlet[] }) {
+        if (detail.detail.length === 1) {
+            $attendeeProfile.check_in_eventlet = detail.detail[0];
+        }
+    }
 
     let eventletIDWhitelist = $attendeeProfile.attendee.attendances.map((attendence) => attendence.eventlet_id);
 
@@ -25,6 +32,7 @@
 			multiSelect={false}
             bind:selectedValues={selectedValues}
             {eventletIDWhitelist}
+            on:select={selectEventlet}
 		/>
 	</div>
 </StepLayout>

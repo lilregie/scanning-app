@@ -77,11 +77,6 @@ export function generateSteps(attendeeProfile: AttendeeProfile): StepData {
     return [completedSteps.length, steps];
 }
 
-export function initiateCheckIn(attendeeProfile: AttendeeProfile) {
-    console.log("Starting check in");
-}
-
-
 export enum StageState {
     Incomplete,
     Complete,

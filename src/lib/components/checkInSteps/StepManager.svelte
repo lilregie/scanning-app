@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Attendee } from '$lib/attendee';
 	import { selectedAttendeeID } from '$lib/store';
-	import { generateSteps, initiateCheckIn, type AttendeeProfile } from './stepManager';
+	import { generateSteps, type AttendeeProfile } from './stepManager';
 
 	import { get, writable, type Readable, type Writable } from 'svelte/store';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
@@ -9,6 +9,7 @@
 	import { Steps as StepsViewer } from 'svelte-steps';
 	import { tick } from 'svelte';
 	import type { StepItem } from './stepManager';
+import { createCheckIn } from '$lib/api/api';
 
 	const dispatch = createEventDispatcher();
 
@@ -36,7 +37,7 @@
 				return id + 1;
 			} else {
 				setTimeout(()=>{
-					initiateCheckIn(get(attendeeProfile));
+					createCheckIn(get(attendeeProfile));
 					dispatch('close');
 				})
 				return id;
@@ -58,7 +59,7 @@
 		idStore = writable(startingID);
 		allSteps = newSteps;
 
-		idStore.subscribe(async (id) => {
+		idUnsubscribe = idStore.subscribe(async (id) => {
 			currentStepID = id;
 
 			// By waiting a tick before setting the current step, we ensure that the previous step has had a chance to destory itself
@@ -69,13 +70,17 @@
 			//
 			// TODO: Remove once these issues are resolved
 			currentStep = null;
+			console.log("Awaiting Tick");
 			await tick();
+			console.log("Ticketed",allSteps[id]);
 			currentStep = allSteps[id];
 		});
 	});
 
 	onDestroy(() => {
-		idUnsubscribe();
+		if (idUnsubscribe) {
+			idUnsubscribe();
+		}
 	});
 </script>
 

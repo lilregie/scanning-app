@@ -8,35 +8,48 @@ import { apiTimers } from "./statusStores";
 import { mergeDeep } from "$lib/utill";
 
 export namespace request {
-	export function get(input: string, customParams: RequestInit = {}) {
-		return process(input, null, customParams, "GET");
+	interface RequestOptions {
+		route: string;
+		customParams?: RequestInit;
+		headers?: Headers;
 	}
-	export function post(input: string, data: any, customParams: RequestInit = {}) {
-		return process(input, data, customParams, "POST");
+	interface RequestOptionsWithBody extends RequestOptions {
+		body?: object;
 	}
-	export function put(input: string, data: any, customParams: RequestInit = {}) {
-		return process(input, data, customParams, "PUT");
+	interface FullRequestOptions extends RequestOptionsWithBody {
+		method: "GET" | "POST" | "PUT" | "DELETE";
+	}
+
+	export function get(options: RequestOptions) {
+		return process({...options, body: null, method: "GET"});
+	}
+	export function post(options: RequestOptionsWithBody) {
+		return process({...options, method: "POST"});
+	}
+	export function put(options: RequestOptionsWithBody) {
+		return process({...options, method: "PUT"});
 	}
 
 	// delete is a reserved word
-	export function delete_(input: string, data: any, customParams: RequestInit = {}) {
-		return process(input, data, customParams, "DELETE");
+	export function delete_(options: RequestOptionsWithBody) {
+		return process({...options, method: "DELETE"});
 	}
 
-	async function process(input: string, data: any | null, customParams: RequestInit = {}, method: "GET" | "POST" | "PUT" | "DELETE"): Promise<Response> {
+	async function process(options: FullRequestOptions): Promise<Response> {
+		const { route, method, body, customParams, headers } = options;
 
 		const origin = storeGet(apiProduction) ? "" : "http://localhost:8080";
 
-		let URL = `${origin}${basePath}${input}`
+		let URL = `${origin}${basePath}${route}`
 
 		// In production, sometimes the api url is /x/y.json, and the base path is /x/y
 		// To simulate in testing, we need to request .json, but that means the url
 		// is now relative, which is shouldn't be.
 
 		// ^ If not relative
-		if (`${basePath}${input}`[0] !== "/") {
+		if (`${basePath}${route}`[0] !== "/") {
 			// Make relative
-			URL = `${origin}${basePath}/${input}`;
+			URL = `${origin}${basePath}/${route}`;
 			console.log("yes", URL)
 		}
 
@@ -51,15 +64,20 @@ export namespace request {
 
 		let result = null;
 
-		const params = mergeDeep(
+		let merged_headers = headers || new Headers();
+		merged_headers.set("X-CSRF-Token", storeGet(csrfAPIState) || "");
+		merged_headers.set("X-Request-ID", requestID);
+		merged_headers.set("Accept", "application/json");
+		if (body) {
+			merged_headers.set("Content-Type", "application/json");
+		}
+
+		const params: RequestInit = mergeDeep(
 			{
 				method,
-				body: data && JSON.stringify(data) || null,
-				headers: {
-					"x-csrf-token": storeGet(csrfAPIState) || "",
-					"Accept": "application/json",
-				}
-			},
+				body: body && JSON.stringify(body) || null,
+				headers: merged_headers,
+			} as RequestInit,
 			customParams
 		);
 		console.log(customParams,params)

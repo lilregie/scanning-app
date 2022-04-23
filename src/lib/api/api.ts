@@ -1,10 +1,11 @@
 import { get } from 'svelte/store';
-import type { Attendee } from '../attendee';
+import type { Attendee, EventletAttendance } from '../attendee';
 import type { LilRegieEvent } from '../event';
 import { allEvents, currentEventID, eventletAttendees, allEventAttendees } from '../store';
 import {findByKey} from "$lib/utill"
 import { request } from './request';
 import { apiProduction, csrfAPIState, errorAPICallbacks } from './statusStores';
+import type { AttendeeProfile } from '$lib/components/checkInSteps/stepManager';
 
 export async function initializeAPI() {
 	console.log('initializeAPI');
@@ -31,7 +32,7 @@ export async function initializeAPI() {
 
 export async function getEventsList() {
 	console.log('Loading Events');
-	let result = await request.get('.json', {});
+	let result = await request.get({route: '.json'});
 	let events: LilRegieEvent[] = await result.json();
 	events.map((event)=>{
 		return event.eventlets.map((eventlet)=>{
@@ -46,7 +47,7 @@ export async function getEventsList() {
 
 export async function getAttendeesList(eventID: string) {
 	try {
-		let result = await request.get(`/${eventID}/attendees.json`, {});
+		let result = await request.get({route: `/${eventID}/attendees.json`});
 		if (result.status == 404) {
 			console.log("Event not found");
 		} else {
@@ -62,9 +63,26 @@ export async function getAttendeesList(eventID: string) {
 
 }
 
-export async function createCheckIn(attendee: Attendee, manually_checked_in: boolean, vaccine_certificate: string = null, ticket_id: number = null) {
-	if (findByKey(get(allEventAttendees), "id", attendee.id).checked_in_at !== null) {
-		console.warn("Tried to create check in, when attendee is already checked in");
+export async function createCheckIn(attendeeProfile: AttendeeProfile) {
+	const {attendee, check_in_eventlet, covidPass, ticket_eventlet} = attendeeProfile;
+
+	// Required Data
+	if (!attendee) {
+		console.error("Tried to check-in attendee without an attendee selected: ", attendeeProfile);
+		return
+	}
+	if (!check_in_eventlet) {
+		console.error("Tried to check-in attendee without an attendance selected: ", attendeeProfile);
+		return
+	}
+
+	// First get attendance
+	console.log(attendee.attendances,check_in_eventlet)
+	let attendance = attendee.attendances.find((x: EventletAttendance)=>x.eventlet_id==check_in_eventlet.id);
+	console.log("attendance",attendance)
+
+	if (attendance.checked_in_at !== null) {
+		console.warn("Tring to create check in, when attendee is already checked in");
 	}
 
 	// So we can revert changes
@@ -82,35 +100,28 @@ export async function createCheckIn(attendee: Attendee, manually_checked_in: boo
 
 		// Apply changes
 		selectedAttendee.checked_in_at = new Date();
-		selectedAttendee.vaccine_pass = !!vaccine_certificate;
+		selectedAttendee.vaccine_pass = selectedAttendee.vaccine_pass || covidPass;
 
 		return _eventAttendees;
 	});
 
 	const requestHeaders: HeadersInit = new Headers();
-	requestHeaders.set('vaccine_pass', (!!vaccine_certificate).toString());
-	if (ticket_id) {
-		requestHeaders.set('ticket_id', ticket_id.toString());
-	}
+	requestHeaders.set('vaccine_pass', (covidPass).toString());
+	requestHeaders.set('ticket_id', attendance.id.toString());
 	console.log("Checking in with",requestHeaders)
-
 	try {
 
-		const checkInData = await request.post(
-			`/${get(currentEventID)}/attendees/${attendee.id}/checkin`,
-			{},
-			{headers: requestHeaders}
+		const checkInData = await request.post({
+				route: `/${get(currentEventID)}/attendees/${attendee.id}/checkin`,
+				headers: requestHeaders
+			}
 		);
 
 		if (checkInData.status !== 200) {
 
 			console.error("Failed to create checkin", checkInData.status, checkInData.text());
 
-			// Undo UI update
-			allEventAttendees.update((_eventAttendees) => {
-				findByKey(_eventAttendees, "id", attendee.id).checked_in_at = null
-				return _eventAttendees;
-			})
+			throw new Error("Failed to create checkin");
 		}
 	} catch {
 
@@ -125,7 +136,7 @@ export async function createCheckIn(attendee: Attendee, manually_checked_in: boo
 		})
 		errorAPICallbacks.update((_errorAPICallbacks) => {
 			_errorAPICallbacks.push(() => {
-				createCheckIn(attendee, manually_checked_in, vaccine_certificate, ticket_id);
+				createCheckIn(attendeeProfile);
 			})
 			return _errorAPICallbacks
 		})
@@ -150,7 +161,7 @@ export async function removeLatestCheckIn(attendee: Attendee) {
 		return _eventAttendees;
 	})
 	try {
-		const checkInData = await request.delete_(`/${get(currentEventID)}/attendees/${attendee.id}/checkin`, {}, {});
+		const checkInData = await request.delete_({route: `/${get(currentEventID)}/attendees/${attendee.id}/checkin`});
 		if (checkInData.status === 204) {
 			console.log("Successfully removed checkin");
 		} else if (checkInData.status === 422) {
