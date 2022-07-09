@@ -81,7 +81,8 @@ export enum StageState {
     Incomplete,
     Complete,
     Warning,
-    Stay
+    Stay,
+    Loading
 }
 
 export interface AttendeeProfile {

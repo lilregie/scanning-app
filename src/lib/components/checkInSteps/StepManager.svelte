@@ -9,7 +9,7 @@
 	import { Steps as StepsViewer } from 'svelte-steps';
 	import { tick } from 'svelte';
 	import type { StepItem } from './stepManager';
-import { createCheckIn } from '$lib/api/api';
+	import { createCheckIn } from '$lib/api/api';
 
 	const dispatch = createEventDispatcher();
 
@@ -36,10 +36,10 @@ import { createCheckIn } from '$lib/api/api';
 			if (id < allSteps.length - 1) {
 				return id + 1;
 			} else {
-				setTimeout(()=>{
+				setTimeout(() => {
 					createCheckIn(get(attendeeProfile));
 					dispatch('close');
-				})
+				});
 				return id;
 			}
 		});
@@ -70,10 +70,11 @@ import { createCheckIn } from '$lib/api/api';
 			//
 			// TODO: Remove once these issues are resolved
 			currentStep = null;
-			console.log("Awaiting Tick");
-			await tick();
-			console.log("Ticketed",allSteps[id]);
-			currentStep = allSteps[id];
+			console.log('Awaiting Tick');
+			setTimeout(() => {
+				console.log('Ticketed', allSteps[id]);
+				currentStep = allSteps[id];
+			}, 500);
 		});
 	});
 
@@ -87,7 +88,7 @@ import { createCheckIn } from '$lib/api/api';
 <div class="container">
 	<div class="stepper-wrapper">
 		{#if allSteps && allSteps.length > 0}
-			<StepsViewer steps={allSteps} bind:current={currentStepID} />
+			<StepsViewer steps={allSteps} bind:current={$idStore} />
 		{/if}
 	</div>
 	<div class="content-slider">
@@ -104,8 +105,7 @@ import { createCheckIn } from '$lib/api/api';
 				lastStep={false}
 			/>
 		{:else}
-			loading
-			{currentStep}
+			<div class="loading-placeholder" />
 		{/if}
 	</div>
 </div>
@@ -128,6 +128,17 @@ import { createCheckIn } from '$lib/api/api';
 		.content-slider {
 			height: 85%;
 			width: 100%;
+		}
+
+		.loadin-placeholder {
+			height: 100%;
+			width: 100%;
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			box-sizing: border-box;
 		}
 	}
 </style>

@@ -111,21 +111,43 @@
 	</div>
 
 	{#if stageState === StageState.Warning}
-		<span class="missmatch-warning">
-			<strong>Warning:</strong> The name on this pass does not match selected Attendee.
-			<Table tableHeaders={nameMissmatchTableData[0]} tableData={nameMissmatchTableData[1]} />
-		</span>
+		<div class="missmatch-warning">
+			<div class="message">
+				<h3>Warning</h3>
+				<span>The name on this pass does not match selected Attendee.</span>	
+			</div>
+			<Table tableHeaders={nameMissmatchTableData[0]} tableData={nameMissmatchTableData[1]} tableColumnLine />
+		</div>
 	{/if}
 </StepLayout>
 
 <style lang="scss">
+	@use '../../../styles/vars.scss' as *;
+	@use 'sass:map';
+
 	.scanner-wrapper {
 		max-width: 50em;
 		margin: 0 auto;
 	}
 	.missmatch-warning {
+		width: 100%;
+		box-sizing: border-box;
+
+		padding: 1em;
 		font-size: 1.2rem;
+
 		position: absolute;
 		bottom: 1em;
+
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		
+		border: 2px solid map-get($theme-colors, "warning");
+		border-radius: $radius-default;
+
+		h3 {
+			margin: 0;
+		}
+
 	}
 </style>

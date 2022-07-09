@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import { fade } from "svelte/transition";
 
 	import Button from '$lib/components/Button.svelte';
 	import { StageState } from './stepManager';
@@ -24,7 +25,7 @@
 </script>
 
 <div class="container">
-	<div class="page-focus">
+	<div class="page-focus"  in:fade={{duration: 100}} out:fade={{duration: 100}}>
 		<slot />
 	</div>
 	<div class="action-bar">
@@ -52,6 +53,13 @@
 					disabled
 					title="You cannot continue without at least completing this step">
 					{lastStep ? "Skip & Finish" : "Skip"}
+				</Button>
+			{:else if stageState == StageState.Loading}
+				<Button
+					color="secondary"
+					size="large"
+					disabled>
+					...
 				</Button>
 			{/if}
 		</div>

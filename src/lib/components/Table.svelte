@@ -13,6 +13,7 @@
 	export let tableData: TableRow[];
 	export let tableHeaders: string[];
 	export let emptyTableMessage: string = 'Nothing to show...';
+	export let tableColumnLine: boolean = false;
 
 	// Used so that the rows can be selected by arrow keys or
 	let currentlyClicked = 0;
@@ -67,7 +68,7 @@
 </script>
 
 <div class="table-wrapper">
-	<table on:keydown={handleKeydown}>
+	<table on:keydown={handleKeydown} class:tableColumnLine>
 		<thead>
 			<tr>
 				{#each tableHeaders as header}
@@ -179,6 +180,14 @@
 				font-weight: 600;
 				padding: 0.5rem;
 				background: rgba($background-foreground, 0.9);
+			}
+		}
+		&.tableColumnLine {
+			td, th {
+				border-left: $border-light solid $border-weight;
+			}
+			thead {
+				border-bottom: $border-light solid calc($border-weight * 2);
 			}
 		}
 	}

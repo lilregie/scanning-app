@@ -104,7 +104,7 @@ import { stringify } from 'uuid';
 					</div>
 				</div>
 				<div>
-					<EventletBox eventletId={ticketInfo.eventletID} />
+					<!-- <EventletBox eventletId={ticketInfo.eventletID} /> -->
 				</div>
 				{#each ticketWarnings as warning}
 					<span class="missmatch-warning">
