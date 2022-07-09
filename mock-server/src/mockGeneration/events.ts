@@ -35,7 +35,7 @@ function generateEventlets(count: number): [Eventlet, ...Eventlet[]] {
         center_time = faker.datatype.boolean() ? new Date() : center_time;
         eventlets.push({
             ticket_limit: faker.datatype.boolean() ? null : ticket_limit,
-            checked_in_count: Math.round(faker.datatype.float(1) * faker.datatype.number(400)),
+            checked_in_count: Math.round(faker.datatype.float(1) * total_ticket_count),
             id: genID(),
             name: capitalizeFirstLetter(faker.company.bs()),
             total_ticket_count,

@@ -19,7 +19,9 @@ export interface Eventlet {
     name: string;
     // users can set a max total number of tickets for this event
     ticket_limit: number | null;
+    // the number of tickets that have been checked in
     checked_in_count: number;
+    // the number of tickets purchased
     total_ticket_count: number;
     // when the eventlet itself is running
     datetime_start: Date;

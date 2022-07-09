@@ -68,7 +68,7 @@ export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 
 	// Required Data
 	if (!attendee) {
-		console.error("Tried to check-in attendee without an attendee selected: ", attendeeProfile);
+		console.error("Tried to check-in attendee without an attendee selected: ",attendee, attendeeProfile);
 		return
 	}
 	if (!check_in_eventlet) {

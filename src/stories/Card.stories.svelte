@@ -1,7 +1,7 @@
 <script>
 	import { Meta, Template, Story } from '@storybook/addon-svelte-csf';
 	import Card from '../lib/components/Card.svelte';
-	import faker from 'faker';
+	import { faker } from '@faker-js/faker';
 	faker.seed(1);
 </script>
 

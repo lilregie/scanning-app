@@ -11,6 +11,7 @@
 	import { currentEvent, selectedEventletIDs } from '$lib/store';
 	import EventletBox from '$lib/components/eventlet/EventletBox.svelte';
 	import SuccessTick from '$lib/components/SuccessTick.svelte';
+import { stringify } from 'uuid';
 
 	export let attendeeProfile: Writable<AttendeeProfile>;
 	export let lastStep: boolean;
@@ -112,6 +113,9 @@
 					</span>
 				{/each}
 			</div>
+		{/if}
+		{#if $attendeeProfile.attendee}
+			{JSON.stringify($attendeeProfile.attendee.attendances.map(x=>x.ticket_number))}
 		{/if}
 	</div>
 </StepLayout>

@@ -37,7 +37,7 @@ export function generateAttendee(id: number = genID(), event: LilRegieEvent, opt
 		attendeePersonal = {
 			first_name: opts.first_name,
 			last_name: opts.last_name,
-			contact_phone: maybe(faker.phone.phoneNumber()),
+			contact_phone: maybe(faker.phone.number()),
 			email_address: maybe(faker.internet.email()),
 			organisation: maybe(faker.company.companyName()),
 			position: maybe(faker.name.jobType()),
