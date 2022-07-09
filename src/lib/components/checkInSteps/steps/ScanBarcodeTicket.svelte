@@ -11,19 +11,15 @@
 	import { currentEvent, selectedEventletIDs } from '$lib/store';
 	import EventletBox from '$lib/components/eventlet/EventletBox.svelte';
 	import SuccessTick from '$lib/components/SuccessTick.svelte';
-import { stringify } from 'uuid';
+	import { stringify } from 'uuid';
 
 	export let attendeeProfile: Writable<AttendeeProfile>;
-	export let lastStep: boolean;
 	export let memory: Writable<Ticket>;
+	export let stageState: StageState = StageState.Incomplete;
 
 	const dispatch = createEventDispatcher();
 
 	let ticketInfo: Ticket = null;
-
-	function next() {
-		dispatch('next');
-	}
 
 	function scan(event: { detail: ScanResults }) {
 		let data = event.detail as ScanResults;
@@ -39,8 +35,6 @@ import { stringify } from 'uuid';
 		);
 
 	}
-
-	let stageState: StageState = StageState.Incomplete;
 
 	interface warning {
 		title: string;
@@ -83,42 +77,40 @@ import { stringify } from 'uuid';
 	})
 </script>
 
-<StepLayout {stageState} on:next={next} on:skip on:back on:force={next} {lastStep}>
-	<div class="scanner-wrapper">
-		<Scanner enabledScanTypes={[ScanTypes.TicketBarcode]} on:scan-complete={scan} />
-		{#if ticketInfo}
-			<div class="ticket-info">
-				<div class="tick-wrapper">
-					{#if ticketWarnings.length === 0}
-						<SuccessTick colour="green" />
-					{:else}
-						<SuccessTick colour="orange" />
-					{/if}
-				</div>
-				<div class="text-container">
-					<div class="header">Ticket Valid</div>
-					<div class="details">
-						<span class="name"
-							>{`${ticketInfo.attendee.first_name} ${ticketInfo.attendee.last_name}`}</span
-						>
-					</div>
-				</div>
-				<div>
-					<!-- <EventletBox eventletId={ticketInfo.eventletID} /> -->
-				</div>
-				{#each ticketWarnings as warning}
-					<span class="missmatch-warning">
-						<span class="title"><strong>Warning:</strong> {warning.title}</span>
-						<span class="message">{warning.message}</span>
-					</span>
-				{/each}
+<div class="scanner-wrapper">
+	<Scanner enabledScanTypes={[ScanTypes.TicketBarcode]} on:scan-complete={scan} />
+	{#if ticketInfo}
+		<div class="ticket-info">
+			<div class="tick-wrapper">
+				{#if ticketWarnings.length === 0}
+					<SuccessTick colour="green" />
+				{:else}
+					<SuccessTick colour="orange" />
+				{/if}
 			</div>
-		{/if}
-		{#if $attendeeProfile.attendee}
-			{JSON.stringify($attendeeProfile.attendee.attendances.map(x=>x.ticket_number))}
-		{/if}
-	</div>
-</StepLayout>
+			<div class="text-container">
+				<div class="header">Ticket Valid</div>
+				<div class="details">
+					<span class="name"
+						>{`${ticketInfo.attendee.first_name} ${ticketInfo.attendee.last_name}`}</span
+					>
+				</div>
+			</div>
+			<div>
+				<EventletBox eventletId={ticketInfo.eventletID} />
+			</div>
+			{#each ticketWarnings as warning}
+				<span class="missmatch-warning">
+					<span class="title"><strong>Warning:</strong> {warning.title}</span>
+					<span class="message">{warning.message}</span>
+				</span>
+			{/each}
+		</div>
+	{/if}
+	{#if $attendeeProfile.attendee}
+		{JSON.stringify($attendeeProfile.attendee.attendances.map(x=>x.ticket_number))}
+	{/if}
+</div>
 
 <style lang="scss">
 	@use '../../../styles/vars.scss' as *;

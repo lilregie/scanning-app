@@ -5,10 +5,9 @@
 	import { StageState, type AttendeeProfile } from '../stepManager';
 
 	export let attendeeProfile: Writable<AttendeeProfile>;
-    export let lastStep: boolean;
+    export let stageState: StageState = StageState.Complete;
 
 
-	let stageState = StageState.Complete;
     let selectedValues: Writable<SelectorValue>;
 
     let eventletIDWhitelist = $attendeeProfile.attendee.attendances.map((attendence) => attendence.eventlet_id);
@@ -16,18 +15,16 @@
     $: stageState = $selectedValues ? StageState.Complete : StageState.Stay;
 </script>
 
-<StepLayout {stageState} on:next on:skip on:back on:force {lastStep}>
-	<div class="select-container">
-        <h2>Comfirm Eventlet</h2>
-        <div class="helper-text">Select the eventlet to check-in the attendee into</div>
-		<EventletSelector
-			startingEventlets={$attendeeProfile.ticket_eventlet ?? null}
-			multiSelect={false}
-            bind:selectedValues={selectedValues}
-            {eventletIDWhitelist}
-		/>
-	</div>
-</StepLayout>
+<div class="select-container">
+    <h2>Comfirm Eventlet</h2>
+    <div class="helper-text">Select the eventlet to check-in the attendee into</div>
+    <EventletSelector
+        startingEventlets={$attendeeProfile.ticket_eventlet ?? null}
+        multiSelect={false}
+        bind:selectedValues={selectedValues}
+        {eventletIDWhitelist}
+    />
+</div>
 
 <style lang="scss">
     .select-container {

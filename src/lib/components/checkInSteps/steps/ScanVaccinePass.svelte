@@ -14,8 +14,8 @@
 	import Table, { type TableRow } from '$lib/components/Table.svelte';
 
 	export let attendeeProfile: Writable<AttendeeProfile>;
-	export let lastStep: boolean;
 	export let memory: Writable<NZCovidPass>;
+	export let stageState: StageState = StageState.Incomplete;
 
 	const covidPass: Writable<NZCovidPass | null> = writable(null);
 	// On step load, it will remove any previous covid pass scans
@@ -41,7 +41,6 @@
 		$covidPass = data.data;
 	}
 
-	let stageState: StageState = StageState.Incomplete;
 
 	$: {
 		if (!$covidPass) {
@@ -94,32 +93,27 @@
 		covidPass.set($memory);
 	});
 
-	// onDestroy(() => {
-	// 	desubMemory();
-	// });
 </script>
 
-<StepLayout {stageState} on:next on:skip on:back on:force {lastStep}>
-	<div class="scanner-wrapper">
-		<Scanner enabledScanTypes={[ScanTypes.CovidPass]} on:scan-complete={scan} />
-		{#if $covidPass}
-			<CovidPassBadge
-				data={$covidPass}
-				icon={stageState === StageState.Warning ? 'tick' : 'warning'}
-			/>
-		{/if}
-	</div>
-
-	{#if stageState === StageState.Warning}
-		<div class="missmatch-warning">
-			<div class="message">
-				<h3>Warning</h3>
-				<span>The name on this pass does not match selected Attendee.</span>	
-			</div>
-			<Table tableHeaders={nameMissmatchTableData[0]} tableData={nameMissmatchTableData[1]} tableColumnLine />
-		</div>
+<div class="scanner-wrapper">
+	<Scanner enabledScanTypes={[ScanTypes.CovidPass]} on:scan-complete={scan} />
+	{#if $covidPass}
+		<CovidPassBadge
+			data={$covidPass}
+			icon={stageState === StageState.Warning ? 'tick' : 'warning'}
+		/>
 	{/if}
-</StepLayout>
+</div>
+
+{#if stageState === StageState.Warning}
+	<div class="missmatch-warning">
+		<div class="message">
+			<h3>Warning</h3>
+			<span>The name on this pass does not match selected Attendee.</span>	
+		</div>
+		<Table tableHeaders={nameMissmatchTableData[0]} tableData={nameMissmatchTableData[1]} tableColumnLine />
+	</div>
+{/if}
 
 <style lang="scss">
 	@use '../../../styles/vars.scss' as *;

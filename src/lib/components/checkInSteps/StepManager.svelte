@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Attendee } from '$lib/attendee';
 	import { selectedAttendeeID } from '$lib/store';
-	import { generateSteps, type AttendeeProfile } from './stepManager';
+	import { generateSteps, StageState, type AttendeeProfile } from './stepManager';
 
 	import { get, writable, type Readable, type Writable } from 'svelte/store';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
@@ -10,6 +10,7 @@
 	import { tick } from 'svelte';
 	import type { StepItem } from './stepManager';
 	import { createCheckIn } from '$lib/api/api';
+	import StepLayout from './StepLayout.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -83,6 +84,8 @@
 			idUnsubscribe();
 		}
 	});
+
+	let currentStageState: StageState;
 </script>
 
 <div class="container">
@@ -94,16 +97,22 @@
 	<div class="content-slider">
 		{#if currentStep}
 			<!-- All of the step modules dynamicaly render here -->
-			<svelte:component
-				this={currentStep.component}
-				memory={currentStep.memory}
+			<StepLayout
+				stageState={currentStageState}
 				on:next={nextStep}
 				on:skip={nextStep}
 				on:back={previousStep}
 				on:force={nextStep}
-				{attendeeProfile}
-				lastStep={false}
-			/>
+				lastStep={$idStore===allSteps?.length-1}
+				firstStep={$idStore===0}
+			>
+				<svelte:component
+					this={currentStep.component}
+					memory={currentStep.memory}
+					bind:stageState={currentStageState}
+					bind:attendeeProfile
+				/>
+			</StepLayout>
 		{:else}
 			<div class="loading-placeholder" />
 		{/if}

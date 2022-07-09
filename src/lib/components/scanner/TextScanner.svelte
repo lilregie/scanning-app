@@ -22,7 +22,7 @@
 	scannerStatus.subscribe(async (status) => {
         if (status === ScannerStatus.Scanning) {
 			await tick();
-            textBox.focus();
+            textBox?.focus();
 		}
 
     })

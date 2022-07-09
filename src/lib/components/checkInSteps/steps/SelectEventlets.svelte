@@ -8,9 +8,8 @@
 	import { StageState, type AttendeeProfile } from '../stepManager';
 
 	export let attendeeProfile: Writable<AttendeeProfile>;
-	export let lastStep: boolean;
+	export let stageState = StageState.Complete;
 
-	let stageState = StageState.Complete;
 	let selectedValues: Writable<SelectorValue>;
 
 	function selectEventlet(detail: { detail: Eventlet[] }) {
@@ -20,8 +19,12 @@
 	}
 
 	function getStartingEventlet(attendeeProfile: AttendeeProfile): Eventlet {
+		console.log(attendeeProfile);
 		if (attendeeProfile?.check_in_eventlet) {
 			return attendeeProfile.check_in_eventlet;
+		}
+		if (attendeeProfile?.ticket_eventlet) {
+			return attendeeProfile?.ticket_eventlet;
 		}
 		if (attendeeProfile?.attendee?.attendances?.length == 1) {
 			return findEventletByID($currentEvent, attendeeProfile.attendee.attendances[0].eventlet_id);
@@ -34,22 +37,25 @@
 	);
 
 	$: stageState = $selectedValues ? StageState.Complete : StageState.Stay;
-	$: startingEventlet = getStartingEventlet($attendeeProfile);
+
+	let startingEventlet = null;
+	$: {
+		startingEventlet = getStartingEventlet($attendeeProfile);
+		$attendeeProfile.check_in_eventlet = startingEventlet
+	}
 </script>
 
-<StepLayout {stageState} on:next on:skip on:back on:force {lastStep}>
-	<div class="select-container">
-		<h2>Comfirm Eventlet</h2>
-		<div class="helper-text">Select the eventlet to check-in the attendee into</div>
-		<EventletSelector
-			startingEventlets={startingEventlet}
-			multiSelect={false}
-			bind:selectedValues
-			{eventletIDWhitelist}
-			on:select={selectEventlet}
-		/>
-	</div>
-</StepLayout>
+<div class="select-container">
+	<h2>Comfirm Eventlet</h2>
+	<div class="helper-text">Select the eventlet to check-in the attendee into</div>
+	<EventletSelector
+		startingEventlets={startingEventlet}
+		multiSelect={false}
+		bind:selectedValues
+		{eventletIDWhitelist}
+		on:select={selectEventlet}
+	/>
+</div>
 
 <style lang="scss">
 	.select-container {

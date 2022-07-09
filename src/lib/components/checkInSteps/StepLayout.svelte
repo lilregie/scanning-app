@@ -6,6 +6,7 @@
 	import { StageState } from './stepManager';
 
 	export let stageState: StageState;
+	export let firstStep: boolean;
 	export let lastStep: boolean;
 
 	const dispatch = createEventDispatcher();
@@ -22,15 +23,31 @@
 	function force() {
 		dispatch('force');
 	}
+	function handleKeypress(event: KeyboardEvent) {
+		console.log(event.key)
+		if (event.key === "ArrowRight") {
+			// Make sure they can go right
+			if (!(stageState===StageState.Stay || stageState===StageState.Loading)) {
+				next()
+			}
+		} else if (event.key === "ArrowLeft") {
+			back()
+		}
+	}
 </script>
+<svelte:window on:keydown={handleKeypress}/>
 
-<div class="container">
+<div class="container" >
 	<div class="page-focus"  in:fade={{duration: 100}} out:fade={{duration: 100}}>
 		<slot />
 	</div>
 	<div class="action-bar">
 		<div>
-			<Button on:click={back} color="secondary" outline size="large">Back</Button>
+			{#if !firstStep}
+				<Button on:click={back} color="secondary" outline size="large">Back</Button>
+			{:else}
+				<Button color="secondary" outline size="large" disabled>Back</Button>
+			{/if}
 		</div>
 		<div>
 			{#if stageState == StageState.Complete}
