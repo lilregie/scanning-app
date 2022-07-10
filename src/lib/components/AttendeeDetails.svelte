@@ -7,7 +7,12 @@
 	import FullAttendeeDetails from '$lib/components/modal/FullAttendeeDetails.svelte';
 	import InvalidCross from './InvalidCross.svelte';
 
-	import { currentEvent, globalModalState, selectedAttendee, selectedEventletIDs } from '$lib/store';
+	import {
+		currentEvent,
+		globalModalState,
+		selectedAttendee,
+		selectedEventletIDs
+	} from '$lib/store';
 
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
@@ -71,7 +76,6 @@
 			detailLevel.set(maxDetailLevel);
 		}
 	}
-
 </script>
 
 {#if closeable}
@@ -88,8 +92,12 @@
 	{#if $selectedAttendee}
 		<div class="detail-column">
 			<h2 class="attendee-name">
-				{$attendee?.first_name}
-				{$attendee?.last_name}
+				{#if $attendee?.first_name}
+					{$attendee?.first_name}
+					{$attendee?.last_name}
+				{:else}
+					Attendee #{$attendee.id}
+				{/if}
 			</h2>
 			<div class="attendee-org">
 				{$attendee?.organisation || ''}&nbsp;
@@ -157,11 +165,11 @@
 			<div class="detail-column">
 				<h3 class="detail-group-header">Bookings</h3>
 				{#if $attendee?.attendances.length > 0}
-				<div class="bookings-container">
-					{#each $attendee.attendances.sort((a,b)=>(a.eventlet_name > b.eventlet_name)?1:-1) as attendance}
-						<EventletBox eventletId={attendance.eventlet_id}/>
-					{/each}
-				</div>
+					<div class="bookings-container">
+						{#each $attendee.attendances.sort( (a, b) => (a.eventlet_name > b.eventlet_name ? 1 : -1) ) as attendance}
+							<EventletBox eventletId={attendance.eventlet_id} />
+						{/each}
+					</div>
 				{:else}
 					<span class="detail-missing">No Bookings Found</span>
 				{/if}
@@ -271,13 +279,12 @@
 				:global(div) {
 					margin: $spacing;
 				}
-				
 			}
 		}
 	}
 
-	.action-container {
-		position: absolute;
-		bottom: 0;
-	}
+	// .action-container {
+	// 	position: absolute;
+	// 	bottom: 0;
+	// }
 </style>

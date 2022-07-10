@@ -31,15 +31,15 @@ export function newestCheckInsTable(): [string[], TableRow[]] {
 }
 
 /// Generates an table of all the attendees, based off a search term
-export function attendeesTable(attendees: Attendee[], searchTerm: string = ""): [string[], TableRow[]] {
-	let tableHeaders = ["Name", "ID", "Checked In", "Vaccine Pass"];
+export function attendeesTable(attendees: Attendee[], searchTerm = ""): [string[], TableRow[]] {
+	const tableHeaders = ["Name", "ID", "Checked In", "Vaccine Pass"];
 
 	if (attendees === null) {return [tableHeaders,[]]};
 
 
 	let sortedAttendees: Attendee[];
 	if (searchTerm !== "") {
-		let fuse = new Fuse(attendees, {
+		const fuse = new Fuse(attendees, {
 			includeScore: true,
 			keys: [{
 				name: "first_name",
@@ -51,10 +51,10 @@ export function attendeesTable(attendees: Attendee[], searchTerm: string = ""): 
 	} else {
 		sortedAttendees = attendees;
 	}
-	let tableData: TableRow[] = sortedAttendees.map(attendee => {
+	const tableData: TableRow[] = sortedAttendees.map(attendee => {
 		return {
 			data: [
-				`${attendee.first_name}  ${attendee.last_name}`,
+				attendee.first_name ? `${attendee.first_name}  ${attendee.last_name}` : '',
 				attendee.id,
 				!!attendee.checked_in_at,
 				attendee.vaccine_pass
