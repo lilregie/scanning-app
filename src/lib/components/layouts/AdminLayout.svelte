@@ -23,10 +23,10 @@
 	};
 
 	export let overflowType = {
-		left: 'auto',
-		rightTop: 'auto',
-		rightBottom: 'auto'
-	};
+		left: "auto",
+		rightTop: "auto",
+		rightBottom: "auto"
+	}
 
 	export let backPath: string;
 	export let url: string;
@@ -98,7 +98,7 @@
 
 	.panel-container {
 		height: 100%;
-
+		
 		@media screen and (max-width: $breakpoint-mobile) {
 			.left-bar,
 			.right-bar {
@@ -108,7 +108,7 @@
 				min-height: 50vh;
 			}
 		}
-
+		
 		display: flex;
 		flex-direction: row;
 		align-items: stretch;
@@ -135,11 +135,10 @@
 			align-items: stretch;
 			row-gap: $item-spacing;
 			column-gap: $item-spacing;
-			overflow: auto;
 		}
 		.info-panel {
 			flex: 1;
-			// max-height: 50%;
+			max-height: 50%;
 			display: flex;
 			flex-flow: column;
 			.info-panel-header {
@@ -152,7 +151,7 @@
 		}
 		.list-panel {
 			flex: 1;
-			// max-height: 50vh;
+			max-height: 50vh;
 			overflow: var(--overflow-type);
 			display: flex;
 			flex-flow: column;
