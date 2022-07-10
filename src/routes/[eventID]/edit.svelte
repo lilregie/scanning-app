@@ -41,7 +41,7 @@
 	import ScanResult from '$lib/components/scanner/ScanResult.svelte';
 	import { ScanTypes, type ScanResults } from '$lib/components/scanner/validateScan';
 	import { findEventletByID } from '$lib/utill';
-import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
+	import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
 
 	export let url: string;
 
@@ -122,7 +122,7 @@ import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
 	overflowType={{
 		left: 'auto',
 		rightTop: 'unset',
-		rightBottom: 'auto'
+		rightBottom: 'unset'
 	}}
 	backPath={`${basePath}/${$currentEventID}`}
 	{url}
@@ -182,7 +182,7 @@ import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
 	</div>
 	<div slot="info-panel" class="info-panel">
 		{#if $selectedAttendee}
-			<Card expand={true} scroll={false} background={!!$selectedAttendee}>
+			<Card expand={true} scroll={true} background={!!$selectedAttendee}>
 				<AttendeeDetails
 					attendee={selectedAttendee}
 					closeable
