@@ -1,92 +1,91 @@
-<script lang="ts">
-	import Doughnut from 'svelte-chartjs/src/Doughnut.svelte';
-	import { Circle } from 'svelte-loading-spinners'
+<script context="module">
+	/** @type {import('@sveltejs/kit').Load} */
+	export const load = async ({ url }) => ({ props: { url: url.pathname } });
+</script>
 
-	import AdminLayout from '$lib/components/AdminLayout.svelte';
+<script lang="ts">
+	import { Circle } from 'svelte-loading-spinners';
+
+	import AdminLayout from '$lib/components/layouts/AdminLayout.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Table from '$lib/components/Table.svelte';
 	import { newestCheckInsTable } from '$lib/generateDataVis';
 
-	import { chosenEvent, chosenEventID, eventAttendees } from '$lib/store';
+	import { currentEvent, currentEventID, eventletAttendees } from '$lib/store';
 	import type { TableRow } from '$lib/components/Table.svelte';
 	import { basePath } from '$lib/consts';
+	import EventletManager from '$lib/components/eventlet/GlobalEventletManager.svelte';
+	import StatsView from '$lib/components/StatsView.svelte';
+
+	export let url: string;
 
 	let checkInTable: [string[], TableRow[]] = [[], []];
-	eventAttendees.subscribe((_) => {
+	eventletAttendees.subscribe((_) => {
 		checkInTable = newestCheckInsTable();
 	});
 
-	$: checkedIn = $eventAttendees?.filter((e) => e.checked_in_at !== null).length;
-	$: notCheckedIn = $eventAttendees?.length - checkedIn;
-	$: availableTickets = $chosenEvent?.['total_tickets'] - $eventAttendees?.length;
-
-	$: checkinChartData = {
-		labels: ['Checked in', 'Not Checked in', 'Available'],
-		datasets: [
-			{
-				label: 'Registrations',
-				data: [checkedIn, notCheckedIn, availableTickets],
-				backgroundColor: ['#2BA628', '#626262', 'rgba(255,255,255,0.08)'],
-				hoverOffset: 20,
-				borderWidth: 0,
-				rotation: 90,
-				borderRadius: 2,
-				cutout: '120'
-			}
-		]
-	};
-
-	const chartOptions = {
-		layout: {
-			padding: 50
-		},
-		plugins: {
-			legend: {
-				display: false
-			}
-		}
-	};
+	$: displayEvenetletManager = $currentEvent?.standalone;
 </script>
 
 <AdminLayout
 	cards={{
 		left: { scroll: true, highlighted: false },
 		rightBottom: false,
-		rightTop: false
+		rightTop: {
+			hide: true,
+			// hide: $currentEvent !== null && $currentEvent.standalone,
+			background: false,
+			shadow: false
+		}
 	}}
+	backPath={`${basePath}/`}
+	{url}
 >
 	<div slot="left-bar" class="latest-check-ins-container">
-		<h2 >Latest Check-Ins</h2>
-		{#if $eventAttendees !== null}
+		<h2>Latest Check-Ins</h2>
+		{#if $eventletAttendees !== null}
 			<div class="table-wrapper">
 				<Table tableHeaders={checkInTable[0]} tableData={checkInTable[1]} />
 			</div>
 		{:else}
-		<div class="loading-spinner">
-			<Circle color="grey" size="5" unit="em"/>
-		</div>
+			<div class="loading-spinner">
+				<Circle color="grey" size="5" unit="em" />
+			</div>
 		{/if}
 	</div>
 	<div slot="left-bar-footer">
-		<Button href="{basePath}/{$chosenEventID}/edit" expanded>Next</Button>
+		<Button href="{basePath}/{$currentEventID}/edit" expanded>Next</Button>
 	</div>
-	<div slot="right-bar" class="graph-container">
-		{#if $eventAttendees !== null}
-			<Doughnut data={checkinChartData} options={chartOptions} />
-			<div class="stats">
-				<h2>{$eventAttendees?.length} Registered</h2>
-				<h3>{availableTickets || '??'} Available Tickets</h3>
-			</div>
-		{:else}
-			<div class="loading-spinner">
-				<Circle color="grey" size="5" unit="em"/>
-			</div>
-		{/if}
+
+	<div slot="info-panel" class="info-panel">
+		<!-- {#if $currentEvent !== null && !$currentEvent.standalone} -->
+		<EventletManager />
+		<!-- {:else if $currentEvent !== null && $currentEvent.standalone}
+			<span class="standalone-info"> Standalone Event </span>
+		{/if} -->
+	</div>
+
+	<div slot="list-panel" class="stats-view">
+		<StatsView />
 	</div>
 </AdminLayout>
 
 <style lang="scss">
 	@use '../../lib/styles/vars.scss' as *;
+	.info-panel {
+		color: $text-dark;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		.standalone-info {
+			font-size: 2em;
+			opacity: 40%;
+			font-weight: 700;
+			max-width: 700px;
+			text-align: center;
+		}
+	}
 	.latest-check-ins-container {
 		position: relative;
 		display: flex;
@@ -101,37 +100,10 @@
 			text-align: center;
 		}
 	}
-	.graph-container {
-		display: flex;
-		flex-direction: column;
-		text-align: center;
-		flex: 1;
-		align-items: stretch;
-		align-content: stretch;
-		justify-content: center;
-		width: 30em;
-		max-width: 100%;
-		margin: auto;
-		color: white;
-		.stats {
-			h2,
-			h3 {
-				margin: 0;
-			}
-			h2 {
-				font-size: 2.5em;
-			}
-			h3 {
-				font-size: 1.4em;
-				font-weight: normal;
-			}
-		}
-	}
 	.loading-spinner {
-			flex-grow: 1;
-			align-self: center;
-			display: flex;
-			align-items: center;
-		}
-
+		flex-grow: 1;
+		align-self: center;
+		display: flex;
+		align-items: center;
+	}
 </style>

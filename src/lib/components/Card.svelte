@@ -1,9 +1,12 @@
 <script lang="ts">
+import CloseButton from "./CloseButton.svelte";
+
 	export let expand: boolean = false;
 	export let margin: boolean = true;
 	export let scroll: boolean = true;
 	export let shadow: false | 'small' | 'medium' | 'large' = 'medium';
 	export let background: boolean | string = true;
+	export let allowClosing: boolean = false;
 </script>
 
 <div
@@ -14,6 +17,9 @@
 	class:transparent={!background}
 	class:has-footer={$$slots.footer}
 >
+	{#if allowClosing}
+		<CloseButton on:close/>
+	{/if}
 	<div class="contents">
 		<slot />
 	</div>
@@ -37,6 +43,7 @@
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
+		position: relative;
 
 		&.transparent {
 			background: none;
@@ -97,5 +104,6 @@
 				overflow: auto;
 			}
 		}
+
 	}
 </style>

@@ -1,7 +1,7 @@
 // Declaration types for Hooks
 // * declarations that are not exported are for internal use
 
-import type { MaybePromise } from "@sveltejs/kit/types/helper";
+import type { MaybePromise } from "@sveltejs/kit/types/private";
 
 // type of string[] is only for set-cookie
 // everything else must be a type of string

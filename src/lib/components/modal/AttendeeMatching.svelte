@@ -1,31 +1,31 @@
 <script lang="ts">
-	import Table from '$lib/components/Table.svelte';
-	import CovidPassBadge from '$lib/components/CovidPassBadge.svelte';
-
 	import type { TableRow } from '$lib/components/Table.svelte';
 	import type { Attendee } from '$lib/attendee';
 
+	import type { Readable, Writable } from 'svelte/store';
+
+	import Table from '$lib/components/Table.svelte';
+	import CovidPassBadge from '$lib/components/CovidPassBadge.svelte';
+
 	import { findAttendeeByID, titleCase } from '$lib/utill';
-	import { eventAttendees, selectedAttendeeID as globalSelectedAttendeeID } from '$lib/store';
-	import { createCheckIn } from '$lib/api/api';
+	import { currentEventID, eventletAttendees, globalModalState } from '$lib/store';
 
 	import Fuse from 'fuse.js';
-	import { getContext, onMount } from 'svelte';
-	import { derived, get, Readable, Writable, writable } from 'svelte/store';
+	import { derived, get, writable } from 'svelte/store';
 	import Button from '../Button.svelte';
+	import type { NZCovidPass } from '$lib/components/scanner/validateScan';
+	import type { AttendeeProfile } from '../checkInSteps/stepManager';
+	import { goto } from '$app/navigation';
+	import { basePath } from '$lib/consts';
+	import { encode_url } from '../checkInSteps/encodeAttendeeProfileURL';
 
-	export let givenName: string;
-	export let lastName: string;
-	export let DOB: string;
-	export let vaccineCert: string;
+	export let data: NZCovidPass;
 
 	const selectedAttendeeID: Writable<number> = writable(null);
 	const selectedAttendee: Readable<Attendee> = derived(
-		[selectedAttendeeID,eventAttendees],
-		([id,attendees]) => findAttendeeByID(attendees, id)
+		[selectedAttendeeID, eventletAttendees],
+		([id, attendees]) => findAttendeeByID(attendees, id)
 	);
-
-	let { close } = getContext('simple-modal');
 
 	let matchingAttendees = [];
 
@@ -35,9 +35,9 @@
 	let countMatching = 0;
 
 	// givenName usually also includes middle name, so we will remove that
-	let firstName = givenName.split(' ')[0];
+	let firstName = data.givenName.split(' ')[0];
 
-	const attendees_with_fullname = get(eventAttendees).map((attendee) => ({
+	const attendees_with_fullname = get(eventletAttendees).map((attendee) => ({
 		full_name: `${attendee.first_name} ${attendee.last_name}`,
 		...attendee
 	}));
@@ -48,7 +48,7 @@
 		threshold: 0.6,
 		isCaseSensitive: false
 	});
-	matchingAttendees = fuse.search(`${firstName} ${lastName}`);
+	matchingAttendees = fuse.search(`${firstName} ${data.lastName}`);
 	if (matchingAttendees.length > 0) {
 		selectedAttendeeID.set(matchingAttendees[0].item.id);
 	}
@@ -77,15 +77,26 @@
 	}
 	selectedAttendee.subscribe(generateTable);
 
-	function checkInAttendee() {
-		let attendee = get(selectedAttendee);
-		if (attendee) {
-			createCheckIn(attendee, false, vaccineCert);
-			globalSelectedAttendeeID.set(attendee.id)
-			close();
-		} else {
-			console.log('No attendee selected, but somehow we are trying to check in someone');
+	function close() {
+		globalModalState.set(null);
+	}
+
+	function viewAttendeeDetails() {
+		if ($selectedAttendee) {
+			selectedAttendeeID.set($selectedAttendee.id);
 		}
+		close();
+	}
+
+	async function checkInAttendee() {
+		let attendeeProfile: AttendeeProfile = {
+			attendee: $selectedAttendee,
+			covidPass: true,
+			check_in_eventlet: null,
+			ticket_eventlet: null
+		};
+		// Don't need to close model as the check-in page will close it for us
+		goto(`${basePath}/${$currentEventID}/check-in${await encode_url(attendeeProfile)}`);
 	}
 </script>
 
@@ -100,30 +111,30 @@
 			</p>
 		{:else}
 			<p>
-				This pass didn’t match any attendees for this event.<br/>
-				You can check in the attendee manually by searching for the attendee’s name,<br/> and using the Check In button in the Attendee Details panel.
-
+				This pass didn’t match any attendees for this event.<br />
+				You can check in the attendee manually by searching for the attendee’s name,<br /> and using
+				the Check In button in the Attendee Details panel.
 			</p>
 		{/if}
 	</div>
 	<div class="covid-pass-badge-wrapper">
-		<CovidPassBadge name={titleCase(`${givenName} ${lastName}`)} dob={DOB} />
+		<CovidPassBadge {data} />
 	</div>
 </div>
 {#if countMatching > 0}
-<div class="attendee-matching-table-wrapper">
-	<Table tableHeaders={['Name', 'ID', 'Certainty', 'Checked In']} {tableData} />
-</div>
+	<div class="attendee-matching-table-wrapper">
+		<Table tableHeaders={['Name', 'ID', 'Certainty', 'Checked In']} {tableData} />
+	</div>
 {/if}
 <div class="action-container">
 	<div>
-		<Button size="large" color="secondary" on:click={close}>
-			{#if countMatching > 0}
-				View attendee details
-			{:else}
-				Search for Attendee
-			{/if}
-		</Button>
+		{#if countMatching > 0}
+			<Button size="large" color="secondary" on:click={viewAttendeeDetails}
+				>View attendee details</Button
+			>
+		{:else}
+			<Button size="large" color="secondary" on:click={close}>Search for Attendee</Button>
+		{/if}
 	</div>
 	<div>
 		<Button size="large" disabled={$selectedAttendee === null} on:click={checkInAttendee}>

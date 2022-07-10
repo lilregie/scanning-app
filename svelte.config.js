@@ -2,7 +2,6 @@ import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import preprocess from 'svelte-preprocess';
 import adapter from '@sveltejs/adapter-static';
-import svg from '@poppanator/sveltekit-svg';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -27,24 +26,6 @@ const config = {
 		paths: {
 			base: process.env['ROOT_PATH'] ? process.env['ROOT_PATH'] : '',
 			assets: process.env['PUBLIC_ASSETS_PATH'] ? process.env['PUBLIC_ASSETS_PATH'] : ''
-		},
-		vite: {
-			optimizeDeps: {
-				include: [
-					"events",
-					"uuid",
-					"visibilityjs",
-					"stampit",
-					"lodash",
-					"dayjs"
-				]
-			},
-			plugins: [svg({
-				type: 'url'
-			})],
-			css: {
-				postcss: {}
-			}
 		}
 	},
 };

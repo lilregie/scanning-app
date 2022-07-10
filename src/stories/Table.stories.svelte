@@ -1,11 +1,11 @@
 <script>
 	import { Meta, Template, Story } from '@storybook/addon-svelte-csf';
 
-	import { formatDistance } from 'date-fns';
+	import dayjs from 'dayjs';
 
 	import Table from '../lib/components/Table.svelte';
 	import { generateAttendeesForEvent } from '../lib/mocks/attendeeMock';
-	import faker from 'faker';
+	import { faker } from '@faker-js/faker';
 	import { newestCheckIns } from '../lib/utill';
 
 	faker.seed(1);
@@ -17,7 +17,7 @@
 			data: [
 				`${check_in[1].first_name}  ${check_in[1].last_name}`,
 				`#${check_in[1].id}`,
-				`${formatDistance(check_in[0].time, new Date(), { addSuffix: true })}`
+				`${dayjs().diff(dayjs(check_in[0].time),"years")}`
 			]
 		}));
 	}

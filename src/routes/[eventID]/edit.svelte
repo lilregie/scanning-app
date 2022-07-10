@@ -1,19 +1,48 @@
+<script context="module">
+	/** @type {import('@sveltejs/kit').Load} */
+	export const load = async ({ url }) => ({ props: { url: url.pathname } });
+</script>
+
 <script lang="ts">
-	import AdminLayout from '$lib/components/AdminLayout.svelte';
+	import type { TableRow } from '$lib/components/Table.svelte';
+
+	import AdminLayout from '$lib/components/layouts/AdminLayout.svelte';
 	import Scanner from '$lib/components/scanner/ScannerWrapper.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import Table, { TableRow } from '$lib/components/Table.svelte';
+	import Table from '$lib/components/Table.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
 	import Card from '$lib/components/Card.svelte';
 	import AttendeeDetails from '$lib/components/AttendeeDetails.svelte';
+	import EventletManager from '$lib/components/eventlet/GlobalEventletManager.svelte';
 
 	import { attendeesTable } from '$lib/generateDataVis';
 	import { createCheckIn, removeLatestCheckIn } from '$lib/api/api';
-	import { attendeesSearchTerm, eventAttendees, selectedAttendee } from '$lib/store';
+	import {
+		attendeesSearchTerm,
+		eventletAttendees,
+		globalModalState,
+		selectedAttendee,
+		selectedAttendeeID,
+		currentEventID,
+		currentEvent
+	} from '$lib/store';
+	import { basePath } from '$lib/consts';
+	import { encode_url } from '$lib/components/checkInSteps/encodeAttendeeProfileURL';
+	import type { AttendeeProfile } from '$lib/components/checkInSteps/stepManager';
 
-	import { get, Writable, writable } from 'svelte/store';
+	import { get, writable } from 'svelte/store';
+	import type { Writable } from 'svelte/store';
 	import { fly, fade } from 'svelte/transition';
+
+	import { bind } from 'svelte-simple-modal';
 	import { Circle } from 'svelte-loading-spinners';
+	import { goto } from '$app/navigation';
+	import { onDestroy } from 'svelte';
+	import ScanResult from '$lib/components/scanner/ScanResult.svelte';
+	import { ScanTypes, type ScanResults } from '$lib/components/scanner/validateScan';
+	import { findEventletByID } from '$lib/utill';
+	import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
+
+	export let url: string;
 
 	let attendeesTableData: [string[], TableRow[]];
 
@@ -22,7 +51,7 @@
 		// the $selectedAttendee changes. This is a hack, and should be fixed later on.
 		((_) => {})($selectedAttendee);
 
-		attendeesTableData = attendeesTable($eventAttendees, $attendeesSearchTerm);
+		attendeesTableData = attendeesTable($eventletAttendees, $attendeesSearchTerm);
 	}
 
 	// $: selectedAttendeeCheckedIn = $selectedAttendee &&  $selectedAttendee.check_ins.length === 0;
@@ -33,7 +62,7 @@
 
 	// Used to highlight how the user should verify a covid pass, and the check-in button appears to do nothing
 	const highlightTimeMS = 1000;
-	leftBarHighlighted.subscribe((highlight) => {
+	const leftBarHighlightedDestroy = leftBarHighlighted.subscribe((highlight) => {
 		if (highlight) {
 			if (leftBarHighlightedTimeout) {
 				clearTimeout(leftBarHighlightedTimeout);
@@ -43,94 +72,106 @@
 			}, highlightTimeMS);
 		}
 	});
+
+	async function checkinAttendee() {
+		let attendeeProfile: AttendeeProfile = {
+			attendee: $selectedAttendee,
+			covidPass: $selectedAttendee.vaccine_pass,
+			check_in_eventlet: null,
+			ticket_eventlet: null
+		};
+
+		goto(`${basePath}/${$currentEventID}/check-in${await encode_url(attendeeProfile)}`);
+	}
+
+	async function checkinScan(event: CustomEvent<ScanResults>) {
+		let scanResults = event.detail;
+
+		if (scanResults.data.type === ScanTypes.CovidPass) {
+			// The vaccine pass name matching windows manages the check-in process
+
+			globalModalState.set(bind(AttendeeMatching, { data: scanResults.data }));
+		} else if (scanResults.data.type === ScanTypes.TicketBarcode) {
+			// If it's a ticket, we can go straight to the check-in process
+			let attendeeProfile: AttendeeProfile = {
+				attendee: scanResults.data.attendee,
+				covidPass: scanResults.data.attendee.vaccine_pass,
+				check_in_eventlet: null,
+				ticket_eventlet: findEventletByID(get(currentEvent), scanResults.data.eventletID)
+			};
+			goto(`${basePath}/${$currentEventID}/check-in${await encode_url(attendeeProfile)}`);
+		}
+	}
+
+	onDestroy(() => {
+		if (leftBarHighlightedTimeout) {
+			clearTimeout(leftBarHighlightedTimeout);
+		}
+		leftBarHighlightedDestroy();
+	});
 </script>
 
 <AdminLayout
 	cards={{
-		left: { scroll: false, highlighted: $leftBarHighlighted },
+		left: { scroll: true, highlighted: $leftBarHighlighted },
 		rightBottom: false,
 		rightTop: false
 	}}
+	overflowType={{
+		left: 'auto',
+		rightTop: 'auto',
+		rightBottom: 'auto'
+	}}
+	backPath={`${basePath}/${$currentEventID}`}
+	{url}
 >
 	<div slot="left-bar" class="left-bar">
-
-		{#if leftBarState === 'ValidateCovidPass'}
-
-			<div
-				class="header-text"
-				out:fade|local
-				in:fly|local={{ y: -200, duration: 1000, delay: 500 }}
-			>
-				Booking for <b>{$selectedAttendee.first_name} {$selectedAttendee.last_name}</b>
-				<h2>Please Verify COVID Pass</h2>
-			</div>
-
-		{:else if leftBarState === 'ScanAny'}
-
 		<div class="header-text" out:fade|local in:fly|local={{ y: -200, duration: 1000 }}>
-				<h2>Scan a Booking or COVID Pass</h2>
+			<h2>Scan a Booking or COVID Pass</h2>
 		</div>
-		{/if}
 
 		<div class="scanner-container">
-			<Scanner />
+			<Scanner on:scan-complete={checkinScan} />
 		</div>
-
-		{#if leftBarState === 'ValidateCovidPass'}
-			<div out:fade|local in:fly|local={{ y: 200, duration: 1000 }}>
-				This will be a QR code provided by the government to verify eligibility for events. Scan
-				using the webcam above to start.
-			</div>
-
-			<hr class="hr-or" out:fade|local in:fly|local={{ y: 200, duration: 500 }} />
-		{:else if leftBarState === 'ScanAny'}
-			<h2>Scan a booking or COVID pass to begin</h2>
-			<div out:fade|local in:fly|local={{ y: 200, duration: 1000 }}>
-				Not working or no code? Use the search to the right to bring up the attendee details and
-				mark them as checked in.
-			</div>
-		{/if}
-	</div>
-	<div slot="left-bar-footer">
-		{#if leftBarState === 'ValidateCovidPass'}
-			<div out:fade|local in:fly|local={{ y: 200, duration: 1000 }}>
-				<Button
-					expanded
-					on:click={() => {
-						createCheckIn(get(selectedAttendee), true);
-						leftBarState = 'ScanAny';
-					}}
-				>
-					Skip and check in anyway
-				</Button>
-			</div>
-		{/if}
+		<h2>Scan a booking or COVID pass to begin</h2>
+		<div out:fade|local in:fly|local={{ y: 200, duration: 1000 }}>
+			Not working or no code? Use the search to the right to bring up the attendee details and mark
+			them as checked in.
+		</div>
 	</div>
 	<div slot="info-panel-header">
 		<h2 class="panel-header">Attendee Details</h2>
 	</div>
 	<div slot="info-panel" class="info-panel">
-		<Card expand={true} scroll={false} background={!!$selectedAttendee}>
-			{#if $selectedAttendee}
+		{#if $selectedAttendee}
+			<Card expand={true} scroll={true} background={!!$selectedAttendee}>
 				<AttendeeDetails
 					attendee={selectedAttendee}
-					on:checkIn={() => {
-						leftBarState = 'ValidateCovidPass';
-						leftBarHighlighted.set(true);
-					}}
+					closeable
+					on:checkIn={checkinAttendee}
 					on:removeLatestCheckIn={() => {
 						removeLatestCheckIn(get(selectedAttendee));
 					}}
 					on:moreDetails={() => {
 						// TODO: Implement detailed attendee deatails page
 					}}
+					on:close={() => {
+						console.log('closing');
+						$selectedAttendeeID = null;
+					}}
 				/>
-			{:else if leftBarState === 'ScanAny'}
-				<p class="noSelect">
-					Scan a booking or COVID pass, or search attendees to access their details.
-				</p>
-			{/if}
-		</Card>
+			</Card>
+		{:else}
+			<div class="empty-attendee-details-container">
+				{#if $currentEvent && !$currentEvent.standalone}
+					<EventletManager />
+				{:else}
+					<p class="no-select-instructions">
+						Scan a booking or COVID pass, or search attendees to access their details.
+					</p>
+				{/if}
+			</div>
+		{/if}
 	</div>
 	<div slot="list-panel-header">
 		<h2 class="panel-header">Attendees</h2>
@@ -143,7 +184,7 @@
 		</div>
 	</div>
 	<div slot="list-panel" class="table list-panel">
-		{#if $eventAttendees !== null}
+		{#if $eventletAttendees !== null}
 			<Table tableHeaders={attendeesTableData[0]} tableData={attendeesTableData[1]} />
 		{:else}
 			<div class="loading-spinner">
@@ -164,24 +205,10 @@
 			h2 {
 				font-size: 2rem;
 				margin: 1rem;
+				&:first-child {
+					margin-top: 0;
+				}
 			}
-		}
-		.hr-or {
-			&::after {
-				content: 'OR';
-				position: relative;
-				top: -0.5rem;
-				background-color: $background-foreground;
-				padding: 0 1.5em;
-				box-sizing: border-box;
-			}
-			background-color: #cacaca;
-			border: none;
-			height: 2px;
-			overflow: visible;
-			position: absolute;
-			width: 100%;
-			bottom: 0;
 		}
 		.scanner-container {
 			width: 100%;
@@ -200,20 +227,40 @@
 	}
 	.info-panel {
 		height: 100%;
-		.noSelect {
-			font-size: 2em;
-			text-align: center;
-			opacity: 40%;
-			font-weight: 700;
-			max-width: 700px;
-			margin: auto;
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			right: 0;
+		.empty-attendee-details-container {
 			display: flex;
+			position: relative;
+			flex-direction: column;
 			align-items: center;
+			justify-content: space-between;
+			height: 100%;
+			padding: 2em;
+			box-sizing: border-box;
+			border: $background-intermediate-dark solid 0.5em;
+			border-radius: 0.5em;
+			color: $text-dark;
+
+			@media screen and (max-width: $breakpoint-mobile) {
+				padding: 1em;
+				p.no-select-instructions {
+					position: absolute;
+					bottom: 0;
+					font-size: 1.5rem;
+					margin: 1em;
+				}
+			}
+			p {
+				margin: 0;
+				font-size: 1.5rem;
+				color: $text-dark;
+			}
+			.no-select-instructions {
+				font-size: 2em;
+				opacity: 40%;
+				font-weight: 700;
+				max-width: 700px;
+				text-align: center;
+			}
 		}
 	}
 	.search-container :global(input),

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { chosenEventID, allEvents, chosenEvent } from '$lib/store';
+	import { currentEventID, allEvents, currentEvent } from '$lib/store';
 	import { onMount } from 'svelte';
 	import Select from 'svelte-select';
 	import { get } from 'svelte/store';
@@ -18,16 +18,16 @@
 	});
 
 	onMount(() => {
-		if (get(chosenEvent) !== null) {
+		if (get(currentEvent) !== null) {
 			eventsDropdownChosen = {
-				value: get(chosenEventID).toString(),
-				label: get(chosenEvent).name
+				value: get(currentEventID).toString(),
+				label: get(currentEvent).name
 			};
 		}
 	});
 
 	function choseProject() {
-		chosenEventID.set(parseInt(eventsDropdownChosen.value));
+		currentEventID.set(parseInt(eventsDropdownChosen.value));
 		goto(`${basePath}/${eventsDropdownChosen.value}`);
 	}
 </script>

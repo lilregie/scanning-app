@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import { Attendee } from "../mockInterfaces/attendee";
 import { attendees, events } from "../datastore";
 import { LilRegieEvent } from "../mockInterfaces/event";
+import { ParsedQs } from "qs";
 
 export function getAttendee(req: Request, res: Response): Attendee | null {
     let attendeeId = parseInt(req.params.attendeeId);
@@ -30,4 +31,12 @@ export function getEvent(req: Request, res: Response): LilRegieEvent | null {
         return null;
     }
     return matchingEvent[0];
+}
+
+export function extractOneHeader (req: Request, x: string): string | null {
+    let header = req.headers[x];
+    if (Array.isArray(header)) {
+        header = header[0];
+    }
+    return header || null;
 }

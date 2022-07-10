@@ -6,6 +6,7 @@ $theme-colors: (
 	"success": #2ba628,
 	"warning": #ffae00,
 	"alert": #e96d47,
+	"danger": #FA1301,
 );
 
 $background-backdrop: #222222;
@@ -51,12 +52,11 @@ $shadows: (
 		0px 0px 57.1px rgba(207, 34, 101, 0.476),
 		0px 0px 155px rgba(207, 34, 101, 0.42),
 	),
+	"highlight-tight": (
+		0px 0px 1.1px rgba(207, 34, 100, 0.295),
+		0px 0px 2.6px rgba(207, 34, 100, 0.199),
+		0px 0px 5.2px rgba(207, 34, 100, 0.137),
+		0px 0px 12.2px rgba(207, 34, 100, 0.185),
+		0px 0px 21.1px rgba(207, 34, 100, 0.116),
+	)
 );
-
-@function text-clr($color) {
-	@if (lightness($color) > 50) {
-		@return $text-light;
-	} @else {
-		@return $text-dark;
-	}
-}

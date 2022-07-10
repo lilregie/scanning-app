@@ -1,5 +1,6 @@
 import type { Attendee } from "./attendee";
 import normalizeStrings from "normalize-strings"
+import type { Eventlet, LilRegieEvent } from "./event";
 
 export function newestCheckIns(eventAttendees: Attendee[]): Attendee[] {
 	let checkIns: Attendee[] = [];
@@ -31,6 +32,17 @@ export function findAttendeeByID(attendees: Attendee[], id: number): Attendee | 
 		return null;
 	}
 }
+
+export function findEventletByID(currentEvent: LilRegieEvent, id: number): Eventlet | null {
+	if (id === null || currentEvent === null) {
+		return null
+	}
+
+	return currentEvent.eventlets.find(
+		(eventlet) => eventlet.id === id
+	) || null;
+}
+
 
 /// Convert a string to title case, so it is "Like This".
 export function titleCase(str: string) {

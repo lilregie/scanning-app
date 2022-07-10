@@ -1,6 +1,6 @@
 import faker from "@faker-js/faker";
 import { Router } from "express";
-import { getAttendee } from "./utill";
+import { extractOneHeader, getAttendee } from "./utill";
 
 
 
@@ -8,37 +8,37 @@ export default function checkInInitialize(router: Router) {
     router.post("/:eventId/attendees/:attendeeId/checkin", (req, res) => {
         let attendee = getAttendee(req, res);
         if (attendee === null) {
+            res.status(400);
+            res.json({ "error": "attendee not found" });
             return;
         }
         
-        const extractOneHeader = (x: string): string | null => {
-            let header = req.headers[x];
-            if (Array.isArray(header)) {
-                header = header[0];
-            }
-            return header || null;
+        let ticketIdHeader = extractOneHeader(req, "ticket_id");
+        let vaccinePassHeader = extractOneHeader(req, "vaccine_pass");
+        console.log(ticketIdHeader, vaccinePassHeader);
+
+        if (!parseInt(ticketIdHeader as string) || !vaccinePassHeader) {
+            res.status(400);
+            res.json({ "error": "missing valid ticket_id or vaccine_pass" });
+            return;
         }
 
-        let ticketIdHeader = extractOneHeader("ticket_id");
-        let vaccinePassHeader = extractOneHeader("vaccine_pass");
-        console.log("asdasd",ticketIdHeader,vaccinePassHeader,req.headers)
+        let eventlet = attendee.attendances.find((x) => x.id === parseInt(ticketIdHeader as string));
+        
+        if (!eventlet) {
+            res.status(404);
+            res.json({ "error": "ticket not found on attendee" });
+            return;
+        }
 
         // Only validate ticket if included in request
-        if ((ticketIdHeader === null) || attendee.ticket_id === parseInt(ticketIdHeader)) {
-            console.log("New CheckIn:",attendee.id);
-            
-            attendee.checked_in_at = new Date();
-            attendee.vaccine_pass = attendee.vaccine_pass || vaccinePassHeader?.toLowerCase()==="true";
+        console.log("New CheckIn:",attendee.id);
+        
+        attendee.checked_in_at = new Date();
+        eventlet.checked_in_at = new Date();
+        attendee.vaccine_pass = attendee.vaccine_pass || vaccinePassHeader?.toLowerCase()==="true";
 
-            res.json({
-                id: faker.datatype.number(),
-                attendee_id: attendee.id,
-                checked_in_at: attendee.checked_in_at,
-                checkin_user_id: faker.datatype.number(),
-            })
-        } else {
-            res.json({ "error": "ticket_id does not match attendee" });
-        }
+        res.json(eventlet)
     });
 
     router.delete("/:eventId/attendees/:attendeeId/checkin", (req, res) => {
