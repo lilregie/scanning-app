@@ -91,7 +91,6 @@
 		if (scanResults.data.type === ScanTypes.CovidPass) {
 			// The vaccine pass name matching windows manages the check-in process
 
-			// @ts-expect-error
 			globalModalState.set(bind(AttendeeMatching, { data: scanResults.data }));
 		} else if (scanResults.data.type === ScanTypes.TicketBarcode) {
 			// If it's a ticket, we can go straight to the check-in process
@@ -128,54 +127,18 @@
 	{url}
 >
 	<div slot="left-bar" class="left-bar">
-		{#if leftBarState === 'ValidateCovidPass'}
-			<div
-				class="header-text"
-				out:fade|local
-				in:fly|local={{ y: -200, duration: 1000, delay: 500 }}
-			>
-				Booking for <b>{$selectedAttendee.first_name} {$selectedAttendee.last_name}</b>
-				<h2>Please Verify COVID Pass</h2>
-			</div>
-		{:else if leftBarState === 'ScanAny'}
-			<div class="header-text" out:fade|local in:fly|local={{ y: -200, duration: 1000 }}>
-				<h2>Scan a Booking or COVID Pass</h2>
-			</div>
-		{/if}
+		<div class="header-text" out:fade|local in:fly|local={{ y: -200, duration: 1000 }}>
+			<h2>Scan a Booking or COVID Pass</h2>
+		</div>
 
 		<div class="scanner-container">
 			<Scanner on:scan-complete={checkinScan} />
 		</div>
-
-		{#if leftBarState === 'ValidateCovidPass'}
-			<div out:fade|local in:fly|local={{ y: 200, duration: 1000 }}>
-				This will be a QR code provided by the government to verify eligibility for events. Scan
-				using the webcam above to start.
-			</div>
-
-			<hr class="hr-or" out:fade|local in:fly|local={{ y: 200, duration: 500 }} />
-		{:else if leftBarState === 'ScanAny'}
-			<h2>Scan a booking or COVID pass to begin</h2>
-			<div out:fade|local in:fly|local={{ y: 200, duration: 1000 }}>
-				Not working or no code? Use the search to the right to bring up the attendee details and
-				mark them as checked in.
-			</div>
-		{/if}
-	</div>
-	<div slot="left-bar-footer">
-		{#if leftBarState === 'ValidateCovidPass'}
-			<div out:fade|local in:fly|local={{ y: 200, duration: 1000 }}>
-				<Button
-					expanded
-					on:click={() => {
-						createCheckIn(get(selectedAttendee), true);
-						leftBarState = 'ScanAny';
-					}}
-				>
-					Skip and check in anyway
-				</Button>
-			</div>
-		{/if}
+		<h2>Scan a booking or COVID pass to begin</h2>
+		<div out:fade|local in:fly|local={{ y: 200, duration: 1000 }}>
+			Not working or no code? Use the search to the right to bring up the attendee details and
+			mark them as checked in.
+		</div>
 	</div>
 	<div slot="info-panel-header">
 		<h2 class="panel-header">Attendee Details</h2>
@@ -244,23 +207,6 @@
 				font-size: 2rem;
 				margin: 1rem;
 			}
-		}
-		.hr-or {
-			&::after {
-				content: 'OR';
-				position: relative;
-				top: -0.5rem;
-				background-color: $background-foreground;
-				padding: 0 1.5em;
-				box-sizing: border-box;
-			}
-			background-color: #cacaca;
-			border: none;
-			height: 2px;
-			overflow: visible;
-			position: absolute;
-			width: 100%;
-			bottom: 0;
 		}
 		.scanner-container {
 			width: 100%;

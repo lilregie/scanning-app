@@ -38,7 +38,7 @@
 <svelte:window on:keydown={handleKeypress}/>
 
 <div class="container" >
-	<div class="page-focus"  in:fade={{duration: 100}} out:fade={{duration: 100}}>
+	<div class="page-focus"  in:fade|local={{duration: 100}} out:fade|local={{duration: 100}}>
 		<slot />
 	</div>
 	<div class="action-bar">
