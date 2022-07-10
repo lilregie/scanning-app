@@ -12,6 +12,7 @@
 	import { writable, type Writable } from 'svelte/store';
 	import { normString, titleCase } from '$lib/utill';
 	import Table, { type TableRow } from '$lib/components/Table.svelte';
+	import Button from '$lib/components/Button.svelte';
 
 	export let attendeeProfile: Writable<AttendeeProfile>;
 	export let memory: Writable<NZCovidPass>;
@@ -30,8 +31,7 @@
 
 	const dispatch = createEventDispatcher();
 
-
-	function scan(event: { detail: ScanResults; }) {
+	function scan(event: { detail: ScanResults }) {
 		let data = event.detail;
 		if (!data.valid || data.data.type !== ScanTypes.CovidPass) {
 			$covidPass = null;
@@ -40,7 +40,6 @@
 
 		$covidPass = data.data;
 	}
-
 
 	$: {
 		if (!$covidPass) {
@@ -76,10 +75,7 @@
 		return [attendeeFullName, covidPassFullName];
 	}
 
-	$: normalisedNames = normalisedNamesFromPass(
-		$covidPass,
-		$attendeeProfile.attendee
-	);
+	$: normalisedNames = normalisedNamesFromPass($covidPass, $attendeeProfile.attendee);
 	// For name mismatch warning dialog
 	let nameMissmatchTableData: [string[], TableRow[]] = [[], []];
 	$: {
@@ -92,7 +88,6 @@
 	onMount(() => {
 		covidPass.set($memory);
 	});
-
 </script>
 
 <div class="scanner-wrapper">
@@ -109,9 +104,20 @@
 	<div class="missmatch-warning">
 		<div class="message">
 			<h3>Warning</h3>
-			<span>The name on this pass does not match selected Attendee.</span>	
+			<span>The name on this pass does not match selected Attendee.</span>
 		</div>
-		<Table tableHeaders={nameMissmatchTableData[0]} tableData={nameMissmatchTableData[1]} tableColumnLine />
+		<div class="table">
+			<Table
+				tableHeaders={nameMissmatchTableData[0]}
+				tableData={nameMissmatchTableData[1]}
+				tableColumnLine
+			/>
+		</div>
+		<div class="actions">
+			<Button color="secondary" on:click={() => (stageState = StageState.Incomplete)}>Cancel</Button
+			>
+			<Button color="warning" on:click={() => dispatch('force')}>Force</Button>
+		</div>
 	</div>
 {/if}
 
@@ -124,24 +130,47 @@
 		margin: 0 auto;
 	}
 	.missmatch-warning {
-		width: 100%;
+		z-index: 10;
+		width: calc(100% - 1rem);
+		margin: auto;
+		left: 0;
+		right: 0;
 		box-sizing: border-box;
 
 		padding: 1em;
 		font-size: 1.2rem;
 
 		position: absolute;
-		bottom: 1em;
+		top: 50%;
+		transform: translateY(-50%);
+		background-color: $background-foreground;
+
+		box-shadow: map-get($shadows, 'medium');
 
 		display: grid;
-		grid-template-columns: 1fr 1fr;
-		
-		border: 2px solid map-get($theme-colors, "warning");
+		grid-template:
+			'message table' auto
+			'action action' auto;
+
+		border: 2px solid map-get($theme-colors, 'warning');
 		border-radius: $radius-default;
 
 		h3 {
 			margin: 0;
 		}
 
+		.actions {
+			display: flex;
+			justify-content: right;
+			margin-top: 1em;
+			grid-area: action;
+			column-gap: 0.5rem;
+		}
+		.message {
+			grid-area: message;
+		}
+		.table {
+			grid-area: table;
+		}
 	}
 </style>

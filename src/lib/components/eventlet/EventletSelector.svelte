@@ -130,7 +130,7 @@
 		<Select
 			items={$allEventlets}
 			isMulti={multiSelect}
-			placeholder={'Select Eventlets...'}
+			placeholder={`Select ${multiSelect ? '' : 'an '}Eventlet${multiSelect ? 's' : ''}...`}
 			bind:value={$selectedValues}
 			on:select={newSelection}
 			isSearchable={false}

@@ -31,7 +31,12 @@
 	cards={{
 		left: { scroll: true, highlighted: false },
 		rightBottom: false,
-		rightTop: false
+		rightTop: {
+			hide: true,
+			// hide: $currentEvent !== null && $currentEvent.standalone,
+			background: false,
+			shadow: false
+		}
 	}}
 	backPath={`${basePath}/`}
 	{url}
@@ -40,7 +45,7 @@
 		<h2>Latest Check-Ins</h2>
 		{#if $eventletAttendees !== null}
 			<div class="table-wrapper">
-				<Table tableHeaders={checkInTable[0]} tableData={checkInTable[1]}/>
+				<Table tableHeaders={checkInTable[0]} tableData={checkInTable[1]} />
 			</div>
 		{:else}
 			<div class="loading-spinner">
@@ -53,19 +58,16 @@
 	</div>
 
 	<div slot="info-panel" class="info-panel">
-		{#if $currentEvent !== null && !$currentEvent.standalone}
-			<EventletManager/>
-		{:else if $currentEvent !== null && $currentEvent.standalone}
-			<span class="standalone-info">
-				Standalone Event
-			</span>
-		{/if}
+		<!-- {#if $currentEvent !== null && !$currentEvent.standalone} -->
+		<EventletManager />
+		<!-- {:else if $currentEvent !== null && $currentEvent.standalone}
+			<span class="standalone-info"> Standalone Event </span>
+		{/if} -->
 	</div>
 
 	<div slot="list-panel" class="stats-view">
-		<StatsView/>
+		<StatsView />
 	</div>
-
 </AdminLayout>
 
 <style lang="scss">

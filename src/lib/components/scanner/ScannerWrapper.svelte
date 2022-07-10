@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ScanTypes } from '$lib/components/scanner/validateScan';
-	
+
 	import { validateScan } from '$lib/components/scanner/validateScan';
 	import SuccessTick from '$lib/components/SuccessTick.svelte';
 	import { Tabs, TabList, TabPanel, Tab } from '$lib/components/tabs';
@@ -24,12 +24,10 @@
 
 	const dispatch = createEventDispatcher();
 
-
-
 	async function handleScan(event: CustomEvent) {
 		if (get(scannerStatus) === ScannerStatus.Scanning) {
 			let validator = await validateScan(event.detail.qrContent, enabledScanTypes);
-			if (validator.valid===true) {
+			if (validator.valid === true) {
 				const type = validator.data.type;
 				if (type === ScanTypes.CovidPass) {
 					scannerStatus.set(ScannerStatus.SuccessCovidPass);
@@ -45,35 +43,32 @@
 	}
 	let fullBrowserWidth: number;
 
-
 	let previewWidth;
 	$: previewWidthRatio = fullBrowserWidth < 650 ? 1 : 1.77;
 
-
-
-	let permissionForCameraState: PermissionState | null | "unknown" = null;
-	(async ()=>{
+	let permissionForCameraState: PermissionState | null | 'unknown' = null;
+	(async () => {
 		try {
-			let status = await navigator.permissions.query({name: 'camera' as PermissionName});
+			let status = await navigator.permissions.query({ name: 'camera' as PermissionName });
 			permissionForCameraState = status.state;
 		} catch {
 			// API not supported by Safari on both desktop and mobile
 			// So we can just assume it's not allowed, as there are no alternative options
 			// https://developer.mozilla.org/en-US/docs/Web/API/Permissions/query#browser_compatibility
-			permissionForCameraState = "unknown";
+			permissionForCameraState = 'unknown';
 		}
 	})();
 
 	function promptCameraPermission() {
 		// Prompts user to grant camera permission
-		navigator.mediaDevices.getUserMedia({ audio: false, video: true});
+		navigator.mediaDevices.getUserMedia({ audio: false, video: true });
 		// Assume everything went well, so they can see the full error
 		// Avoids situations where the button does nothing on non-compliant browsers
-		permissionForCameraState = "granted";
+		permissionForCameraState = 'granted';
 	}
 </script>
 
-<svelte:window bind:innerWidth={fullBrowserWidth}/>
+<svelte:window bind:innerWidth={fullBrowserWidth} />
 
 <div class="qr-container">
 	<!-- Always render QR Scanner we enabled (so we hide it instead of remove it) -->
@@ -88,52 +83,58 @@
 				<Tab id="text" on:selected={() => prefersCameraOrTextScanning.set('text')}>Text</Tab>
 			</TabList>
 			<TabPanel id="camera">
-				{#if permissionForCameraState === "granted"}
-					<CameraScanner
-						on:scan={handleScan}
-						{previewWidth}
-					/>
-				{:else if permissionForCameraState === "prompt"}
+				{#if permissionForCameraState === 'granted'}
+					<CameraScanner on:scan={handleScan} {previewWidth} />
+				{:else if permissionForCameraState === 'prompt'}
 					<div class="permission-container">
 						<span class="permission-header">To scan, we need to use your camera</span>
-						<span class="permission-instructions">Select <b>Allow</b> when your browser asks for permissions.</span>
-						<Button color="primary" outline size="small" on:click={promptCameraPermission}>Give Permission</Button>
+						<span class="permission-instructions"
+							>Select <b>Allow</b> when your browser asks for permissions.</span
+						>
+						<Button color="primary" outline size="small" on:click={promptCameraPermission}
+							>Give Permission</Button
+						>
 					</div>
-				{:else if permissionForCameraState === "denied"}
+				{:else if permissionForCameraState === 'denied'}
 					<div class="permission-container">
 						<span class="permission-header">Camera Permission Denied</span>
-						<span class="permission-instructions">To use your camera, you will need to grant permission to use your camera with your browser.</span>
-						<Button color="primary" outline size="small" on:click={promptCameraPermission}>Try Continue Anyway</Button>
+						<span class="permission-instructions"
+							>To use your camera, you will need to grant permission to use your camera with your
+							browser.</span
+						>
+						<Button color="primary" outline size="small" on:click={promptCameraPermission}
+							>Try Continue Anyway</Button
+						>
 					</div>
-				{:else if permissionForCameraState === "unknown"}
+				{:else if permissionForCameraState === 'unknown'}
 					<div class="permission-container">
 						<span class="permission-header">Start Camera</span>
-						<span class="permission-instructions">If prompted, select <b>Allow</b> when your browser asks for permissions.</span>
-						<Button color="primary" outline size="small" on:click={promptCameraPermission}>Start</Button>
+						<span class="permission-instructions"
+							>If prompted, select <b>Allow</b> when your browser asks for permissions.</span
+						>
+						<Button color="primary" outline size="small" on:click={promptCameraPermission}
+							>Start</Button
+						>
 					</div>
 				{/if}
 			</TabPanel>
 			<TabPanel id="text">
-				<TextScanner
-					on:scan={handleScan}
-					{previewWidth}
-					{scannerStatus}
-				/>
+				<TextScanner on:scan={handleScan} {previewWidth} {scannerStatus} />
 			</TabPanel>
 		</Tabs>
 		{#if $scannerStatus === ScannerStatus.SuccessCovidPass}
 			<ScanResult bind:scannerStatus backgroundColour="#2ba628">
-					<div style="width: 30%">
-						<SuccessTick />
-					</div>
-					COVID Pass Verified
+				<div style="width: 30%">
+					<SuccessTick />
+				</div>
+				COVID Pass Verified
 			</ScanResult>
 		{:else if $scannerStatus === ScannerStatus.SuccessTicket}
 			<ScanResult bind:scannerStatus backgroundColour="#2ba628">
-					<div style="width: 30%">
-						<SuccessTick />
-					</div>
-					Ticket Verified
+				<div style="width: 30%">
+					<SuccessTick />
+				</div>
+				Ticket Verified
 			</ScanResult>
 		{:else if $scannerStatus === ScannerStatus.Invalid}
 			<ScanResult bind:scannerStatus backgroundColour="#911d14">

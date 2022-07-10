@@ -8,6 +8,8 @@
 		scroll?: boolean;
 		shadow?: false | 'small' | 'medium' | 'large';
 		highlighted?: boolean;
+		hide?: boolean;
+		background?: boolean | string;
 	}
 
 	interface Cards {
@@ -23,10 +25,10 @@
 	};
 
 	export let overflowType = {
-		left: "auto",
-		rightTop: "auto",
-		rightBottom: "auto"
-	}
+		left: 'auto',
+		rightTop: 'auto',
+		rightBottom: 'auto'
+	};
 
 	export let backPath: string;
 	export let url: string;
@@ -51,42 +53,46 @@
 		</div>
 		<div class="right-bar">
 			<slot name="right-bar">
-				<div
-					class="info-panel"
-					class:highlighted={cards.rightTop && cards.rightTop.highlighted}
-					style={`--overflow-type: ${overflowType.rightTop}`}
-				>
-					<div class="info-panel-header">
-						<slot name="info-panel-header" />
-					</div>
-					{#if cards.rightTop}
-						<Card expand={true} {...cards.rightTop}>
-							<slot name="info-panel" />
-						</Card>
-					{:else}
-						<div class="info-panel-content">
-							<slot name="info-panel" />
+				{#if cards.rightTop ? !cards.rightTop.hide : true}
+					<div
+						class="info-panel"
+						class:highlighted={cards.rightTop && cards.rightTop.highlighted}
+						style={`--overflow-type: ${overflowType.rightTop}`}
+					>
+						<div class="info-panel-header">
+							<slot name="info-panel-header" />
 						</div>
-					{/if}
-				</div>
-				<div
-					class="list-panel"
-					class:highlighted={cards.rightBottom && cards.rightBottom.highlighted}
-					style={`--overflow-type: ${overflowType.rightBottom}`}
-				>
-					<div class="list-panel-header">
-						<slot name="list-panel-header" />
+						{#if cards.rightTop}
+							<Card expand={true} {...cards.rightTop}>
+								<slot name="info-panel" />
+							</Card>
+						{:else}
+							<div class="info-panel-content">
+								<slot name="info-panel" />
+							</div>
+						{/if}
 					</div>
-					{#if cards.rightBottom}
-						<Card expand={true} {...cards.rightBottom}>
-							<slot name="list-panel" />
-						</Card>
-					{:else}
-						<div class="list-panel-content">
-							<slot name="list-panel" />
+				{/if}
+				{#if $$slots['list-panel']}
+					<div
+						class="list-panel"
+						class:highlighted={cards.rightBottom && cards.rightBottom.highlighted}
+						style={`--overflow-type: ${overflowType.rightBottom}`}
+					>
+						<div class="list-panel-header">
+							<slot name="list-panel-header" />
 						</div>
-					{/if}
-				</div>
+						{#if cards.rightBottom}
+							<Card expand={true} {...cards.rightBottom}>
+								<slot name="list-panel" />
+							</Card>
+						{:else}
+							<div class="list-panel-content">
+								<slot name="list-panel" />
+							</div>
+						{/if}
+					</div>
+				{/if}
 			</slot>
 		</div>
 	</div>
@@ -98,7 +104,7 @@
 
 	.panel-container {
 		height: 100%;
-		
+
 		@media screen and (max-width: $breakpoint-mobile) {
 			.left-bar,
 			.right-bar {
@@ -108,7 +114,7 @@
 				min-height: 50vh;
 			}
 		}
-		
+
 		display: flex;
 		flex-direction: row;
 		align-items: stretch;
@@ -133,6 +139,7 @@
 			display: flex;
 			flex-direction: column;
 			align-items: stretch;
+			justify-content: center;
 			row-gap: $item-spacing;
 			column-gap: $item-spacing;
 		}

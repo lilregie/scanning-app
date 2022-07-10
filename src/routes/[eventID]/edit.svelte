@@ -8,7 +8,6 @@
 
 	import AdminLayout from '$lib/components/layouts/AdminLayout.svelte';
 	import Scanner from '$lib/components/scanner/ScannerWrapper.svelte';
-	import Button from '$lib/components/Button.svelte';
 	import Table from '$lib/components/Table.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
 	import Card from '$lib/components/Card.svelte';
@@ -41,7 +40,7 @@
 	import ScanResult from '$lib/components/scanner/ScanResult.svelte';
 	import { ScanTypes, type ScanResults } from '$lib/components/scanner/validateScan';
 	import { findEventletByID } from '$lib/utill';
-import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
+	import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
 
 	export let url: string;
 
@@ -114,13 +113,13 @@ import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
 
 <AdminLayout
 	cards={{
-		left: { scroll: false, highlighted: $leftBarHighlighted },
+		left: { scroll: true, highlighted: $leftBarHighlighted },
 		rightBottom: false,
 		rightTop: false
 	}}
 	overflowType={{
 		left: 'auto',
-		rightTop: 'unset',
+		rightTop: 'auto',
 		rightBottom: 'auto'
 	}}
 	backPath={`${basePath}/${$currentEventID}`}
@@ -136,8 +135,8 @@ import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
 		</div>
 		<h2>Scan a booking or COVID pass to begin</h2>
 		<div out:fade|local in:fly|local={{ y: 200, duration: 1000 }}>
-			Not working or no code? Use the search to the right to bring up the attendee details and
-			mark them as checked in.
+			Not working or no code? Use the search to the right to bring up the attendee details and mark
+			them as checked in.
 		</div>
 	</div>
 	<div slot="info-panel-header">
@@ -145,7 +144,7 @@ import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
 	</div>
 	<div slot="info-panel" class="info-panel">
 		{#if $selectedAttendee}
-			<Card expand={true} scroll={false} background={!!$selectedAttendee}>
+			<Card expand={true} scroll={true} background={!!$selectedAttendee}>
 				<AttendeeDetails
 					attendee={selectedAttendee}
 					closeable
@@ -206,6 +205,9 @@ import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
 			h2 {
 				font-size: 2rem;
 				margin: 1rem;
+				&:first-child {
+					margin-top: 0;
+				}
 			}
 		}
 		.scanner-container {

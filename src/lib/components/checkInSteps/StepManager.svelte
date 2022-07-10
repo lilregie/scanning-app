@@ -103,14 +103,19 @@
 				on:skip={nextStep}
 				on:back={previousStep}
 				on:force={nextStep}
-				lastStep={$idStore===allSteps?.length-1}
-				firstStep={$idStore===0}
+				on:close={() => dispatch('close')}
+				lastStep={$idStore === allSteps?.length - 1}
+				firstStep={$idStore === 0}
 			>
 				<svelte:component
 					this={currentStep.component}
 					memory={currentStep.memory}
 					bind:stageState={currentStageState}
 					bind:attendeeProfile
+					on:next={nextStep}
+					on:skip={nextStep}
+					on:back={previousStep}
+					on:force={nextStep}
 				/>
 			</StepLayout>
 		{:else}
@@ -148,6 +153,11 @@
 			align-items: center;
 
 			box-sizing: border-box;
+		}
+
+		@media screen and (max-width: $breakpoint-mobile) {
+			width: 85%;
+			min-height: 85vh;
 		}
 	}
 </style>

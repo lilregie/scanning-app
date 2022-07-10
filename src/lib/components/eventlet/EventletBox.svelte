@@ -6,12 +6,12 @@
 	$: eventlet = $currentEvent.eventlets.find((eventlet) => eventlet.id === eventletId);
 </script>
 
-<div class="eventlet" alt={`#${eventlet.id}`} class:selected={eventletSelected}>
+<div class="eventlet" title={`#${eventlet.id}`} class:selected={eventletSelected}>
 	<span class="eventlet-name">{eventlet.name}</span>
 </div>
 
 <style lang="scss">
-    @use '../../styles/vars.scss' as *;
+	@use '../../styles/vars.scss' as *;
 
 	.eventlet {
 		display: flex;

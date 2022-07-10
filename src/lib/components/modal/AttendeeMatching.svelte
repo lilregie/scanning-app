@@ -81,6 +81,13 @@
 		globalModalState.set(null);
 	}
 
+	function viewAttendeeDetails() {
+		if ($selectedAttendee) {
+			selectedAttendeeID.set($selectedAttendee.id);
+		}
+		close();
+	}
+
 	async function checkInAttendee() {
 		let attendeeProfile: AttendeeProfile = {
 			attendee: $selectedAttendee,
@@ -121,13 +128,13 @@
 {/if}
 <div class="action-container">
 	<div>
-		<Button size="large" color="secondary" on:click={close}>
-			{#if countMatching > 0}
-				View attendee details
-			{:else}
-				Search for Attendee
-			{/if}
-		</Button>
+		{#if countMatching > 0}
+			<Button size="large" color="secondary" on:click={viewAttendeeDetails}
+				>View attendee details</Button
+			>
+		{:else}
+			<Button size="large" color="secondary" on:click={close}>Search for Attendee</Button>
+		{/if}
 	</div>
 	<div>
 		<Button size="large" disabled={$selectedAttendee === null} on:click={checkInAttendee}>

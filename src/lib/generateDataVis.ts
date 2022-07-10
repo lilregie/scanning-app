@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { eventletAttendees, selectedAttendeeID } from "./store";
+import { currentEvent, eventletAttendees, selectedAttendeeID } from "./store";
 import { newestCheckIns } from "./utill";
 import Fuse from 'fuse.js';
 
@@ -12,7 +12,9 @@ import type { TableRow } from "$lib/components/Table.svelte";
 
 
 export function newestCheckInsTable(): [string[], TableRow[]] {
-	const tableHeaders = ["Name", "ID", "Check In Time"];
+	const includesNames = get(currentEvent)?.event_type === "attendee";
+
+	const tableHeaders = [...(includesNames ? ["Name"]: []), "ID", "Check In Time"];
 
 	if (get(eventletAttendees) === null) {return [tableHeaders,[]]};
 
@@ -21,7 +23,7 @@ export function newestCheckInsTable(): [string[], TableRow[]] {
 	const tableData = checkedInAttendees.map(checkedInAttendee => {
 		return {
 			data: [
-				`${checkedInAttendee.first_name}  ${checkedInAttendee.last_name}`,
+				...(includesNames ? [`${checkedInAttendee.first_name}  ${checkedInAttendee.last_name}`] : []),
 				`#${checkedInAttendee.id}`,
 				`${dayjs(checkedInAttendee.checked_in_at).from(new Date())}`
 			]
@@ -32,7 +34,12 @@ export function newestCheckInsTable(): [string[], TableRow[]] {
 
 /// Generates an table of all the attendees, based off a search term
 export function attendeesTable(attendees: Attendee[], searchTerm = ""): [string[], TableRow[]] {
-	const tableHeaders = ["Name", "ID", "Checked In", "Vaccine Pass"];
+	const event = get(currentEvent);
+	const includesNames = event?.event_type === "attendee";
+	// Decides if we should show the vaccine pass column
+	const includesVPInfo = event?.vaccine_pass_enabled;
+
+	const tableHeaders = [...(includesNames ? ["Name"]: []), "ID", "Checked In", ...(includesVPInfo ? ["Vaccine Pass"] : [])];
 
 	if (attendees === null) {return [tableHeaders,[]]};
 
@@ -54,10 +61,10 @@ export function attendeesTable(attendees: Attendee[], searchTerm = ""): [string[
 	const tableData: TableRow[] = sortedAttendees.map(attendee => {
 		return {
 			data: [
-				attendee.first_name ? `${attendee.first_name}  ${attendee.last_name}` : '',
-				attendee.id,
+				...(includesNames ? [`${attendee.first_name}  ${attendee.last_name}`] : []),
+				`#${attendee.id}`,
 				!!attendee.checked_in_at,
-				attendee.vaccine_pass
+				...(includesVPInfo ? [attendee.vaccine_pass] : [])
 			],
 			callback: () => {
 				selectedAttendeeID.set(attendee.id);

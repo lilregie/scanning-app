@@ -33,7 +33,6 @@
 		$attendeeProfile.ticket_eventlet = $currentEvent.eventlets.find(
 			(eventlet) => eventlet.id === ticketInfo.eventletID
 		);
-
 	}
 
 	interface warning {
@@ -70,11 +69,11 @@
 		}
 	}
 
-	onMount(()=>{
+	onMount(() => {
 		if ($memory !== null) {
 			ticketInfo = $memory;
 		}
-	})
+	});
 </script>
 
 <div class="scanner-wrapper">
@@ -106,9 +105,6 @@
 				</span>
 			{/each}
 		</div>
-	{/if}
-	{#if $attendeeProfile.attendee}
-		{JSON.stringify($attendeeProfile.attendee.attendances.map(x=>x.ticket_number))}
 	{/if}
 </div>
 

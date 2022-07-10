@@ -9,7 +9,7 @@ import { browser } from '$app/env';
 import { basePath } from './consts';
 
 
-let LOCAL_STORAGE_VERSION = 3;
+const LOCAL_STORAGE_VERSION = 3;
 
 /** Makes a store persistent in local storage
  * @param  {[Writable]} store Writable store to be made persistent
@@ -46,7 +46,7 @@ export const allEvents: Writable<LilRegieEvent[]> = writable([]);
 
 export const currentEvent = derived([currentEventID, allEvents], ([_currentEventID, _allEvents]) => {
 	if (_currentEventID !== null && _allEvents.length > 0) {
-		let potentialcurrentEvent = _allEvents.filter((event) => event.id === _currentEventID);
+		const potentialcurrentEvent = _allEvents.filter((event) => event.id === _currentEventID);
 		if (potentialcurrentEvent.length === 1) {
 			console.log("Found event", _currentEventID);
 
@@ -66,7 +66,7 @@ export const currentEvent = derived([currentEventID, allEvents], ([_currentEvent
 });
 
 export const selectedEventletIDs: Writable<number[]> = writable([]);
-let selectedEventletIDsLoaded = false;
+const selectedEventletIDsLoaded = false;
 
 currentEvent.subscribe((currentEvent) => {
 	if (!currentEvent) {
@@ -105,7 +105,7 @@ export const selectedEventletCombo: Readable<Eventlet> = derived([selectedEventl
 		)
 	}
 
-	let selectedEventlets = _currentEvent.eventlets.filter((eventlet) => _selectedEventletIDs.includes(eventlet.id));
+	const selectedEventlets = _currentEvent.eventlets.filter((eventlet) => _selectedEventletIDs.includes(eventlet.id));
 
 	if (selectedEventlets.length > 0) {
 
@@ -141,7 +141,7 @@ export const allEventAttendees: Writable<Attendee[] | null> = writable(null);
 export const eventletAttendees: Readable<Attendee[] | null> = derived([selectedEventletCombo, allEventAttendees], ([_selectedEventletCombo, _allEventAttendees]) => {
 	if (_selectedEventletCombo && _allEventAttendees) {
 		return _allEventAttendees.filter((attendee) => {
-			let attendeeEventlets = attendee.attendances.map((eventlet) => eventlet.eventlet_id);
+			const attendeeEventlets = attendee.attendances.map((eventlet) => eventlet.eventlet_id);
 			if (_selectedEventletCombo.combo_ids) {
 				// Check for array of eventlet ids intersection
 				return _selectedEventletCombo.combo_ids.filter((id)=> (attendeeEventlets).includes(id)).length > 0;
