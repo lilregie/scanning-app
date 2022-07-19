@@ -6,21 +6,17 @@
 	import SuccessTick from '$lib/components/SuccessTick.svelte';
 	import FullAttendeeDetails from '$lib/components/modal/FullAttendeeDetails.svelte';
 	import InvalidCross from './InvalidCross.svelte';
+	import CloseButton from './CloseButton.svelte';
+	import EventletBox from './eventlet/EventletBox.svelte';
 
-	import {
-		currentEvent,
-		globalModalState,
-		selectedAttendee,
-		selectedEventletIDs
-	} from '$lib/store';
+	import { currentEvent, globalModalState, selectedAttendee } from '$lib/store';
 
 	import { createEventDispatcher } from 'svelte';
+
 	const dispatch = createEventDispatcher();
 
 	import { writable } from 'svelte/store';
 	import { bind } from 'svelte-simple-modal';
-	import CloseButton from './CloseButton.svelte';
-	import EventletBox from './eventlet/EventletBox.svelte';
 
 	export let attendee: Readable<Attendee>;
 	export let direction: 'horizontal' | 'vertical' = 'horizontal';
@@ -80,114 +76,115 @@
 {#if closeable}
 	<CloseButton on:close altText="Close Attendee Details" spacing={['0', '0']} />
 {/if}
-
-<div
-	class="details-container"
-	class:horizontal={direction === 'horizontal'}
-	class:vertical={direction === 'vertical'}
-	style="--detailLevel: {$detailLevel}"
-	bind:clientWidth={elementWidth}
->
-	{#if $selectedAttendee}
-		<div class="detail-column">
-			<h2 class="attendee-name">
-				{#if $attendee?.first_name}
-					{$attendee?.first_name}
-					{$attendee?.last_name}
-				{:else}
-					Attendee #{$attendee.id}
-				{/if}
-			</h2>
-			<div class="attendee-org">
-				{$attendee?.organisation || ''}&nbsp;
-			</div>
-			<div class="check-list">
-				{#each Object.entries(checkList) as check}
-					<div class="check-item">
-						<span class="check-status">
-							{#if check[1]}
-								<SuccessTick colour="#2ba628" />
-							{:else}
-								<InvalidCross colour="#d0021b" />
-							{/if}
-						</span>
-						<span class="check-item-label">{check[0]}</span>
-					</div>
-				{/each}
-			</div>
-		</div>
-		{#if $detailLevel > 1}
+<div class="complete-container">
+	<div
+		class="details-container"
+		class:horizontal={direction === 'horizontal'}
+		class:vertical={direction === 'vertical'}
+		style="--detailLevel: {$detailLevel}"
+		bind:clientWidth={elementWidth}
+	>
+		{#if $selectedAttendee}
 			<div class="detail-column">
-				<h3 class="detail-group-header">Requirements</h3>
-				{#if $attendee?.requirements}
-					{$attendee.requirements}
-				{:else}
-					<span class="detail-missing">No Requirements Found</span>
-				{/if}
-				<h3 class="detail-group-header">Booking Details</h3>
-				{#if $attendee?.email_address}
-					<div class="detail-key-value">
-						<span class="detail-key">Email</span>
-						<span class="detail-value">{$attendee.email_address}</span>
-					</div>
-				{/if}
-				{#if $attendee?.contact_phone}
-					<div class="detail-key-value">
-						<span class="detail-key">Phone</span>
-						<span class="detail-value">{$attendee.contact_phone}</span>
-					</div>
-				{/if}
-				{#if $attendee?.ticket_type_name}
-					<div class="detail-key-value">
-						<span class="detail-key">Ticket Type</span>
-						<span class="detail-value">{$attendee.ticket_type_name}</span>
-					</div>
-				{/if}
-				{#if $attendee?.custom_fields?.length > 0}
-					<h3 class="detail-group-header">Custom Fields</h3>
-					<div class="detail-key-value">
-						<div class="custom-fields">
-							{#each $attendee.custom_fields as field}
-								<span class="detail-key">{field.name}</span>
-								<div class="detail-key-value">
-									{#each field.values as value}
-										<span class="detail-value custom-fields-multiple">{value}</span>
-									{/each}
-								</div>
+				<h2 class="attendee-name">
+					{#if $attendee?.first_name}
+						{$attendee?.first_name}
+						{$attendee?.last_name}
+					{:else}
+						Attendee #{$attendee.id}
+					{/if}
+				</h2>
+				<div class="attendee-org">
+					{$attendee?.organisation || ''}&nbsp;
+				</div>
+				<div class="check-list">
+					{#each Object.entries(checkList) as check}
+						<div class="check-item">
+							<span class="check-status">
+								{#if check[1]}
+									<SuccessTick colour="#2ba628" />
+								{:else}
+									<InvalidCross colour="#d0021b" />
+								{/if}
+							</span>
+							<span class="check-item-label">{check[0]}</span>
+						</div>
+					{/each}
+				</div>
+			</div>
+			{#if $detailLevel > 1}
+				<div class="detail-column">
+					<h3 class="detail-group-header">Requirements</h3>
+					{#if $attendee?.requirements}
+						{$attendee.requirements}
+					{:else}
+						<span class="detail-missing">No Requirements Found</span>
+					{/if}
+					<h3 class="detail-group-header">Booking Details</h3>
+					{#if $attendee?.email_address}
+						<div class="detail-key-value">
+							<span class="detail-key">Email</span>
+							<span class="detail-value">{$attendee.email_address}</span>
+						</div>
+					{/if}
+					{#if $attendee?.contact_phone}
+						<div class="detail-key-value">
+							<span class="detail-key">Phone</span>
+							<span class="detail-value">{$attendee.contact_phone}</span>
+						</div>
+					{/if}
+					{#if $attendee?.ticket_type_name}
+						<div class="detail-key-value">
+							<span class="detail-key">Ticket Type</span>
+							<span class="detail-value">{$attendee.ticket_type_name}</span>
+						</div>
+					{/if}
+					{#if $attendee?.custom_fields?.length > 0}
+						<h3 class="detail-group-header">Custom Fields</h3>
+						<div class="detail-key-value">
+							<div class="custom-fields">
+								{#each $attendee.custom_fields as field}
+									<span class="detail-key">{field.name}</span>
+									<div class="detail-key-value">
+										{#each field.values as value}
+											<span class="detail-value custom-fields-multiple">{value}</span>
+										{/each}
+									</div>
+								{/each}
+							</div>
+						</div>
+					{/if}
+				</div>
+			{/if}
+			{#if $detailLevel > 2 && !$currentEvent?.standalone}
+				<div class="detail-column">
+					<h3 class="detail-group-header">Bookings</h3>
+					{#if $attendee?.attendances.length > 0}
+						<div class="bookings-container">
+							{#each $attendee.attendances.sort( (a, b) => (a.eventlet_name > b.eventlet_name ? 1 : -1) ) as attendance}
+								<EventletBox eventletId={attendance.eventlet_id} />
 							{/each}
 						</div>
-					</div>
-				{/if}
-			</div>
-		{/if}
-		{#if $detailLevel > 2 && !$currentEvent?.standalone}
-			<div class="detail-column">
-				<h3 class="detail-group-header">Bookings</h3>
-				{#if $attendee?.attendances.length > 0}
-					<div class="bookings-container">
-						{#each $attendee.attendances.sort( (a, b) => (a.eventlet_name > b.eventlet_name ? 1 : -1) ) as attendance}
-							<EventletBox eventletId={attendance.eventlet_id} />
-						{/each}
-					</div>
-				{:else}
-					<span class="detail-missing">No Bookings Found</span>
-				{/if}
-			</div>
-		{/if}
-	{/if}
-</div>
-{#if actionsAvailable}
-	<div class="action-container">
-		{#if checkedIn}
-			<Button on:click={removeLatestCheckIn} color="warning">Remove Check In</Button>
-		{:else}
-			<Button on:click={checkIn}>Check In</Button>
-		{/if}
-		{#if $detailLevel < maxDetailLevel}
-			<Button on:click={moreDetails} color="secondary" outline>More Details</Button>
+					{:else}
+						<span class="detail-missing">No Bookings Found</span>
+					{/if}
+				</div>
+			{/if}
 		{/if}
 	</div>
-{/if}
+	{#if actionsAvailable}
+		<div class="action-container">
+			{#if checkedIn}
+				<Button on:click={removeLatestCheckIn} color="warning">Remove Check In</Button>
+			{:else}
+				<Button on:click={checkIn}>Check In</Button>
+			{/if}
+			{#if $detailLevel < maxDetailLevel}
+				<Button on:click={moreDetails} color="secondary" outline>More Details</Button>
+			{/if}
+		</div>
+	{/if}
+</div>
 
 <style lang="scss">
 	@use '../styles/vars.scss' as *;
@@ -281,9 +278,10 @@
 			}
 		}
 	}
-
-	.action-container {
-		position: absolute;
-		bottom: 0;
+	.complete-container {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 100%;
 	}
 </style>
