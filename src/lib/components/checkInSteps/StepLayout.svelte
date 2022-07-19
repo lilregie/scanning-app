@@ -56,15 +56,15 @@
 		<div>
 			{#if stageState == StageState.Complete}
 				<Button on:click={next} size="large">
-					{lastStep ? 'Finish' : 'Next'}
+					{lastStep ? 'Submit' : 'Next'}
 				</Button>
 			{:else if stageState == StageState.Warning}
 				<Button on:click={force} size="large" color="warning">
-					{lastStep ? 'Force Finish' : 'Force'}
+					{lastStep ? 'Force Submit' : 'Force'}
 				</Button>
 			{:else if stageState == StageState.Incomplete}
 				<Button color="secondary" on:click={skip} size="large">
-					{lastStep ? 'Skip & Finish' : 'Skip'}
+					{lastStep ? 'Skip & Submit' : 'Skip'}
 				</Button>
 			{:else if stageState == StageState.Stay}
 				<Button
@@ -74,7 +74,7 @@
 					disabled
 					title="You cannot continue without at least completing this step"
 				>
-					{lastStep ? 'Skip & Finish' : 'Skip'}
+					{lastStep ? 'Skip & Submit' : 'Skip'}
 				</Button>
 			{:else if stageState == StageState.Loading}
 				<Button color="secondary" size="large" disabled>...</Button>

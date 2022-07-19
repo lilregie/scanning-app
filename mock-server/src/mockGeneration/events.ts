@@ -16,7 +16,7 @@ export function generateEvent(event_type: 'attendee' | 'ticket_only'): LilRegieE
     const eventID = genID();
 	return {
 		id: eventID,
-		name: `Genned Event | ${event_type} | ${standalone ? "standalone" : `${eventletCount} eventlets`} | VP-${vaccine_pass_enabled} | #${eventID}`,
+		name: `${event_type} | ${standalone ? "standalone" : `${eventletCount} eventlets`} | VP-${vaccine_pass_enabled} | #${eventID}`,
         permalink: faker.lorem.slug(),
         event_type,
         standalone: standalone,

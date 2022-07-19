@@ -50,7 +50,6 @@
 
 	function moreDetails() {
 		dispatch('moreDetails', {});
-		// @ts-expect-error
 		globalModalState.set(bind(FullAttendeeDetails, { attendee: attendee }));
 	}
 
@@ -283,8 +282,8 @@
 		}
 	}
 
-	// .action-container {
-	// 	position: absolute;
-	// 	bottom: 0;
-	// }
+	.action-container {
+		position: absolute;
+		bottom: 0;
+	}
 </style>

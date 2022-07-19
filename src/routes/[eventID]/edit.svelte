@@ -23,11 +23,12 @@
 		selectedAttendee,
 		selectedAttendeeID,
 		currentEventID,
-		currentEvent
+		currentEvent,
+stepManagerSettings
 	} from '$lib/store';
 	import { basePath } from '$lib/consts';
 	import { encode_url } from '$lib/components/checkInSteps/encodeAttendeeProfileURL';
-	import type { AttendeeProfile } from '$lib/components/checkInSteps/stepManager';
+	import { generateSteps, type AttendeeProfile } from '$lib/components/checkInSteps/stepManager';
 
 	import { get, writable } from 'svelte/store';
 	import type { Writable } from 'svelte/store';
@@ -41,6 +42,7 @@
 	import { ScanTypes, type ScanResults } from '$lib/components/scanner/validateScan';
 	import { findEventletByID } from '$lib/utill';
 	import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
+import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 
 	export let url: string;
 
@@ -81,7 +83,16 @@
 			ticket_eventlet: null
 		};
 
-		goto(`${basePath}/${$currentEventID}/check-in${await encode_url(attendeeProfile)}`);
+		// Check if any steps are neededd to complete the check-in process
+		let [, steps] = generateSteps(attendeeProfile, $stepManagerSettings);
+		if (steps.length > 0) {
+			goto(`${basePath}/${$currentEventID}/check-in${await encode_url(attendeeProfile)}`);
+
+		} else {
+			// No steps needed, so we directly check-in now
+			createCheckIn(attendeeProfile);
+		}
+
 	}
 
 	async function checkinScan(event: CustomEvent<ScanResults>) {
@@ -170,6 +181,10 @@
 						Scan a booking or COVID pass, or search attendees to access their details.
 					</p>
 				{/if}
+				<div class="step-settings-wrapper">
+					<h3>Checkin Settings</h3>
+					<StepSettings theme="dark"/>
+				</div>
 			</div>
 		{/if}
 	</div>
@@ -260,6 +275,13 @@
 				font-weight: 700;
 				max-width: 700px;
 				text-align: center;
+			}
+			.step-settings-wrapper {
+				width: 15em;
+				h3 {
+					text-align: center;
+				}
+
 			}
 		}
 	}

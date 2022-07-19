@@ -9,7 +9,7 @@
 	viewBox="0 0 94 94"
 	style={`color: ${colour};stroke: ${colour}`}
 >
-	<g out:fade|local={{ duration: 200 }} opacity="1">
+	<g opacity="1">
 		<circle
 			in:fade|local={{ duration: 350, delay: 250 }}
 			style="fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.3rem;"

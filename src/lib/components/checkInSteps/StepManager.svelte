@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Attendee } from '$lib/attendee';
-	import { selectedAttendeeID } from '$lib/store';
-	import { generateSteps, StageState, type AttendeeProfile } from './stepManager';
+	import { selectedAttendeeID, stepManagerSettings } from '$lib/store';
+	import { backupStep, generateSteps, StageState, type AttendeeProfile } from './stepManager';
 
 	import { get, writable, type Readable, type Writable } from 'svelte/store';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
@@ -17,11 +17,12 @@
 	export let attendeeProfile: Writable<AttendeeProfile>;
 
 	let allSteps: StepItem[] = null;
-	let idStore: Writable<number> = null;
+	let idStore: Writable<number> = writable(0);
 	let currentStep: StepItem = null;
 	let currentStepID: number = 0;
 
 	let idUnsubscribe = null;
+	let stepSettingsUnsubscribe = null;
 
 	function updateSelectedAttendee(attendeeProfile: AttendeeProfile) {
 		if (attendeeProfile.attendee) {
@@ -56,11 +57,24 @@
 	}
 
 	onMount(() => {
-		const [startingID, newSteps] = generateSteps(get(attendeeProfile));
-		idStore = writable(startingID);
-		allSteps = newSteps;
+		stepSettingsUnsubscribe = stepManagerSettings.subscribe((settings) => {
+			const [startingID, newSteps] = generateSteps(get(attendeeProfile),settings);
+			console.log("Reloading steps with new settings")
+			allSteps = newSteps;
+			if (get(idStore)===startingID) {
+				// If the new ID is the same, the store will not update
+				// so we manually trigger the update
+				idStore.set(null);
+				console.log("Setting ID to null")
+			}
 
-		idUnsubscribe = idStore.subscribe(async (id) => {
+			idStore.set(startingID);
+		});
+		
+		function updateCurrentStep(id: number) {
+			console.log(
+				"wow"
+			)
 			currentStepID = id;
 
 			// By waiting a tick before setting the current step, we ensure that the previous step has had a chance to destory itself
@@ -73,15 +87,24 @@
 			currentStep = null;
 			console.log('Awaiting Tick');
 			setTimeout(() => {
-				console.log('Ticketed', allSteps[id]);
-				currentStep = allSteps[id];
+				console.log('Ticketed',allSteps,id, allSteps[id]);
+				if (allSteps.length > id) {
+					currentStep = allSteps[id];
+				} else {
+					currentStep = backupStep;
+				}
 			}, 500);
-		});
+		}
+
+		idUnsubscribe = idStore.subscribe(updateCurrentStep);
 	});
 
 	onDestroy(() => {
 		if (idUnsubscribe) {
 			idUnsubscribe();
+		}
+		if (stepSettingsUnsubscribe) {
+			stepSettingsUnsubscribe();
 		}
 	});
 
@@ -91,7 +114,9 @@
 <div class="container">
 	<div class="stepper-wrapper">
 		{#if allSteps && allSteps.length > 0}
-			<StepsViewer steps={allSteps} bind:current={$idStore} />
+			{#key allSteps}
+				<StepsViewer steps={allSteps} bind:current={$idStore} />
+			{/key}
 		{/if}
 	</div>
 	<div class="content-slider">
@@ -104,7 +129,7 @@
 				on:back={previousStep}
 				on:force={nextStep}
 				on:close={() => dispatch('close')}
-				lastStep={$idStore === allSteps?.length - 1}
+				lastStep={$idStore >= allSteps?.length - 1}
 				firstStep={$idStore === 0}
 			>
 				<svelte:component
@@ -119,7 +144,8 @@
 				/>
 			</StepLayout>
 		{:else}
-			<div class="loading-placeholder" />
+			<div class="loading-placeholder">
+			</div>
 		{/if}
 	</div>
 </div>
@@ -144,7 +170,7 @@
 			width: 100%;
 		}
 
-		.loadin-placeholder {
+		.loading-placeholder {
 			height: 100%;
 			width: 100%;
 			position: relative;

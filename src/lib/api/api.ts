@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import type { Attendee, EventletAttendance } from '../attendee';
 import type { LilRegieEvent } from '../event';
-import { allEvents, currentEventID, eventletAttendees, allEventAttendees } from '../store';
+import { allEvents, currentEventID, eventletAttendees, allEventAttendees, currentEvent } from '../store';
 import {findByKey} from "$lib/utill"
 import { request } from './request';
 import { apiProduction, csrfAPIState, errorAPICallbacks } from './statusStores';
@@ -14,6 +14,7 @@ export async function initializeAPI() {
 	let metaTag = document.querySelector('meta[name=csrf-token]') as HTMLMetaElement;
 	const CSRF_TOKEN = metaTag?.content;
 	csrfAPIState.set(CSRF_TOKEN);
+
 	if (CSRF_TOKEN==="testing-token") {
 		console.warn("API in DEV mode");
 		apiProduction.set(false);
@@ -23,7 +24,6 @@ export async function initializeAPI() {
 	} else {
 		console.log("API in production mode");
 		apiProduction.set(true);
-
 	}
 
 	console.log('Loading Events');
@@ -64,20 +64,20 @@ export async function getAttendeesList(eventID: string) {
 }
 
 export async function createCheckIn(attendeeProfile: AttendeeProfile) {
-	const {attendee, check_in_eventlet, covidPass, ticket_eventlet} = attendeeProfile;
+	let {attendee, check_in_eventlet, covidPass, ticket_eventlet} = attendeeProfile;
 
 	// Required Data
 	if (!attendee) {
 		console.error("Tried to check-in attendee without an attendee selected: ",attendee, attendeeProfile);
 		return
 	}
-	if (!check_in_eventlet) {
+	if (!check_in_eventlet && !get(currentEvent).standalone) {
 		console.error("Tried to check-in attendee without an attendance selected: ", attendeeProfile);
 		return
 	}
+	check_in_eventlet = check_in_eventlet || get(currentEvent).eventlets[0];
 
 	// First get attendance
-	console.log(attendee.attendances,check_in_eventlet)
 	let attendance = attendee.attendances.find((x: EventletAttendance)=>x.eventlet_id==check_in_eventlet.id);
 	console.log("attendance",attendance)
 

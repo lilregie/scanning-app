@@ -7,6 +7,7 @@ import { findAttendeeByID } from './utill';
 import { goto } from '$app/navigation';
 import { browser } from '$app/env';
 import { basePath } from './consts';
+import type { StepManagerSettings } from './components/checkInSteps/stepManager';
 
 
 const LOCAL_STORAGE_VERSION = 3;
@@ -177,3 +178,11 @@ export const prefersCameraOrTextScanning: Writable<string> = writable('camera');
 useLocalStorage(prefersCameraOrTextScanning, 'prefersCameraOrTextScanning');
 
 export const globalModalState: Writable<any> = writable(null);
+
+
+// Checked in screen might have check-in steps disabled or enabled
+export const stepManagerSettings: Writable<StepManagerSettings> = writable({
+	scanTicket: true,
+	scanVaccinePass: true
+});
+useLocalStorage(stepManagerSettings, 'stepManagerSettings');

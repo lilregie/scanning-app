@@ -12,8 +12,8 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import {
-allEventAttendees,
-currentEvent,
+		allEventAttendees,
+		currentEvent,
 		currentEventID,
 		eventletAttendees,
 		globalModalState,
@@ -23,7 +23,7 @@ currentEvent,
 	import { onMount } from 'svelte';
 
 	import { basePath } from '$lib/consts';
-	
+
 	import Card from '$lib/components/Card.svelte';
 	import StepManager from '$lib/components/checkInSteps/StepManager.svelte';
 	import AdminLayout from '$lib/components/layouts/AdminLayout.svelte';
@@ -31,18 +31,22 @@ currentEvent,
 	import { decode_url } from '$lib/components/checkInSteps/encodeAttendeeProfileURL';
 	import { derived, writable, type Readable, type Writable } from 'svelte/store';
 	import type { AttendeeProfile } from '$lib/components/checkInSteps/stepManager';
+	import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 
 	export let url: string;
 
 	const backPath = `${basePath}/${$currentEventID}/edit`;
-	
-	const bootstrapAttendeeProfile: Readable<AttendeeProfile> = derived([page, allEventAttendees],([_page,_allEventAttendees], set)=>{
-		if (!_allEventAttendees) {
-			set(null);
-			return;
+
+	const bootstrapAttendeeProfile: Readable<AttendeeProfile> = derived(
+		[page, allEventAttendees],
+		([_page, _allEventAttendees], set) => {
+			if (!_allEventAttendees) {
+				set(null);
+				return;
+			}
+			decode_url(_page.url.searchParams).then((newAttendeeProfile) => set(newAttendeeProfile));
 		}
-		decode_url(_page.url.searchParams).then((newAttendeeProfile)=>set(newAttendeeProfile));
-	});
+	);
 
 	const attendeeProfile: Writable<AttendeeProfile> = writable(null);
 	$: attendeeProfile.set($bootstrapAttendeeProfile);
@@ -51,7 +55,7 @@ currentEvent,
 		goto(backPath);
 	}
 
-	onMount(()=>{
+	onMount(() => {
 		globalModalState.set(null);
 	});
 </script>
@@ -60,7 +64,7 @@ currentEvent,
 	<div slot="right-bar" class="container">
 		<Card expand allowClosing on:close={onClose}>
 			{#if $bootstrapAttendeeProfile}
-				<StepManager {attendeeProfile} on:close={onClose}/>
+				<StepManager {attendeeProfile} on:close={onClose} />
 			{:else}
 				Loading animation here...
 			{/if}
@@ -69,15 +73,35 @@ currentEvent,
 
 	<div class="attendee-details" slot="left-bar">
 		{#if $selectedAttendee}
-			<AttendeeDetails attendee={selectedAttendee} actionsAvailable={false} direction={'vertical'} />
+			<AttendeeDetails
+				attendee={selectedAttendee}
+				actionsAvailable={false}
+				direction={'vertical'}
+			/>
 		{:else}
 			No attendee selected...
 		{/if}
+		<div class="attendee-details-footer">
+			<h3>Checkin Settings</h3>
+			<StepSettings />
+		</div>
 	</div>
 </AdminLayout>
 
 <style lang="scss">
+	@use '../../lib/styles/vars.scss' as *;
+	
 	.container {
 		height: 100%;
+	}
+	.attendee-details {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+
+		height: 100%;
+		.attendee-details-footer {
+			border-top: $border-light 2px solid;
+		}
 	}
 </style>
