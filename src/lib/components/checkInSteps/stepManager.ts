@@ -7,17 +7,19 @@ import type { NZCovidPass } from "../scanner/validateScan";
 // Steps (TS doesn't like importing svelte files)
 import ScanVaccinePassSvelte from "./steps/ScanVaccinePass.svelte";
 import ScanBarcodeTicketSvelte from "./steps/ScanBarcodeTicket.svelte";
-import AttendeeMatchingSvelte from "./steps/AttendeeMatching.svelte";
 import SelectEventletsSvelte from "./steps/SelectEventlets.svelte";
 import ConfirmCheckinSvelte from "./steps/ConfirmCheckin.svelte";
 
+// Icons
+import ScanVaccinePassICON from "./stepIcons/ScanVaccinePass.svelte";
+import ScanBarcodeTicketICON from "./stepIcons/ScanBarcodeTicket.svelte";
+import SelectEventletsICON from "./stepIcons/SelectEventlets.svelte";
 import type { Eventlet } from "$lib/event";
 
 export enum Steps {
     ScanVaccinePass = "Scan Vaccine Pass",
     ScanTicket = "Scan Ticket",
     ConfirmEventlets = "Confirm Eventlets",
-    AttendeeMatching = "Attendee Matching",
     ConfirmCheckin = "Confirm Checkin",
 }
 
@@ -25,7 +27,6 @@ export const StepComponents = {
     [Steps.ScanVaccinePass]: ScanVaccinePassSvelte,
     [Steps.ScanTicket]: ScanBarcodeTicketSvelte,
     [Steps.ConfirmEventlets]: SelectEventletsSvelte,
-    [Steps.AttendeeMatching]: AttendeeMatchingSvelte,
     [Steps.ConfirmCheckin]: ConfirmCheckinSvelte
 }
 
@@ -40,10 +41,9 @@ export interface StepItem {
 
 type StepIcons = { [key in Steps]: typeof SvelteComponent | null };
 const stepIcons: StepIcons = {
-    "Scan Vaccine Pass": null,
-    "Scan Ticket": null,
-    "Confirm Eventlets": null,
-    "Attendee Matching": null,
+    "Scan Vaccine Pass": ScanVaccinePassICON,
+    "Scan Ticket": ScanBarcodeTicketICON,
+    "Confirm Eventlets": SelectEventletsICON,
     "Confirm Checkin": null
 }
 
