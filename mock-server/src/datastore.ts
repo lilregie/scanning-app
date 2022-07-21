@@ -7,7 +7,7 @@ export let events: LilRegieEvent[] = [];
 export let attendees: Map<number, Attendee[]> = new Map();
 
 for (let i = 0; i < 24; i++) {
-    events.push(generateEvent(i%2===0 ? 'attendee' : 'ticket_only'));
+    events.push(generateEvent(i%2===0 ? 'registration' : 'ticket_only'));
 }
 
 for (const event of events) {

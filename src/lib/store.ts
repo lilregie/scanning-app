@@ -16,7 +16,7 @@ const LOCAL_STORAGE_VERSION = 3;
  * @param  {[Writable]} store Writable store to be made persistent
  * @param  {[string]} key Key to be used in Local Storage
  */
-function useLocalStorage<T>(store: Writable<T>, key: string | (()=>string), defaultCallback: () => void = null): void {
+function useLocalStorage<T>(store: Writable<T>, key: string | (()=>string), defaultCallback: (() => void) | null = null): void {
 	// It's a function, so the key can be regenerated each time it is saved
 	const getLocalStorageKey = () => {
 		let stringKey: string;
@@ -41,7 +41,7 @@ function useLocalStorage<T>(store: Writable<T>, key: string | (()=>string), defa
 	}
 }
 
-export const currentEventID: Writable<number> = writable(null);
+export const currentEventID: Writable<number | null> = writable(null);
 
 export const allEvents: Writable<LilRegieEvent[]> = writable([]);
 

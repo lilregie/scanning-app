@@ -6,7 +6,7 @@ faker.seed(42);
 
 const genID = () => faker.datatype.number();
 
-export function generateEvent(event_type: 'attendee' | 'ticket_only'): LilRegieEvent {
+export function generateEvent(event_type: 'registration' | 'ticket_only'): LilRegieEvent {
     const standalone = faker.datatype.number(3)===1;
     const eventletCount = standalone ? 1 : faker.datatype.number({
         min: 1,

@@ -1,9 +1,9 @@
 export interface LilRegieEvent {
     id: number;
     name: string;
-    // some events are fully managed by Lil Regie ("attendee"),
+    // some events are fully managed by Lil Regie ("registration"),
     // others are just using Lil Regie for ticketing ("ticket_only").
-    event_type: "ticket_only" | "attendee";
+    event_type: "ticket_only" | "registration";
     // snake case version of name - used for signup URL
     permalink: string;
     // decides if we should display the eventlet UI elements

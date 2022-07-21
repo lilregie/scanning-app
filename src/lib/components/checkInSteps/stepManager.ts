@@ -60,11 +60,11 @@ export function generateSteps(attendeeProfile: AttendeeProfile, settings: StepMa
         addStep(Steps.ScanTicket, attendeeProfile.ticket_eventlet);
     }
 
-    if (event.vaccine_pass_enabled && settings.scanVaccinePass) {
+    if (event?.vaccine_pass_enabled && settings.scanVaccinePass) {
         addStep(Steps.ScanVaccinePass, attendeeProfile.covidPass);
     }
 
-    if (!event.standalone) {
+    if (!event?.standalone) {
         addStep(Steps.ConfirmEventlets, false); // always confirm eventlets if enabled
     }
 

@@ -33,7 +33,7 @@ export function generateAttendee(id: number = genID(), event: LilRegieEvent, opt
 	let checked_in = faker.datatype.boolean();
 
 	let attendeePersonal: AttendeePersonal | {} = {}
-	if (event.event_type === 'attendee') {
+	if (event.event_type === 'registration') {
 		attendeePersonal = {
 			first_name: opts.first_name,
 			last_name: opts.last_name,

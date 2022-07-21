@@ -12,7 +12,7 @@ import type { TableRow } from "$lib/components/Table.svelte";
 
 
 export function newestCheckInsTable(): [string[], TableRow[]] {
-	const includesNames = get(currentEvent)?.event_type === "attendee";
+	const includesNames = get(currentEvent)?.event_type === "registration";
 
 	const tableHeaders = [...(includesNames ? ["Name"]: []), "ID", "Check In Time"];
 
@@ -35,7 +35,7 @@ export function newestCheckInsTable(): [string[], TableRow[]] {
 /// Generates an table of all the attendees, based off a search term
 export function attendeesTable(attendees: Attendee[], searchTerm = ""): [string[], TableRow[]] {
 	const event = get(currentEvent);
-	const includesNames = event?.event_type === "attendee";
+	const includesNames = event?.event_type === "registration";
 	// Decides if we should show the vaccine pass column
 	const includesVPInfo = event?.vaccine_pass_enabled;
 
