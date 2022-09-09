@@ -7,28 +7,34 @@
 	import { basePath } from '$lib/consts';
 	import { goto } from '$app/navigation';
 
-	let eventsDropdownList = [];
-	let eventsDropdownChosen: {value: string,label: string} = null;
+	let eventsDropdownList: { value: string; label: string }[] = [];
+	let eventsDropdownChosen: { value: string; label: string } | null = null;
 
 
 	allEvents.subscribe((events) => {
 		eventsDropdownList = events.map((event) => {
-			return { value: event.id, label: event.name };
+			return { value: event.id.toString(), label: event.name };
 		});
 	});
 
 	onMount(() => {
-		if (get(currentEvent) !== null) {
+		let event = get(currentEvent);
+		if (event !== null) {
 			eventsDropdownChosen = {
-				value: get(currentEventID).toString(),
-				label: get(currentEvent).name
+				value: event.id.toString(),
+				label: event.name
 			};
 		}
 	});
 
 	function choseProject() {
+		if (eventsDropdownChosen !== null) {
 		currentEventID.set(parseInt(eventsDropdownChosen.value));
-		goto(`${basePath}/${eventsDropdownChosen.value}`);
+			console.log(basePath,eventsDropdownChosen,`${basePath}/${eventsDropdownChosen.value}`)
+			goto(`${basePath}/${eventsDropdownChosen.value}`);
+		} else {
+			console.warn('Tried to select event but no event was chosen?');
+		}
 	}
 </script>
 
@@ -40,8 +46,9 @@
 			expanded
 			on:click={choseProject}
 			disabled={typeof eventsDropdownChosen === 'undefined' || eventsDropdownChosen === null}
-			>Choose Event</Button
 		>
+			Choose Event
+		</Button>
 	</div>
 </div>
 

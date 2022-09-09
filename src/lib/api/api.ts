@@ -51,7 +51,7 @@ export async function getAttendeesList(eventID: string) {
 		if (result.status == 404) {
 			console.log("Event not found");
 		} else {
-			let attendees: Attendee[] = (await result.json()).map(attendee=>{
+			let attendees: Attendee[] = (await result.json()).map((attendee: Attendee)=>{
 				attendee.checked_in_at = typeof attendee.checked_in_at === "string" && new Date(attendee.checked_in_at) || null
 				return attendee
 			});

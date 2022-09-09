@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-	export async function load({params}) {
+	export const load: import('@sveltejs/kit').Load = async ({params}) => {
 		const {eventID} = params;
 		return {
 			props: {

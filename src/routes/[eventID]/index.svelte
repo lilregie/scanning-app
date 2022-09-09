@@ -1,6 +1,5 @@
-<script context="module">
-	/** @type {import('@sveltejs/kit').Load} */
-	export const load = async ({ url }) => ({ props: { url: url.pathname } });
+<script context="module" lang="ts">
+	export const load: import('@sveltejs/kit').Load = async ({ url }) => ({ props: { url: url.pathname } });
 </script>
 
 <script lang="ts">

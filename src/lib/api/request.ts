@@ -57,7 +57,7 @@ export namespace request {
 
 		// apiTimers keeps track of all the requests that are currently running,
 		// so that we can show the user if the request is taking too long
-		apiTimers.update(_apiTimers => {
+		apiTimers.update((_apiTimers: typeof apiTimers) => {
 			_apiTimers.set(requestID, new Date().getTime());
 			return _apiTimers;
 		})
@@ -92,7 +92,7 @@ export namespace request {
 
 		} finally {
 			// Clear API request from logs
-			apiTimers.update(_apiTimers => {
+			apiTimers.update((_apiTimers: typeof apiTimers) => {
 				_apiTimers.delete(requestID);
 				return _apiTimers;
 			})
