@@ -103,9 +103,16 @@ export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 
 	// Optimistically update UI
 	allEventAttendees.update((_eventAttendees) => {
-		if (!_eventAttendees) { return _eventAttendees }
+		if (!_eventAttendees) {
+			console.warn("Tried to update attendee before attendees loaded");
+			return _eventAttendees
+		}
 		// Get mutable reference to attendee
-		let selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
+		let selectedAttendee = findByKey(_eventAttendees, "id", attendee?.id);
+		if (typeof selectedAttendee === "undefined") {
+			console.error("Tried to checkin attendee that is does not exist");
+			return _eventAttendees;
+		}
 
 		// Save current state so we can revert if request fails
 		startingAttendeeCheckInDate = selectedAttendee.checked_in_at;
@@ -159,17 +166,26 @@ export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 }
 
 export async function removeLatestCheckIn(attendee: Attendee) {
-	if (findByKey(get(allEventAttendees), "id", attendee.id).checked_in_at === null) {
-		console.warn("Trying to remove check in, but attendee is not checked in");
-	}
 
 	// So we can undo the UI update
-	let checkInDate = null;
+	let checkInDate: Date | null;
 
 	// Optimistically update UI
 	allEventAttendees.update((_eventAttendees) => {
+		if (!_eventAttendees) {
+			console.warn("Tried to update attendee before attendees loaded");
+			return _eventAttendees
+		}
+
 		let selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
+		if (typeof selectedAttendee === "undefined") {
+			console.error("Tried to remove checkin for attendee that is does not exist");
+			return _eventAttendees;
+		}
 		checkInDate = selectedAttendee.checked_in_at;
+		if (checkInDate === null) {
+			console.warn("Trying to remove check in, but attendee is not checked in");
+		}
 		selectedAttendee.checked_in_at = null;
 		return _eventAttendees;
 	})
@@ -184,7 +200,13 @@ export async function removeLatestCheckIn(attendee: Attendee) {
 		console.log("Failed to remove checkin");
 		// Undo UI update
 		allEventAttendees.update((_eventAttendees) => {
+			if (!_eventAttendees) { return _eventAttendees }
+
 			let selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
+			if (typeof selectedAttendee === "undefined") {
+				console.error("Tried to undo remove checkin for attendee that is does not exist");
+				return _eventAttendees;
+			}
 			selectedAttendee.checked_in_at = checkInDate;
 			return _eventAttendees;
 		})
