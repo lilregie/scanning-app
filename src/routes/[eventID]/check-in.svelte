@@ -1,11 +1,9 @@
 <script lang="ts" context="module">
-	export async function load({ url }) {
-		return {
-			props: {
-				url: url.pathname
-			}
-		};
-	}
+	export const load: import('@sveltejs/kit').Load = async ({ url }) => ({
+		props: {
+			url: url.pathname
+		}
+	})
 </script>
 
 <script lang="ts">
@@ -37,7 +35,7 @@
 
 	const backPath = `${basePath}/${$currentEventID}/edit`;
 
-	const bootstrapAttendeeProfile: Readable<AttendeeProfile> = derived(
+	const bootstrapAttendeeProfile: Readable<AttendeeProfile | null> = derived(
 		[page, allEventAttendees],
 		([_page, _allEventAttendees], set) => {
 			if (!_allEventAttendees) {
@@ -48,7 +46,7 @@
 		}
 	);
 
-	const attendeeProfile: Writable<AttendeeProfile> = writable(null);
+	const attendeeProfile: Writable<AttendeeProfile | null> = writable(null);
 	$: attendeeProfile.set($bootstrapAttendeeProfile);
 
 	function onClose() {

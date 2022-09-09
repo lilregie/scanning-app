@@ -16,9 +16,11 @@ export function newestCheckInsTable(): [string[], TableRow[]] {
 
 	const tableHeaders = [...(includesNames ? ["Name"]: []), "ID", "Check In Time"];
 
-	if (get(eventletAttendees) === null) {return [tableHeaders,[]]};
+	let attendees = get(eventletAttendees);
 
-	const checkedInAttendees: Attendee[] = newestCheckIns(get(eventletAttendees));
+	if (attendees === null) {return [tableHeaders,[]]};
+
+	const checkedInAttendees: Attendee[] = newestCheckIns(attendees);
 
 	const tableData = checkedInAttendees.map(checkedInAttendee => {
 		return {
@@ -37,7 +39,7 @@ export function attendeesTable(attendees: Attendee[], searchTerm = ""): [string[
 	const event = get(currentEvent);
 	const includesNames = event?.event_type === "registration";
 	// Decides if we should show the vaccine pass column
-	const includesVPInfo = event?.vaccine_pass_enabled;
+	const includesVPInfo = event?.vaccine_pass_required;
 
 	const tableHeaders = [...(includesNames ? ["Name"]: []), "ID", "Checked In", ...(includesVPInfo ? ["Vaccine Pass"] : [])];
 

@@ -1,11 +1,13 @@
-import faker from "@faker-js/faker";
 import { Router } from "express";
+import { CheckInError } from "../mockInterfaces/checkIn";
+import { CheckIn } from "../mockInterfaces/checkIn";
 import { extractOneHeader, getAttendee } from "./utill";
 
+import {faker} from '@faker-js/faker';
 
 
 export default function checkInInitialize(router: Router) {
-    router.post("/:eventId/attendees/:attendeeId/checkin", (req, res) => {
+    router.post("/:eventId/attendances/:attendeeId/checkin", (req, res) => {
         let attendee = getAttendee(req, res);
         if (attendee === null) {
             res.status(400);
@@ -13,7 +15,7 @@ export default function checkInInitialize(router: Router) {
             return;
         }
         
-        let ticketIdHeader = extractOneHeader(req, "ticket_id");
+        let ticketIdHeader = extractOneHeader(req, "ticket_uuid");
         let vaccinePassHeader = extractOneHeader(req, "vaccine_pass");
         console.log(ticketIdHeader, vaccinePassHeader);
 
@@ -23,11 +25,11 @@ export default function checkInInitialize(router: Router) {
             return;
         }
 
-        let eventlet = attendee.attendances.find((x) => x.id === parseInt(ticketIdHeader as string));
+        let valid = attendee.ticket_uuid === ticketIdHeader;
         
-        if (!eventlet) {
+        if (!valid) {
             res.status(404);
-            res.json({ "error": "ticket not found on attendee" });
+            res.json({ "error": "ticket not found on attendee" } as CheckInError);
             return;
         }
 
@@ -35,13 +37,20 @@ export default function checkInInitialize(router: Router) {
         console.log("New CheckIn:",attendee.id);
         
         attendee.checked_in_at = new Date();
-        eventlet.checked_in_at = new Date();
         attendee.vaccine_pass = attendee.vaccine_pass || vaccinePassHeader?.toLowerCase()==="true";
 
-        res.json(eventlet)
+
+        let result: CheckIn = {
+            id: faker.datatype.number(),
+            attendee_id: attendee.id,
+            checked_in_at: attendee.checked_in_at,
+            checkin_user_id: faker.datatype.number(),
+            vaccine_pass: attendee.vaccine_pass
+        };
+        res.json(result)
     });
 
-    router.delete("/:eventId/attendees/:attendeeId/checkin", (req, res) => {
+    router.delete("/:eventId/attendances/:attendeeId/checkin", (req, res) => {
         let attendee = getAttendee(req, res);
         if (attendee === null) {
             return;

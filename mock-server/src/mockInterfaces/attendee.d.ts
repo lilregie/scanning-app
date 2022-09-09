@@ -11,7 +11,13 @@ export interface Attendee {
    attendances: EventletAttendance[];
    cancelled_at: Date | null;
    voucher_name: string | null;
+   ticket_uuid: string;
+	// A booking can for more than one person.
+	// The sequence number thus indicates the continuous
+	// numbering of those tickets/attendances on that booking.
+	ticket_sequence: number;
    vaccine_pass: boolean;
+   
 }
 
 // Details not collected in a ticket only event
@@ -33,16 +39,13 @@ export interface CustomField {
 }
 
 export interface EventletAttendance {
-   id: number;
-   eventlet_id: number;
-   eventlet_name: string;
-   amount_excluding_tax: string;
-   tax: string;
-   amount_including_tax: string;
-   ticket_number: number;
-   // A booking can for more than one person.
-   // The sequence number thus indicates the continuous
-   // numbering of those tickets/attendances on that booking.
-   ticket_sequence: number;
-   checked_in_at: Date | null;
+	id: number;
+	attendee_id: number;
+	eventlet_id: number;
+	eventlet_name: string;
+	amount_excluding_tax: string;
+	tax: string;
+	amount_including_tax: string;
+	checked_in_at: Date | null;
+	checkin_user_id: number;
 }

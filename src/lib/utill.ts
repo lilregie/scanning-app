@@ -8,6 +8,8 @@ export function newestCheckIns(eventAttendees: Attendee[]): Attendee[] {
 	checkIns = checkIns.sort((a: Attendee, b: Attendee) => {
 		if (b.checked_in_at && a.checked_in_at) {
 			return b.checked_in_at.getTime() - a.checked_in_at.getTime();
+		} else {
+			return Number.MAX_VALUE
 		}
 	});
 	return checkIns
@@ -54,11 +56,11 @@ export function titleCase(str: string) {
 }
 
 
-function isObject(item) {
+function isObject(item: any) {
 	return (item && typeof item === 'object' && !Array.isArray(item));
 }
 
-export function mergeDeep(target, ...sources) {
+export function mergeDeep(target: any, ...sources: any): object {
 	if (!sources.length) return target;
 	const source = sources.shift();
 

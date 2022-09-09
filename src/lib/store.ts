@@ -1,12 +1,10 @@
 import { derived, get, writable } from 'svelte/store';
 import type { Writable, Readable } from 'svelte/store';
-import type { Eventlet, LilRegieEvent } from '$lib/event';
+import type { Eventlet, EventletsCombined, LilRegieEvent } from '$lib/event';
 import type { Attendee } from './attendee';
 import { getAttendeesList } from './api/api';
 import { findAttendeeByID } from './utill';
-import { goto } from '$app/navigation';
-import { browser } from '$app/env';
-import { basePath } from './consts';
+
 import type { StepManagerSettings } from './components/checkInSteps/stepManager';
 
 
@@ -94,14 +92,14 @@ currentEvent.subscribe((currentEvent) => {
 	}
 })
 
-export const selectedEventletCombo: Readable<Eventlet> = derived([selectedEventletIDs, currentEvent],([_selectedEventletIDs, _currentEvent]) => {
+export const selectedEventletCombo: Readable<EventletsCombined | null> = derived([selectedEventletIDs, currentEvent],([_selectedEventletIDs, _currentEvent]) => {
 	if (!_currentEvent) {
 		return null
 	}
 	const getDateSum = (list: Eventlet[], opp: (...args: number[])=>number) => {
 		return new Date(
 			opp(
-				...list.map((eventlet) => eventlet.datetime_start.getTime())
+				...list.map((eventlet) => eventlet.start_at.getTime())
 				)
 		)
 	}
@@ -111,28 +109,20 @@ export const selectedEventletCombo: Readable<Eventlet> = derived([selectedEventl
 	if (selectedEventlets.length > 0) {
 
 		// Now we just sum up the eventlets
-		const ticket_limit_enabled = selectedEventlets.every((eventlet) => eventlet.ticket_limit);
+		const ticket_limit_enabled = selectedEventlets.every((eventlet) => eventlet.maximum_attendees);
 		return {
 			checked_in_count: selectedEventlets.reduce((acc, eventlet) => acc + eventlet.checked_in_count, 0),
-			datetime_start: getDateSum(selectedEventlets, Math.min),
-			datetime_end: getDateSum(selectedEventlets, Math.max),
-			id: null,
-			name: selectedEventlets.map((eventlet) => eventlet.name).join(", "),
-			ticket_limit: ticket_limit_enabled ? selectedEventlets.reduce((acc, eventlet) => acc + eventlet.ticket_limit, 0) : 0,
-			total_ticket_count: selectedEventlets.reduce((acc, eventlet) => acc + eventlet.total_ticket_count, 0),
-			combo_ids: selectedEventlets.map((eventlet) => eventlet.id)
-		} as Eventlet;
+			event_id: _currentEvent.id,
+			
+			start_at: getDateSum(selectedEventlets, Math.min),
+			end_at: getDateSum(selectedEventlets, Math.max),
+			name: selectedEventlets.map((eventlet) => eventlet.name),
+			maximum_attendees: ticket_limit_enabled ? selectedEventlets.reduce((acc, eventlet) => acc + (eventlet.maximum_attendees as number), 0) : 0,
+			total_attendee_count: selectedEventlets.reduce((acc, eventlet) => acc + eventlet.total_attendee_count, 0),
+			id: selectedEventlets.map((eventlet) => eventlet.id),
+		} as EventletsCombined;
 	} else {
-		return {
-			checked_in_count: 0,
-			datetime_start: null,
-			datetime_end: null,
-			id: null,
-			name: "",
-			ticket_limit: null,
-			total_ticket_count: 0,
-			combo_ids: []
-		}
+		return null
 	}
 
 });
@@ -143,9 +133,9 @@ export const eventletAttendees: Readable<Attendee[] | null> = derived([selectedE
 	if (_selectedEventletCombo && _allEventAttendees) {
 		return _allEventAttendees.filter((attendee) => {
 			const attendeeEventlets = attendee.attendances.map((eventlet) => eventlet.eventlet_id);
-			if (_selectedEventletCombo.combo_ids) {
+			if (_selectedEventletCombo.id) {
 				// Check for array of eventlet ids intersection
-				return _selectedEventletCombo.combo_ids.filter((id)=> (attendeeEventlets).includes(id)).length > 0;
+				return _selectedEventletCombo.id.filter((id)=> (attendeeEventlets).includes(id)).length > 0;
 			} else {
 				// non-combo eventlet
 				return attendeeEventlets.includes(_selectedEventletCombo.id);
@@ -160,11 +150,14 @@ export const eventletAttendees: Readable<Attendee[] | null> = derived([selectedE
 
 export const attendeesSearchTerm: Writable<string> = writable('');
 
-export const selectedAttendeeID: Writable<number> = writable(null);
+export const selectedAttendeeID: Writable<number | null> = writable(null);
 
 export const selectedAttendee: Readable<Attendee> = derived(
 	[selectedAttendeeID, eventletAttendees],
-	([_selectedAttendeeID, _eventletAttendees]) => findAttendeeByID(_eventletAttendees, _selectedAttendeeID)
+	([_selectedAttendeeID, _eventletAttendees]) => {
+		if (!_eventletAttendees || !_selectedAttendeeID) {return undefined}
+		findAttendeeByID(_eventletAttendees, _selectedAttendeeID)
+	}
 );
 
 export const checkedInCount: Readable<number> = derived(eventletAttendees, (_eventletAttendees) => {

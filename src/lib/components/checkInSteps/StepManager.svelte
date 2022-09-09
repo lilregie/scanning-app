@@ -3,7 +3,7 @@
 	import { selectedAttendeeID, stepManagerSettings } from '$lib/store';
 	import { backupStep, generateSteps, StageState, type AttendeeProfile } from './stepManager';
 
-	import { get, writable, type Readable, type Writable } from 'svelte/store';
+	import { get, writable, type Readable, type Unsubscriber, type Writable } from 'svelte/store';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 
 	import { Steps as StepsViewer } from 'svelte-steps';
@@ -14,15 +14,15 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let attendeeProfile: Writable<AttendeeProfile>;
+	export let attendeeProfile: Writable<AttendeeProfile | null>;
 
-	let allSteps: StepItem[] = null;
+	let allSteps: StepItem[] = [];
 	let idStore: Writable<number> = writable(0);
-	let currentStep: StepItem = null;
+	let currentStep: StepItem | null = null;
 	let currentStepID: number = 0;
 
-	let idUnsubscribe = null;
-	let stepSettingsUnsubscribe = null;
+	let idUnsubscribe: Unsubscriber | null = null;
+	let stepSettingsUnsubscribe: Unsubscriber | null = null;
 
 	function updateSelectedAttendee(attendeeProfile: AttendeeProfile) {
 		if (attendeeProfile.attendee) {

@@ -53,7 +53,10 @@ import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 		// the $selectedAttendee changes. This is a hack, and should be fixed later on.
 		((_) => {})($selectedAttendee);
 
-		attendeesTableData = attendeesTable($eventletAttendees, $attendeesSearchTerm);
+		if ($eventletAttendees) {
+			attendeesTableData = attendeesTable($eventletAttendees, $attendeesSearchTerm);
+		}
+
 	}
 
 	// $: selectedAttendeeCheckedIn = $selectedAttendee &&  $selectedAttendee.check_ins.length === 0;
@@ -139,13 +142,13 @@ import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 >
 	<div slot="left-bar" class="left-bar">
 		<div class="header-text" out:fade|local in:fly|local={{ y: -200, duration: 1000 }}>
-			<h2>Scan a Ticket {!$currentEvent?.vaccine_pass_enabled ? "" : "or COVID Pass"}</h2>
+			<h2>Scan a Ticket {!$currentEvent?.vaccine_pass_required ? "" : "or COVID Pass"}</h2>
 		</div>
 
 		<div class="scanner-container">
 			<Scanner on:scan-complete={checkinScan} />
 		</div>
-		<h2>Scan a ticket {!$currentEvent?.vaccine_pass_enabled ? "" : "or COVID Pass"} to begin</h2>
+		<h2>Scan a ticket {!$currentEvent?.vaccine_pass_required ? "" : "or COVID Pass"} to begin</h2>
 		<div out:fade|local in:fly|local={{ y: 200, duration: 1000 }}>
 			Not working or no code? Use the search to the right to bring up the attendee details and mark
 			them as checked in.
@@ -179,7 +182,7 @@ import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 					<EventletManager />
 				{:else if $currentEvent}
 					<p class="no-select-instructions">
-						Scan a ticket{$currentEvent?.vaccine_pass_enabled ? " or COVID Pass": ""}, or search attendees to access their details.
+						Scan a ticket{$currentEvent?.vaccine_pass_required ? " or COVID Pass": ""}, or search attendees to access their details.
 					</p>
 				{/if}
 				<div class="step-settings-wrapper">

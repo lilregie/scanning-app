@@ -36,8 +36,8 @@ export async function getEventsList() {
 	let events: LilRegieEvent[] = await result.json();
 	events.map((event)=>{
 		return event.eventlets.map((eventlet)=>{
-			eventlet.datetime_start = new Date(eventlet.datetime_start) || null;
-			eventlet.datetime_end = new Date(eventlet.datetime_end) || null;
+			eventlet.start_at = new Date(eventlet.start_at) || null;
+			eventlet.end_at = new Date(eventlet.end_at) || null;
 			return eventlet;
 		})
 	})
@@ -66,19 +66,31 @@ export async function getAttendeesList(eventID: string) {
 export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 	let {attendee, check_in_eventlet, covidPass, ticket_eventlet} = attendeeProfile;
 
+	const event = get(currentEvent);
+	if (!event) {
+		console.error("Tried to create checkin before events loaded");
+		return
+	}
+
 	// Required Data
 	if (!attendee) {
 		console.error("Tried to check-in attendee without an attendee selected: ",attendee, attendeeProfile);
 		return
 	}
-	if (!check_in_eventlet && !get(currentEvent).standalone) {
+	if (!check_in_eventlet && !event.standalone) {
 		console.error("Tried to check-in attendee without an attendance selected: ", attendeeProfile);
 		return
 	}
-	check_in_eventlet = check_in_eventlet || get(currentEvent).eventlets[0];
+	if (check_in_eventlet === null) {
+		check_in_eventlet = event.eventlets[0];
+	}
 
 	// First get attendance
 	let attendance = attendee.attendances.find((x: EventletAttendance)=>x.eventlet_id==check_in_eventlet.id);
+	if (!attendance) {
+		console.error("Tried to check-in attendee without a valid attendance selected: ", attendeeProfile);
+		return
+	}
 	console.log("attendance",attendance)
 
 	if (attendance.checked_in_at !== null) {
@@ -86,11 +98,12 @@ export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 	}
 
 	// So we can revert changes
-	let startingAttendeeCheckInDate = null;
-	let startingAttendeeVaccinePass = null;
+	let startingAttendeeCheckInDate: Date | null = null;
+	let startingAttendeeVaccinePass: boolean | null = null;
 
 	// Optimistically update UI
 	allEventAttendees.update((_eventAttendees) => {
+		if (!_eventAttendees) { return _eventAttendees }
 		// Get mutable reference to attendee
 		let selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
 
@@ -107,12 +120,12 @@ export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 
 	const requestHeaders: HeadersInit = new Headers();
 	requestHeaders.set('vaccine_pass', (covidPass).toString());
-	requestHeaders.set('ticket_id', attendance.id.toString());
+	requestHeaders.set('ticket_uuid', attendance.id.toString());
 	console.log("Checking in with",requestHeaders)
 	try {
 
 		const checkInData = await request.post({
-				route: `/${get(currentEventID)}/attendees/${attendee.id}/checkin`,
+				route: `/${get(currentEventID)}/attendances/${attendee.id}/checkin`,
 				headers: requestHeaders
 			}
 		);
@@ -161,7 +174,7 @@ export async function removeLatestCheckIn(attendee: Attendee) {
 		return _eventAttendees;
 	})
 	try {
-		const checkInData = await request.delete_({route: `/${get(currentEventID)}/attendees/${attendee.id}/checkin`});
+		const checkInData = await request.delete_({route: `/${get(currentEventID)}/attendances/${attendee.id}/checkin`});
 		if (checkInData.status === 204) {
 			console.log("Successfully removed checkin");
 		} else if (checkInData.status === 422) {

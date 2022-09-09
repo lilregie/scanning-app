@@ -60,7 +60,7 @@ export function generateSteps(attendeeProfile: AttendeeProfile, settings: StepMa
         addStep(Steps.ScanTicket, attendeeProfile.ticket_eventlet);
     }
 
-    if (event?.vaccine_pass_enabled && settings.scanVaccinePass) {
+    if (event?.vaccine_pass_required && settings.scanVaccinePass) {
         addStep(Steps.ScanVaccinePass, attendeeProfile.covidPass);
     }
 

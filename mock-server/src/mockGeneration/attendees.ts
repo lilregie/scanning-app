@@ -54,16 +54,18 @@ export function generateAttendee(id: number = genID(), event: LilRegieEvent, opt
 		ticket_type_name: faker.datatype.boolean() ? "Early Bird" : "Standard",
 		attendee_type_id: faker.datatype.number(),
 		attendee_type_name: faker.datatype.boolean() ? "Student" : "Standard",
-		attendances: generateAttendances(event, checked_in),
+		attendances: generateAttendances(event, id, checked_in),
 		cancelled_at: null,
 		voucher_name: null,
 		checked_in_at: checked_in ? faker.date.recent(2) : null,
 		vaccine_pass: faker.datatype.number(2) == 1,
+		ticket_uuid: faker.datatype.uuid(),
+		ticket_sequence: faker.datatype.number(3) + 1,
 		...attendeePersonal,
 	};
 }
 
-export function generateAttendances(event: LilRegieEvent, checked_in: boolean) {
+export function generateAttendances(event: LilRegieEvent, attendee_id: number, checked_in: boolean) {
 	let attendances: EventletAttendance[] = [];
 	let count = faker.datatype.number(event.eventlets.length - 1) + 1;
 
@@ -72,13 +74,13 @@ export function generateAttendances(event: LilRegieEvent, checked_in: boolean) {
 	for (let i = 0; i < count; i++) {
 		attendances.push({
 			id: genID(),
+			attendee_id: attendee_id,
+			checkin_user_id: faker.datatype.number(5),
 			eventlet_id: chosenEventlets[i].id,
 			eventlet_name: chosenEventlets[i].name,
 			amount_excluding_tax: faker.datatype.string(),
 			tax: faker.datatype.string(),
 			amount_including_tax: faker.datatype.string(),
-			ticket_number: faker.datatype.number(9999),
-			ticket_sequence: faker.datatype.number(3),
 			checked_in_at: checked_in && (faker.datatype.boolean() || i === 0) ? faker.date.recent(2) : null,
 		})
 	}
