@@ -23,7 +23,7 @@ export function findByKey<T>(list: T[], key: string, value: any): T | undefined 
 	return list.find((item) => item[key] === value);
 }
 
-export function findAttendeeByID(attendees: Attendee[], id: number): Attendee | null {
+export function findAttendeeByID(attendees: Attendee[] | null, id: number | null): Attendee | null {
 	if (id === null || attendees === null) {
 		return null
 	}

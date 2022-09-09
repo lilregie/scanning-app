@@ -99,8 +99,7 @@ import { stringify } from 'uuid';
 			let attendeeProfile: AttendeeProfile = {
 				attendee: scanResults.data.attendee,
 				covidPass: scanResults.data.attendee.vaccine_pass,
-				check_in_eventlet: null,
-				ticket_eventlet: findEventletByID(get(currentEvent), scanResults.data.eventletID)
+				ticketKey: scanResults.data.key
 			};
 			goto(`${basePath}/${$currentEventID}/check-in${await encode_url(attendeeProfile)}`);
 		}
@@ -149,9 +148,6 @@ import { stringify } from 'uuid';
 					on:removeLatestCheckIn={() => {
 						removeLatestCheckIn(get(selectedAttendee));
 					}}
-					on:moreDetails={() => {
-						// TODO: Implement detailed attendee deatails page
-					}}
 					on:close={() => {
 						console.log('closing');
 						$selectedAttendeeID = null;
@@ -159,7 +155,6 @@ import { stringify } from 'uuid';
 				/>
 			</Card>
 		{:else}
-		{ JSON.stringify($selectedAttendeeID) }
 			<div class="empty-attendee-details-container">
 				{#if $currentEvent && !$currentEvent.standalone}
 					<EventletManager />

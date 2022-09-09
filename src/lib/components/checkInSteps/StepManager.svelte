@@ -1,13 +1,11 @@
 <script lang="ts">
-	import type { Attendee } from '$lib/attendee';
 	import { selectedAttendeeID, stepManagerSettings } from '$lib/store';
 	import { backupStep, generateSteps, StageState, type AttendeeProfile } from './stepManager';
 
-	import { get, writable, type Readable, type Unsubscriber, type Writable } from 'svelte/store';
+	import { get, writable, type Unsubscriber, type Writable } from 'svelte/store';
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 
 	import { Steps as StepsViewer } from 'svelte-steps';
-	import { tick } from 'svelte';
 	import type { StepItem } from './stepManager';
 	import { createCheckIn } from '$lib/api/api';
 	import StepLayout from './StepLayout.svelte';

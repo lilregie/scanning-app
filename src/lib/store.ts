@@ -1,6 +1,6 @@
 import { derived, get, writable } from 'svelte/store';
 import type { Writable, Readable } from 'svelte/store';
-import type { Eventlet, EventletsCombined, LilRegieEvent } from '$lib/event';
+import type { Eventlet, EventletsCombined, EventletSingle, LilRegieEvent } from '$lib/event';
 import type { Attendee } from './attendee';
 import { getAttendeesList } from './api/api';
 import { findAttendeeByID } from './utill';
@@ -87,7 +87,7 @@ currentEvent.subscribe((currentEvent) => {
 		selectedEventletIDs.set([currentEvent.eventlets[0].id]);
 	} else if (firstTimeSelectedEventlet) {
 		// First time loading event, so default to all eventlets
-		selectedEventletIDs.set(currentEvent?.eventlets.map((eventlet) => eventlet.id) || []);
+		selectedEventletIDs.set(currentEvent?.eventlets.map((eventlet: EventletSingle) => eventlet.id) || []);
 		firstTimeSelectedEventlet = false;
 	}
 })
@@ -104,7 +104,7 @@ export const selectedEventletCombo: Readable<EventletsCombined | null> = derived
 		)
 	}
 
-	const selectedEventlets = _currentEvent.eventlets.filter((eventlet) => _selectedEventletIDs.includes(eventlet.id));
+	const selectedEventlets: EventletSingle[] = _currentEvent.eventlets.filter((eventlet: EventletSingle) => _selectedEventletIDs.includes(eventlet.id));
 
 	if (selectedEventlets.length > 0) {
 
@@ -152,12 +152,13 @@ export const attendeesSearchTerm: Writable<string> = writable('');
 
 export const selectedAttendeeID: Writable<number | null> = writable(null);
 
-export const selectedAttendee: Readable<Attendee> = derived(
+export const selectedAttendee: Readable<Attendee | null> = derived(
 	[selectedAttendeeID, eventletAttendees],
 	([_selectedAttendeeID, _eventletAttendees]) => {
 		if (_eventletAttendees && _selectedAttendeeID) {
 			return findAttendeeByID(_eventletAttendees, _selectedAttendeeID)
 		}
+		return null
 	}
 );
 

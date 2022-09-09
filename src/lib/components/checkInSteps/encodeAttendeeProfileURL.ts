@@ -1,6 +1,7 @@
 import { allEventAttendees, currentEvent } from "$lib/store";
 import { findAttendeeByID, findEventletByID } from "$lib/utill";
 import { get } from "svelte/store";
+import { validate } from "uuid";
 import type { AttendeeProfile } from "./stepManager";
 
 /*
@@ -21,11 +22,8 @@ export async function encode_url(attendeeProfile: AttendeeProfile): Promise<stri
     if (attendeeProfile.covidPass) {
         searchParams.append("covid_pass", "true");
     }
-    if (attendeeProfile.ticket_eventlet) {
-        searchParams.append("ticket_eventlet_id", attendeeProfile.ticket_eventlet.id.toString());
-    }
-    if (attendeeProfile.check_in_eventlet) {
-        searchParams.append("check_in_eventlet_id", attendeeProfile.check_in_eventlet.id.toString());
+    if (attendeeProfile.ticketKey) {
+        searchParams.append("ticket_key", attendeeProfile.ticketKey);
     }
 
     return `?${searchParams}`;
@@ -35,12 +33,11 @@ export async function decode_url(queryParams: URLSearchParams): Promise<Attendee
     let attendeeProfile: AttendeeProfile = {
         attendee: null,
 		covidPass: false,
-        ticket_eventlet: null,
-        check_in_eventlet: null
+        ticketKey: null
     }
 
     // Attendee Info
-    let attendee_id = parseInt(queryParams.get("attendee_id"));
+    let attendee_id = parseInt(queryParams.get("attendee_id") || "");
     if (!isNaN(attendee_id)) {
         attendeeProfile.attendee = findAttendeeByID(get(allEventAttendees), attendee_id);
     }
@@ -49,15 +46,9 @@ export async function decode_url(queryParams: URLSearchParams): Promise<Attendee
     attendeeProfile.covidPass = queryParams.has("covid_pass");
 
     // Ticket Eventlet Info
-    let ticket_eventlet_id = parseInt(queryParams.get("check_in_eventlet_id"));
-    if (!isNaN(ticket_eventlet_id)) {
-        attendeeProfile.check_in_eventlet = findEventletByID(get(currentEvent), ticket_eventlet_id);
-    }
-
-    // Target Checkin Eventlet
-    let checkin_eventlet_id = parseInt(queryParams.get("check_in_eventlet_id"));
-    if (!isNaN(checkin_eventlet_id)) {
-        attendeeProfile.check_in_eventlet = findEventletByID(get(currentEvent), checkin_eventlet_id);
+    let ticket_key = queryParams.get("ticket_key") || "";
+    if (validate(ticket_key)) {
+        attendeeProfile.ticketKey = ticket_key;
     }
 
     return attendeeProfile;

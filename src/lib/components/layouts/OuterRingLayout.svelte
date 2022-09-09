@@ -9,10 +9,7 @@
 		selectedEventletCombo,
 		selectedEventletIDs
 	} from '$lib/store';
-
-	import { page } from '$app/stores';
-	import { findAttendeeByID, findEventletByID } from '$lib/utill';
-
+	
 	export let backPath: string;
 	export let url: string;
 
@@ -33,10 +30,10 @@
 			<span class="stat-label">Checked In</span>
 		</div>
 
-		{#if $selectedEventletCombo?.ticket_limit}
+		{#if $selectedEventletCombo?.maximum_attendees}
 			<div class="stat">
 				<span class="stat-value"
-					>{$selectedEventletCombo?.ticket_limit - $checkedInCount || '??'}</span
+					>{$selectedEventletCombo?.maximum_attendees - $checkedInCount || '??'}</span
 				>
 				<span class="stat-label">Available Tickets</span>
 			</div>

@@ -1,8 +1,7 @@
 import { verifyPassURIOffline } from "@vaxxnz/nzcp";
 
 import type { VerificationResult } from "@vaxxnz/nzcp";
-import type { Attendee, EventletAttendance } from "../../attendee";
-import type { Eventlet } from "../../event";
+import type { Attendee } from "../../attendee";
 import { allEventAttendees } from "../../store";
 import { get } from "svelte/store";
 

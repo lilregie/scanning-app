@@ -30,7 +30,7 @@
 		ticketInfo = data.data;
 		memory.set(ticketInfo);
 
-		$attendeeProfile.ticketKey = ticketInfo;
+		$attendeeProfile.ticketKey = ticketInfo.key;
 	}
 
 	interface warning {
@@ -68,7 +68,7 @@
 </script>
 
 <div class="scanner-wrapper">
-	{$selectedAttendee.ticket_uuid}
+	{$selectedAttendee?.ticket_uuid}
 	<Scanner enabledScanTypes={[ScanTypes.TicketBarcode]} on:scan-complete={scan} />
 	{#if ticketInfo}
 		<div class="ticket-info">

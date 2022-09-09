@@ -46,6 +46,7 @@ const stepIcons: StepIcons = {
 export type StepData = [number, StepItem[]];
 
 export function generateSteps(attendeeProfile: AttendeeProfile, settings: StepManagerSettings): StepData {
+    console.log(attendeeProfile)
     const event = get(currentEvent);
     let stepOrder: Steps[] = [];
     let completedSteps: Steps[] = [];
@@ -60,11 +61,15 @@ export function generateSteps(attendeeProfile: AttendeeProfile, settings: StepMa
         addStep(Steps.ScanVaccinePass, attendeeProfile.covidPass);
     }
 
+    console.log("step order",completedSteps, stepOrder);
+
+    if (stepOrder.length == 0) {
+        addStep(Steps.ConfirmCheckin, false); // Add a confirm step if no steps are required
+    }
 
     stepOrder = [...completedSteps, ...stepOrder];
 
 
-    console.log("step order", stepOrder, completedSteps);
 
     let steps: StepItem[] = stepOrder.map(step => {
         return {
@@ -99,7 +104,7 @@ export enum StageState {
 export interface AttendeeProfile {
     attendee: Attendee | null,
     covidPass: boolean,
-    ticketKey: Ticket | null,
+    ticketKey: string | null,
 }
 
 export interface StepManagerSettings {

@@ -116,7 +116,7 @@
 		}
 
 		const eventlets = eventletIDS.map((id: number) => {
-			return get(currentEvent).eventlets.find((eventlet: Eventlet) => {
+			return get(currentEvent)?.eventlets?.find((eventlet: Eventlet) => {
 				return eventlet.id === id;
 			});
 		});
