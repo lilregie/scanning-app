@@ -27,7 +27,6 @@
 		dispatch('close');
 	}
 	function handleKeypress(event: KeyboardEvent) {
-		console.log(event.key);
 		if (event.key === 'ArrowRight') {
 			// Make sure they can go right
 			if (!(stageState === StageState.Stay || stageState === StageState.Loading)) {

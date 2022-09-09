@@ -64,7 +64,7 @@ export async function getAttendeesList(eventID: string) {
 }
 
 export async function createCheckIn(attendeeProfile: AttendeeProfile) {
-	let {attendee, check_in_eventlet, covidPass, ticket_eventlet} = attendeeProfile;
+	let {attendee, covidPass, ticketKey} = attendeeProfile;
 
 	const event = get(currentEvent);
 	if (!event) {
@@ -77,29 +77,14 @@ export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 		console.error("Tried to check-in attendee without an attendee selected: ",attendee, attendeeProfile);
 		return
 	}
-	if (!check_in_eventlet && !event.standalone) {
-		console.error("Tried to check-in attendee without an attendance selected: ", attendeeProfile);
-		return
-	}
-	if (check_in_eventlet === null) {
-		check_in_eventlet = event.eventlets[0];
-	}
 
-	// First get attendance
-	let attendance = attendee.attendances.find((x: EventletAttendance)=>x.eventlet_id==check_in_eventlet.id);
-	if (!attendance) {
-		console.error("Tried to check-in attendee without a valid attendance selected: ", attendeeProfile);
-		return
-	}
-	console.log("attendance",attendance)
-
-	if (attendance.checked_in_at !== null) {
+	if (attendee.checked_in_at !== null) {
 		console.warn("Tring to create check in, when attendee is already checked in");
 	}
 
 	// So we can revert changes
 	let startingAttendeeCheckInDate: Date | null = null;
-	let startingAttendeeVaccinePass: boolean | null = null;
+	let startingAttendeeVaccinePass: boolean;
 
 	// Optimistically update UI
 	allEventAttendees.update((_eventAttendees) => {
@@ -149,7 +134,7 @@ export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 
 		// Undo UI update
 		allEventAttendees.update((_eventAttendees) => {
-			let selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
+			let selectedAttendee = findByKey(_eventAttendees, "id", attendee?.id);
 			selectedAttendee.checked_in_at = startingAttendeeCheckInDate;
 			selectedAttendee.vaccine_pass = startingAttendeeVaccinePass;
 			return _eventAttendees;
