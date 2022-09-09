@@ -4,6 +4,7 @@ import { CheckIn } from "../mockInterfaces/checkIn";
 import { extractOneHeader, getAttendee } from "./utill";
 
 import {faker} from '@faker-js/faker';
+import { parse as uuidParse } from "uuid";
 
 
 export default function checkInInitialize(router: Router) {
@@ -19,9 +20,9 @@ export default function checkInInitialize(router: Router) {
         let vaccinePassHeader = extractOneHeader(req, "vaccine_pass");
         console.log(ticketIdHeader, vaccinePassHeader);
 
-        if (!parseInt(ticketIdHeader as string) || !vaccinePassHeader) {
+        if (!uuidParse(ticketIdHeader as string) || !vaccinePassHeader) {
             res.status(400);
-            res.json({ "error": "missing valid ticket_id or vaccine_pass" });
+            res.json({ "error": "missing valid ticket_uuid or vaccine_pass" });
             return;
         }
 

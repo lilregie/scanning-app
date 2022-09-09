@@ -155,8 +155,9 @@ export const selectedAttendeeID: Writable<number | null> = writable(null);
 export const selectedAttendee: Readable<Attendee> = derived(
 	[selectedAttendeeID, eventletAttendees],
 	([_selectedAttendeeID, _eventletAttendees]) => {
-		if (!_eventletAttendees || !_selectedAttendeeID) {return undefined}
-		findAttendeeByID(_eventletAttendees, _selectedAttendeeID)
+		if (_eventletAttendees && _selectedAttendeeID) {
+			return findAttendeeByID(_eventletAttendees, _selectedAttendeeID)
+		}
 	}
 );
 

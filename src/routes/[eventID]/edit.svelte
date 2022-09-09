@@ -43,6 +43,7 @@ stepManagerSettings
 	import { findEventletByID } from '$lib/utill';
 	import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
 import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
+import { stringify } from 'uuid';
 
 	export let url: string;
 
@@ -62,21 +63,9 @@ import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 	// $: selectedAttendeeCheckedIn = $selectedAttendee &&  $selectedAttendee.check_ins.length === 0;
 
 	let leftBarState: 'ScanAny' | 'ValidateCovidPass' | 'CheckInSuccess' = 'ScanAny';
-	let leftBarHighlighted: Writable<boolean> = writable(false);
-	let leftBarHighlightedTimeout: NodeJS.Timeout;
 
 	// Used to highlight how the user should verify a covid pass, and the check-in button appears to do nothing
 	const highlightTimeMS = 1000;
-	const leftBarHighlightedDestroy = leftBarHighlighted.subscribe((highlight) => {
-		if (highlight) {
-			if (leftBarHighlightedTimeout) {
-				clearTimeout(leftBarHighlightedTimeout);
-			}
-			leftBarHighlightedTimeout = setTimeout(() => {
-				leftBarHighlighted.set(false);
-			}, highlightTimeMS);
-		}
-	});
 
 	async function checkinAttendee() {
 		let attendeeProfile: AttendeeProfile = {
@@ -117,18 +106,11 @@ import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 		}
 	}
 
-	onDestroy(() => {
-		if (leftBarHighlightedTimeout) {
-			clearTimeout(leftBarHighlightedTimeout);
-		}
-		leftBarHighlightedDestroy();
-	});
-
 </script>
 
 <AdminLayout
 	cards={{
-		left: { scroll: true, highlighted: $leftBarHighlighted },
+		left: { scroll: true },
 		rightBottom: false,
 		rightTop: false
 	}}
@@ -177,6 +159,7 @@ import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 				/>
 			</Card>
 		{:else}
+		{ JSON.stringify($selectedAttendeeID) }
 			<div class="empty-attendee-details-container">
 				{#if $currentEvent && !$currentEvent.standalone}
 					<EventletManager />

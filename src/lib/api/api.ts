@@ -120,7 +120,7 @@ export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 
 	const requestHeaders: HeadersInit = new Headers();
 	requestHeaders.set('vaccine_pass', (covidPass).toString());
-	requestHeaders.set('ticket_uuid', attendance.id.toString());
+	requestHeaders.set('ticket_uuid', attendee.ticket_uuid);
 	console.log("Checking in with",requestHeaders)
 	try {
 
