@@ -8,7 +8,6 @@
 	const dispatch = createEventDispatcher();
 
 	function close() {
-		console.log("ASDASD4ASD")
 		dispatch('close');
 	}
 </script>

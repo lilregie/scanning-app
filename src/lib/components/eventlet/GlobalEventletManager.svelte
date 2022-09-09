@@ -1,17 +1,14 @@
 <script lang="ts">
-	import type { Eventlet } from '$lib/event';
+	import type { Eventlet, EventletSingle } from '$lib/event';
 
 	import {
 		currentEvent,
-		eventletAttendees,
 		selectedEventletIDs as globalSelectedEventletIDs
 	} from '$lib/store';
 	import dayjs from 'dayjs';
 	import isBetween from 'dayjs/plugin/isBetween';
-	import { onDestroy, onMount } from 'svelte';
 	dayjs.extend(isBetween);
 
-	import Select from 'svelte-select';
 	import { get, writable } from 'svelte/store';
 	import EventletSelector from './EventletSelector.svelte';
 
@@ -21,10 +18,10 @@
 		});
 	});
 
-	function updateGlobalEventlets(detail: { detail: Eventlet[] }) {
+	function updateGlobalEventlets(detail: { detail: EventletSingle[] }) {
 		console.log('Updated eventlets: ', detail);
 		globalSelectedEventletIDs.set(
-			detail.detail.map((eventlet: Eventlet) => {
+			detail.detail.map((eventlet: EventletSingle) => {
 				return eventlet.id;
 			})
 		);

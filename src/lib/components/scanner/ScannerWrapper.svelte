@@ -43,7 +43,7 @@
 	}
 	let fullBrowserWidth: number;
 
-	let previewWidth;
+	let previewWidth: number;
 	$: previewWidthRatio = fullBrowserWidth < 650 ? 1 : 1.77;
 
 	let permissionForCameraState: PermissionState | null | 'unknown' = null;

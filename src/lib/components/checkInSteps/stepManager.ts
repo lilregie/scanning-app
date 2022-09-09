@@ -2,12 +2,11 @@ import type { Attendee } from "$lib/attendee";
 import { currentEvent, stepManagerSettings } from "$lib/store";
 import type { SvelteComponent } from "svelte";
 import { get, writable, type Writable } from "svelte/store";
-import type { NZCovidPass } from "../scanner/validateScan";
+import type { NZCovidPass, Ticket } from "../scanner/validateScan";
 
 // Steps (TS doesn't like importing svelte files)
 import ScanVaccinePassSvelte from "./steps/ScanVaccinePass.svelte";
 import ScanBarcodeTicketSvelte from "./steps/ScanBarcodeTicket.svelte";
-import SelectEventletsSvelte from "./steps/SelectEventlets.svelte";
 import ConfirmCheckinSvelte from "./steps/ConfirmCheckin.svelte";
 
 // Icons
@@ -19,14 +18,12 @@ import type { Eventlet } from "$lib/event";
 export enum Steps {
     ScanVaccinePass = "Scan Vaccine Pass",
     ScanTicket = "Scan Ticket",
-    ConfirmEventlets = "Confirm Eventlets",
     ConfirmCheckin = "Confirm Checkin",
 }
 
 export const StepComponents = {
     [Steps.ScanVaccinePass]: ScanVaccinePassSvelte,
     [Steps.ScanTicket]: ScanBarcodeTicketSvelte,
-    [Steps.ConfirmEventlets]: SelectEventletsSvelte,
     [Steps.ConfirmCheckin]: ConfirmCheckinSvelte
 }
 
@@ -43,13 +40,13 @@ type StepIcons = { [key in Steps]: typeof SvelteComponent | null };
 const stepIcons: StepIcons = {
     "Scan Vaccine Pass": ScanVaccinePassICON,
     "Scan Ticket": ScanBarcodeTicketICON,
-    "Confirm Eventlets": SelectEventletsICON,
     "Confirm Checkin": null
 }
 
 export type StepData = [number, StepItem[]];
 
 export function generateSteps(attendeeProfile: AttendeeProfile, settings: StepManagerSettings): StepData {
+    console.log(attendeeProfile)
     const event = get(currentEvent);
     let stepOrder: Steps[] = [];
     let completedSteps: Steps[] = [];
@@ -57,22 +54,22 @@ export function generateSteps(attendeeProfile: AttendeeProfile, settings: StepMa
     const addStep = (step: Steps, completed: any) => (completed ? completedSteps.push(step) : stepOrder.push(step));
 
     if (settings.scanTicket) {
-        addStep(Steps.ScanTicket, attendeeProfile.ticket_eventlet);
+        addStep(Steps.ScanTicket, attendeeProfile.ticketKey);
     }
 
-    if (event?.vaccine_pass_enabled && settings.scanVaccinePass) {
+    if (event?.vaccine_pass_required && settings.scanVaccinePass) {
         addStep(Steps.ScanVaccinePass, attendeeProfile.covidPass);
     }
 
-    if (!event?.standalone) {
-        addStep(Steps.ConfirmEventlets, false); // always confirm eventlets if enabled
-    }
+    console.log("step order",completedSteps, stepOrder);
 
+    if (stepOrder.length == 0) {
+        addStep(Steps.ConfirmCheckin, false); // Add a confirm step if no steps are required
+    }
 
     stepOrder = [...completedSteps, ...stepOrder];
 
 
-    console.log("step order", stepOrder, completedSteps);
 
     let steps: StepItem[] = stepOrder.map(step => {
         return {
@@ -107,8 +104,7 @@ export enum StageState {
 export interface AttendeeProfile {
     attendee: Attendee | null,
     covidPass: boolean,
-    ticket_eventlet: Eventlet | null,
-    check_in_eventlet: Eventlet | null
+    ticketKey: string | null,
 }
 
 export interface StepManagerSettings {

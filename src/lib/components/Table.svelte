@@ -46,7 +46,7 @@
 		} else if (event.key === 'Enter') {
 			// Use data attribute to get the id of the element
 			// and check that that's valid
-			let selectedID = parseInt(document.activeElement.getAttribute('data-row-id'));
+			let selectedID = parseInt(document.activeElement?.getAttribute('data-row-id') || "");
 
 			if (selectedID >= 0 && selectedID < tableData.length) {
 				currentlyClicked = selectedID;

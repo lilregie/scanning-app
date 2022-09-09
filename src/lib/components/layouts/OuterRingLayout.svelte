@@ -9,10 +9,7 @@
 		selectedEventletCombo,
 		selectedEventletIDs
 	} from '$lib/store';
-
-	import { page } from '$app/stores';
-	import { findAttendeeByID, findEventletByID } from '$lib/utill';
-
+	
 	export let backPath: string;
 	export let url: string;
 
@@ -33,10 +30,10 @@
 			<span class="stat-label">Checked In</span>
 		</div>
 
-		{#if $selectedEventletCombo?.ticket_limit}
+		{#if $selectedEventletCombo?.maximum_attendees}
 			<div class="stat">
 				<span class="stat-value"
-					>{$selectedEventletCombo?.ticket_limit - $checkedInCount || '??'}</span
+					>{$selectedEventletCombo?.maximum_attendees - $checkedInCount || '??'}</span
 				>
 				<span class="stat-label">Available Tickets</span>
 			</div>
@@ -62,21 +59,15 @@
 <div class="event-selection-overview stats-container">
 	{#if $currentEvent && $selectedEventletIDs}
 		<div class="stat">
-			<span class="stat-value">Currently Viewing</span>
-			<span class="stat-label">{$currentEvent.name}</span>
+			<span class="stat-label">Currently Viewing:</span>
+			<span class="stat-value">{$currentEvent.name}</span>
 		</div>
 		{#if !$currentEvent.standalone}
 			<hr class="stat-seperator" />
 			<div class="stat">
 				{#if $selectedEventletIDs.length <= 3}
 					<span class="stat-label">Selected Eventlets: </span>
-					{#each $selectedEventletIDs as id, i (i)}
-						{@const eventlet = findEventletByID($currentEvent, id).name.trim()}
-						<span class="stat-value">
-							{eventlet}
-							{#if i < $selectedEventletIDs.length - 1}, {/if}
-						</span>
-					{/each}
+					<span class="stat-value">{$selectedEventletCombo?.name.join(", ")}</span>
 				{:else}
 					<!-- Too many to display full names -->
 					<span class="stat-value">{$selectedEventletIDs.length}</span>

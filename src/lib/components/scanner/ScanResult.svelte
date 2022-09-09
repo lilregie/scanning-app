@@ -10,7 +10,7 @@
 	export let backgroundColour: string = '#fff';
 
 	const openTime = 2500;
-	let timeout: NodeJS.Timeout = null;
+	let timeout: NodeJS.Timeout | null = null;
 	let timeoutStart: number = Date.now();
 
 	let progressBarPoll: number = 100;

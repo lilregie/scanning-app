@@ -92,8 +92,7 @@
 		let attendeeProfile: AttendeeProfile = {
 			attendee: $selectedAttendee,
 			covidPass: true,
-			check_in_eventlet: null,
-			ticket_eventlet: null
+			ticketKey: null,
 		};
 		// Don't need to close model as the check-in page will close it for us
 		goto(`${basePath}/${$currentEventID}/check-in${await encode_url(attendeeProfile)}`);

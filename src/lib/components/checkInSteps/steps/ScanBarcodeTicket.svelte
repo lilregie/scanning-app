@@ -8,7 +8,7 @@
 	import type { ScanResults } from '$lib/components/scanner/validateScan';
 	import { StageState, type AttendeeProfile } from '../stepManager';
 	import type { Writable } from 'svelte/store';
-	import { currentEvent, selectedEventletIDs } from '$lib/store';
+	import { currentEvent, selectedAttendee, selectedEventletIDs } from '$lib/store';
 	import EventletBox from '$lib/components/eventlet/EventletBox.svelte';
 	import SuccessTick from '$lib/components/SuccessTick.svelte';
 	import { stringify } from 'uuid';
@@ -19,7 +19,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	let ticketInfo: Ticket = null;
+	let ticketInfo: Ticket;
 
 	function scan(event: { detail: ScanResults }) {
 		let data = event.detail as ScanResults;
@@ -30,9 +30,7 @@
 		ticketInfo = data.data;
 		memory.set(ticketInfo);
 
-		$attendeeProfile.ticket_eventlet = $currentEvent.eventlets.find(
-			(eventlet) => eventlet.id === ticketInfo.eventletID
-		);
+		$attendeeProfile.ticketKey = ticketInfo.key;
 	}
 
 	interface warning {
@@ -43,7 +41,7 @@
 	let ticketWarnings: warning[] = [];
 
 	$: {
-		if (!ticketInfo?.eventletID) {
+		if (!ticketInfo) {
 			stageState = StageState.Incomplete;
 		} else {
 			stageState = ticketWarnings.length > 0 ? StageState.Warning : StageState.Complete;
@@ -59,13 +57,6 @@
 					message: `The ticket scanned does not match the selected attendee.`
 				});
 			}
-
-			if (!$selectedEventletIDs.includes(ticketInfo.eventletID)) {
-				ticketWarnings.push({
-					title: 'Eventlet Mismatch',
-					message: `The ticket scanned does not match any of the selected eventlets.`
-				});
-			}
 		}
 	}
 
@@ -77,6 +68,7 @@
 </script>
 
 <div class="scanner-wrapper">
+	{$selectedAttendee?.ticket_uuid}
 	<Scanner enabledScanTypes={[ScanTypes.TicketBarcode]} on:scan-complete={scan} />
 	{#if ticketInfo}
 		<div class="ticket-info">
@@ -95,12 +87,9 @@
 					>
 				</div>
 			</div>
-			<div>
-				<EventletBox eventletId={ticketInfo.eventletID} />
-			</div>
 			{#each ticketWarnings as warning}
 				<span class="missmatch-warning">
-					<span class="title"><strong>Warning:</strong> {warning.title}</span>
+					<span class="title"><strong>Warning: {warning.title}</strong></span><br/>
 					<span class="message">{warning.message}</span>
 				</span>
 			{/each}

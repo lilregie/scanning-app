@@ -35,13 +35,13 @@
 				optionEnabled = false;
 			}
 
-			const startDate = dayjs(eventlet.datetime_start).format('MMM DD, ha');
-			let isRightnow = dayjs().isBetween(eventlet.datetime_start, eventlet.datetime_end);
+			const startDate = dayjs(eventlet.start_at).format('MMM DD, ha');
+			let isRightnow = dayjs().isBetween(eventlet.start_at, eventlet.end_at);
 
-			let group: SelectorGroups = null;
+			let group: SelectorGroups | null = null;
 			if (isRightnow) {
 				group = SelectorGroups.RightNow;
-			} else if (dayjs().isAfter(eventlet.datetime_end)) {
+			} else if (dayjs().isAfter(eventlet.end_at)) {
 				group = SelectorGroups.Past;
 			} else {
 				group = SelectorGroups.Future;
@@ -51,7 +51,7 @@
 				value: eventlet.id,
 				label: `${eventlet.name} (${startDate})`,
 				group: group,
-				startTime: eventlet.datetime_start,
+				startTime: eventlet.start_at,
 				selectable: optionEnabled
 			};
 
@@ -107,7 +107,7 @@
 	$: force_update_selected($allEventlets, startingEventlets);
 
 	function newSelection() {
-		let eventletIDS = [];
+		let eventletIDS: number[] = [];
 		const currentValues = get(selectedValues);
 		if (Array.isArray(currentValues)) {
 			eventletIDS = currentValues.map((v) => v.value) || [];
@@ -116,7 +116,7 @@
 		}
 
 		const eventlets = eventletIDS.map((id: number) => {
-			return get(currentEvent).eventlets.find((eventlet: Eventlet) => {
+			return get(currentEvent)?.eventlets?.find((eventlet: Eventlet) => {
 				return eventlet.id === id;
 			});
 		});

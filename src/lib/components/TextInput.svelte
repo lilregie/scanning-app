@@ -7,7 +7,7 @@
 	export let disabled = false;
 	export let expanded: boolean = false;
 
-	export let inputComponent: HTMLInputElement = null;
+	export let inputComponent: HTMLInputElement | null = null;
 </script>
 
 <input bind:value={textInputValue} class="{size}" class:expanded {placeholder} disabled={disabled} bind:this={inputComponent}/>

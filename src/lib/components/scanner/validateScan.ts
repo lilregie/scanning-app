@@ -1,10 +1,11 @@
 import { verifyPassURIOffline } from "@vaxxnz/nzcp";
 
 import type { VerificationResult } from "@vaxxnz/nzcp";
-import type { Attendee, EventletAttendance } from "../../attendee";
-import type { Eventlet } from "../../event";
+import type { Attendee } from "../../attendee";
 import { allEventAttendees } from "../../store";
 import { get } from "svelte/store";
+
+import { validate as uuidValidate } from "uuid";
 
 export interface ScanResults {
     valid: true;
@@ -25,9 +26,8 @@ export interface NZCovidPass {
 
 export interface Ticket {
     type: ScanTypes.TicketBarcode;
-    id: number;
+    key: string;
     attendee: Attendee;
-    eventletID: number;
 }
 
 export enum ScanTypes {
@@ -64,11 +64,11 @@ export async function validateScan(scanText: string, enabledScanTypes: ScanTypes
         } else {
             return {
                 valid: false,
-                violation: passResult.violates.description
+                violation: passResult.violates.description || "Unknown error"
             }
         }
     }
-    if (!isNaN(parseInt(scanText))) {
+    if (uuidValidate(scanText)) {
         if (!enabledScanTypes.includes(ScanTypes.TicketBarcode)) {
             return {
                 valid: false,
@@ -78,18 +78,16 @@ export async function validateScan(scanText: string, enabledScanTypes: ScanTypes
         // Ticket Barcode
 
         // Search for booking
-        let ticketID = parseInt(scanText);
-        let ticketInfo = getBookingFromTicket(ticketID);
-        if (ticketInfo) {
-            let [attendee, eventletID] = ticketInfo;
-
+        let ticketKey = scanText.trim();
+        let attendee = getBookingFromTicket(ticketKey);
+        if (attendee) {
+            
             return {
                 valid: true,
                 data: {
                     type: ScanTypes.TicketBarcode,
-                    id: ticketID,
-                    attendee,
-                    eventletID
+                    key: ticketKey,
+                    attendee
                 }
             }
         } else {
@@ -118,15 +116,12 @@ export async function validateScan(scanText: string, enabledScanTypes: ScanTypes
     }
 }
 
-function getBookingFromTicket(ticketID: number): [Attendee, number] | null {
-    let attendeeMatch: [Attendee, number] = null;
-    for (let attendee of get(allEventAttendees)) {
-        let eventletMatches = attendee.attendances.filter(booking => booking.ticket_number === ticketID);
-        if (eventletMatches.length > 0) {
-            attendeeMatch = [attendee, eventletMatches[0].eventlet_id];
-            break;
-        }
+function getBookingFromTicket(ticketKey: string): Attendee | null {
+    let eventAttendees = get(allEventAttendees);
+    if (!eventAttendees) {
+        console.error("Trying to retrieve booking from ticket, but no event attendees are loaded");
+        return null;
     }
-    return attendeeMatch;
+    return eventAttendees.find((attendee) => (attendee.ticket_uuid===ticketKey)) || null;
 }
 

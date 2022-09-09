@@ -11,7 +11,7 @@
 			<td><Switch onColour="primary" bind:checked={$stepManagerSettings.scanTicket} /></td>
 		</tr>
 
-		{#if $currentEvent?.vaccine_pass_enabled}
+		{#if $currentEvent?.vaccine_pass_required}
 			<tr class="switch-row">
 				<td class="label" class:active={$stepManagerSettings.scanVaccinePass}
 					>Check Vaccine Passes</td

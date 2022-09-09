@@ -1,5 +1,5 @@
 export interface CheckInCreation {
-    ticket_id: string;
+    ticket_uuid: string;
     vaccine_pass: boolean;
 }
 
@@ -11,3 +11,6 @@ export interface CheckIn {
     vaccine_pass: boolean;
 }
  
+export interface CheckInError {
+    error: string
+}

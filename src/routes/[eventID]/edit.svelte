@@ -43,6 +43,7 @@ stepManagerSettings
 	import { findEventletByID } from '$lib/utill';
 	import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
 import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
+import { stringify } from 'uuid';
 
 	export let url: string;
 
@@ -53,27 +54,18 @@ import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 		// the $selectedAttendee changes. This is a hack, and should be fixed later on.
 		((_) => {})($selectedAttendee);
 
-		attendeesTableData = attendeesTable($eventletAttendees, $attendeesSearchTerm);
+		if ($eventletAttendees) {
+			attendeesTableData = attendeesTable($eventletAttendees, $attendeesSearchTerm);
+		}
+
 	}
 
 	// $: selectedAttendeeCheckedIn = $selectedAttendee &&  $selectedAttendee.check_ins.length === 0;
 
 	let leftBarState: 'ScanAny' | 'ValidateCovidPass' | 'CheckInSuccess' = 'ScanAny';
-	let leftBarHighlighted: Writable<boolean> = writable(false);
-	let leftBarHighlightedTimeout: NodeJS.Timeout;
 
 	// Used to highlight how the user should verify a covid pass, and the check-in button appears to do nothing
 	const highlightTimeMS = 1000;
-	const leftBarHighlightedDestroy = leftBarHighlighted.subscribe((highlight) => {
-		if (highlight) {
-			if (leftBarHighlightedTimeout) {
-				clearTimeout(leftBarHighlightedTimeout);
-			}
-			leftBarHighlightedTimeout = setTimeout(() => {
-				leftBarHighlighted.set(false);
-			}, highlightTimeMS);
-		}
-	});
 
 	async function checkinAttendee() {
 		let attendeeProfile: AttendeeProfile = {
@@ -107,25 +99,17 @@ import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 			let attendeeProfile: AttendeeProfile = {
 				attendee: scanResults.data.attendee,
 				covidPass: scanResults.data.attendee.vaccine_pass,
-				check_in_eventlet: null,
-				ticket_eventlet: findEventletByID(get(currentEvent), scanResults.data.eventletID)
+				ticketKey: scanResults.data.key
 			};
 			goto(`${basePath}/${$currentEventID}/check-in${await encode_url(attendeeProfile)}`);
 		}
 	}
 
-	onDestroy(() => {
-		if (leftBarHighlightedTimeout) {
-			clearTimeout(leftBarHighlightedTimeout);
-		}
-		leftBarHighlightedDestroy();
-	});
-
 </script>
 
 <AdminLayout
 	cards={{
-		left: { scroll: true, highlighted: $leftBarHighlighted },
+		left: { scroll: true },
 		rightBottom: false,
 		rightTop: false
 	}}
@@ -139,13 +123,13 @@ import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 >
 	<div slot="left-bar" class="left-bar">
 		<div class="header-text" out:fade|local in:fly|local={{ y: -200, duration: 1000 }}>
-			<h2>Scan a Ticket {!$currentEvent?.vaccine_pass_enabled ? "" : "or COVID Pass"}</h2>
+			<h2>Scan a Ticket {!$currentEvent?.vaccine_pass_required ? "" : "or COVID Pass"}</h2>
 		</div>
 
 		<div class="scanner-container">
 			<Scanner on:scan-complete={checkinScan} />
 		</div>
-		<h2>Scan a ticket {!$currentEvent?.vaccine_pass_enabled ? "" : "or COVID Pass"} to begin</h2>
+		<h2>Scan a ticket {!$currentEvent?.vaccine_pass_required ? "" : "or COVID Pass"} to begin</h2>
 		<div out:fade|local in:fly|local={{ y: 200, duration: 1000 }}>
 			Not working or no code? Use the search to the right to bring up the attendee details and mark
 			them as checked in.
@@ -164,9 +148,6 @@ import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 					on:removeLatestCheckIn={() => {
 						removeLatestCheckIn(get(selectedAttendee));
 					}}
-					on:moreDetails={() => {
-						// TODO: Implement detailed attendee deatails page
-					}}
 					on:close={() => {
 						console.log('closing');
 						$selectedAttendeeID = null;
@@ -179,7 +160,7 @@ import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 					<EventletManager />
 				{:else if $currentEvent}
 					<p class="no-select-instructions">
-						Scan a ticket{$currentEvent?.vaccine_pass_enabled ? " or COVID Pass": ""}, or search attendees to access their details.
+						Scan a ticket{$currentEvent?.vaccine_pass_required ? " or COVID Pass": ""}, or search attendees to access their details.
 					</p>
 				{/if}
 				<div class="step-settings-wrapper">

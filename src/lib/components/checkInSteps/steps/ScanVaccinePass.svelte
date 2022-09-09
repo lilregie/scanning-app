@@ -61,7 +61,7 @@
 
 		return covidPassFullName === attendeeFullName;
 	}
-	function normalisedNamesFromPass(pass: NZCovidPass, attendee: Attendee): [string, string] {
+	function normalisedNamesFromPass(pass: NZCovidPass | null, attendee: Attendee | null): [string, string] {
 		if (!pass || !attendee) {
 			return ['', ''];
 		}

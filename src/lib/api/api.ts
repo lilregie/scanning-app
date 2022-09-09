@@ -36,8 +36,8 @@ export async function getEventsList() {
 	let events: LilRegieEvent[] = await result.json();
 	events.map((event)=>{
 		return event.eventlets.map((eventlet)=>{
-			eventlet.datetime_start = new Date(eventlet.datetime_start) || null;
-			eventlet.datetime_end = new Date(eventlet.datetime_end) || null;
+			eventlet.start_at = new Date(eventlet.start_at) || null;
+			eventlet.end_at = new Date(eventlet.end_at) || null;
 			return eventlet;
 		})
 	})
@@ -64,35 +64,40 @@ export async function getAttendeesList(eventID: string) {
 }
 
 export async function createCheckIn(attendeeProfile: AttendeeProfile) {
-	let {attendee, check_in_eventlet, covidPass, ticket_eventlet} = attendeeProfile;
+	let {attendee, covidPass, ticketKey} = attendeeProfile;
+
+	const event = get(currentEvent);
+	if (!event) {
+		console.error("Tried to create checkin before events loaded");
+		return
+	}
 
 	// Required Data
 	if (!attendee) {
 		console.error("Tried to check-in attendee without an attendee selected: ",attendee, attendeeProfile);
 		return
 	}
-	if (!check_in_eventlet && !get(currentEvent).standalone) {
-		console.error("Tried to check-in attendee without an attendance selected: ", attendeeProfile);
-		return
-	}
-	check_in_eventlet = check_in_eventlet || get(currentEvent).eventlets[0];
 
-	// First get attendance
-	let attendance = attendee.attendances.find((x: EventletAttendance)=>x.eventlet_id==check_in_eventlet.id);
-	console.log("attendance",attendance)
-
-	if (attendance.checked_in_at !== null) {
+	if (attendee.checked_in_at !== null) {
 		console.warn("Tring to create check in, when attendee is already checked in");
 	}
 
 	// So we can revert changes
-	let startingAttendeeCheckInDate = null;
-	let startingAttendeeVaccinePass = null;
+	let startingAttendeeCheckInDate: Date | null = null;
+	let startingAttendeeVaccinePass: boolean;
 
 	// Optimistically update UI
 	allEventAttendees.update((_eventAttendees) => {
+		if (!_eventAttendees) {
+			console.warn("Tried to update attendee before attendees loaded");
+			return _eventAttendees
+		}
 		// Get mutable reference to attendee
-		let selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
+		let selectedAttendee = findByKey(_eventAttendees, "id", attendee?.id);
+		if (typeof selectedAttendee === "undefined") {
+			console.error("Tried to checkin attendee that is does not exist");
+			return _eventAttendees;
+		}
 
 		// Save current state so we can revert if request fails
 		startingAttendeeCheckInDate = selectedAttendee.checked_in_at;
@@ -107,12 +112,12 @@ export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 
 	const requestHeaders: HeadersInit = new Headers();
 	requestHeaders.set('vaccine_pass', (covidPass).toString());
-	requestHeaders.set('ticket_id', attendance.id.toString());
+	requestHeaders.set('ticket_uuid', attendee.ticket_uuid);
 	console.log("Checking in with",requestHeaders)
 	try {
 
 		const checkInData = await request.post({
-				route: `/${get(currentEventID)}/attendees/${attendee.id}/checkin`,
+				route: `/${get(currentEventID)}/attendances/${attendee.id}/checkin`,
 				headers: requestHeaders
 			}
 		);
@@ -129,7 +134,7 @@ export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 
 		// Undo UI update
 		allEventAttendees.update((_eventAttendees) => {
-			let selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
+			let selectedAttendee = findByKey(_eventAttendees, "id", attendee?.id);
 			selectedAttendee.checked_in_at = startingAttendeeCheckInDate;
 			selectedAttendee.vaccine_pass = startingAttendeeVaccinePass;
 			return _eventAttendees;
@@ -146,22 +151,31 @@ export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 }
 
 export async function removeLatestCheckIn(attendee: Attendee) {
-	if (findByKey(get(allEventAttendees), "id", attendee.id).checked_in_at === null) {
-		console.warn("Trying to remove check in, but attendee is not checked in");
-	}
 
 	// So we can undo the UI update
-	let checkInDate = null;
+	let checkInDate: Date | null;
 
 	// Optimistically update UI
 	allEventAttendees.update((_eventAttendees) => {
+		if (!_eventAttendees) {
+			console.warn("Tried to update attendee before attendees loaded");
+			return _eventAttendees
+		}
+
 		let selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
+		if (typeof selectedAttendee === "undefined") {
+			console.error("Tried to remove checkin for attendee that is does not exist");
+			return _eventAttendees;
+		}
 		checkInDate = selectedAttendee.checked_in_at;
+		if (checkInDate === null) {
+			console.warn("Trying to remove check in, but attendee is not checked in");
+		}
 		selectedAttendee.checked_in_at = null;
 		return _eventAttendees;
 	})
 	try {
-		const checkInData = await request.delete_({route: `/${get(currentEventID)}/attendees/${attendee.id}/checkin`});
+		const checkInData = await request.delete_({route: `/${get(currentEventID)}/attendances/${attendee.id}/checkin`});
 		if (checkInData.status === 204) {
 			console.log("Successfully removed checkin");
 		} else if (checkInData.status === 422) {
@@ -171,7 +185,13 @@ export async function removeLatestCheckIn(attendee: Attendee) {
 		console.log("Failed to remove checkin");
 		// Undo UI update
 		allEventAttendees.update((_eventAttendees) => {
+			if (!_eventAttendees) { return _eventAttendees }
+
 			let selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
+			if (typeof selectedAttendee === "undefined") {
+				console.error("Tried to undo remove checkin for attendee that is does not exist");
+				return _eventAttendees;
+			}
 			selectedAttendee.checked_in_at = checkInDate;
 			return _eventAttendees;
 		})
