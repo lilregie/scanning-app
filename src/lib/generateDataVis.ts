@@ -70,7 +70,6 @@ export function attendeesTable(attendees: Attendee[], searchTerm = ""): [string[
 			],
 			callback: () => {
 				selectedAttendeeID.set(attendee.id);
-				console.log(get(selectedAttendeeID))
 			},
 			hightlighted: attendee.id === get(selectedAttendeeID),
 		}

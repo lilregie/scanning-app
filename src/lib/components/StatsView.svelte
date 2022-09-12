@@ -14,8 +14,8 @@
 
 	$: checkedIn = $eventletAttendees?.filter((e) => e.checked_in_at !== null).length;
 	$: notCheckedIn = $eventletAttendees?.length - checkedIn;
-	$: availableTickets = $selectedEventletCombo?.ticket_limit
-		? $selectedEventletCombo?.ticket_limit - $eventletAttendees?.length
+	$: availableTickets = $selectedEventletCombo?.maximum_attendees
+		? $selectedEventletCombo?.maximum_attendees - $eventletAttendees?.length
 		: null;
 
 	$: checkinChartData = {

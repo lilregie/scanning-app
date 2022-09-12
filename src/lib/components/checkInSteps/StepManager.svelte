@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { selectedAttendeeID, stepManagerSettings } from '$lib/store';
+	import { selectedAttendee, selectedAttendeeID, stepManagerSettings } from '$lib/store';
 	import { backupStep, generateSteps, StageState, type AttendeeProfile } from './stepManager';
 
 	import { get, writable, type Unsubscriber, type Writable } from 'svelte/store';
@@ -9,6 +9,7 @@
 	import type { StepItem } from './stepManager';
 	import { createCheckIn } from '$lib/api/api';
 	import StepLayout from './StepLayout.svelte';
+import type { Attendee } from '$lib/attendee';
 
 	const dispatch = createEventDispatcher();
 
@@ -22,14 +23,22 @@
 	let idUnsubscribe: Unsubscriber | null = null;
 	let stepSettingsUnsubscribe: Unsubscriber | null = null;
 
-	function updateSelectedAttendee(attendeeProfile: AttendeeProfile) {
-		if (attendeeProfile.attendee) {
+	function updateSelectedAttendee(attendeeProfile: AttendeeProfile | null) {
+		if (attendeeProfile?.attendee && $selectedAttendeeID !== attendeeProfile.attendee.id) {
 			$selectedAttendeeID = attendeeProfile.attendee.id;
+			console.log("Updated selected attendee with attendee profile", attendeeProfile.attendee);
 		}
-		console.log('attendeeProfile', attendeeProfile.attendee);
+	}
+
+	function updateAttendeeProfile(selectedAttendee: Attendee | null) {
+		if ($attendeeProfile && selectedAttendee?.id !== $attendeeProfile?.attendee?.id) {
+			$attendeeProfile.attendee = selectedAttendee;
+			console.log("Updated attendee profile with selected attenddee", selectedAttendee);
+		}
 	}
 
 	$: updateSelectedAttendee($attendeeProfile);
+	$: updateAttendeeProfile($selectedAttendee);
 
 	function nextStep() {
 		idStore.update((id) => {

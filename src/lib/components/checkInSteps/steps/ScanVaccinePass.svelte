@@ -11,8 +11,13 @@
 	import { StageState, type AttendeeProfile } from '../stepManager';
 	import { writable, type Writable } from 'svelte/store';
 	import { normString, titleCase } from '$lib/utill';
-	import Table, { type TableRow } from '$lib/components/Table.svelte';
+	import type { TableRow } from '$lib/components/Table.svelte';
 	import Button from '$lib/components/Button.svelte';
+import { currentEvent, globalModalState } from '$lib/store';
+import StepWarning from '../StepWarning.svelte';
+import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
+import { bind } from 'svelte-simple-modal';
+
 
 	export let attendeeProfile: Writable<AttendeeProfile>;
 	export let memory: Writable<NZCovidPass>;
@@ -45,14 +50,16 @@
 		if (!$covidPass) {
 			stageState = StageState.Incomplete;
 		} else {
-			stageState = covidPassNameMatch() ? StageState.Complete : StageState.Warning;
+			stageState = covidPassNameMatch($covidPass, $attendeeProfile.attendee) ? StageState.Complete : StageState.Warning;
 		}
 	}
 
-	function covidPassNameMatch() {
-		const pass = $covidPass;
-		const attendee = $attendeeProfile.attendee;
-
+	function covidPassNameMatch(pass: NZCovidPass | null,  attendee: Attendee | null) {
+		// Can't match if it is a ticket only event
+		if ($currentEvent?.event_type === "ticket_only") {
+			return true;
+		}
+		
 		if (!pass || !attendee) {
 			return false;
 		}
@@ -85,92 +92,54 @@
 		];
 	}
 
+	function findAttendeeFromPass() {
+		globalModalState.set(bind(AttendeeMatching, { data: $covidPass }))
+	}
+
 	onMount(() => {
 		covidPass.set($memory);
 	});
 </script>
-
-<div class="scanner-wrapper">
-	<Scanner enabledScanTypes={[ScanTypes.CovidPass]} on:scan-complete={scan} />
-	{#if $covidPass}
-		<CovidPassBadge
-			data={$covidPass}
-			icon={stageState === StageState.Warning ? 'tick' : 'warning'}
-		/>
-	{/if}
-</div>
-
-{#if stageState === StageState.Warning}
-	<div class="missmatch-warning">
-		<div class="message">
-			<h3>Warning</h3>
-			<span>The name on this pass does not match selected Attendee.</span>
-		</div>
-		<div class="table">
-			<Table
+<div class="scanner-container">
+	<div class="scanner-wrapper">
+		<Scanner enabledScanTypes={[ScanTypes.CovidPass]} on:scan-complete={scan} />
+		{#if $covidPass}
+			<CovidPassBadge
+				data={$covidPass}
+				icon={stageState === StageState.Warning ? 'warning' : 'tick'}
+			/>
+		{/if}
+	</div>
+	
+	{#if stageState === StageState.Warning}
+		<StepWarning>
+			<svelte:fragment slot="title">Warning</svelte:fragment>
+			<svelte:fragment slot="message">The name on this pass does not match selected Attendee.</svelte:fragment>
+			<!-- <svelte:fragment slot="table">
+				<Table
 				tableHeaders={nameMissmatchTableData[0]}
 				tableData={nameMissmatchTableData[1]}
 				tableColumnLine
 			/>
-		</div>
-		<div class="actions">
-			<Button color="secondary" on:click={() => (stageState = StageState.Incomplete)}>Cancel</Button
-			>
-			<Button color="warning" on:click={() => dispatch('force')}>Force</Button>
-		</div>
-	</div>
-{/if}
+			</svelte:fragment> -->
+			<svelte:fragment slot="actions">
+				<Button on:click={findAttendeeFromPass} color="success">
+					Find {nameMissmatchTableData[1][0].data[1]}
+				</Button>
+			</svelte:fragment>
+		</StepWarning>
+	{/if}
+</div>
+
 
 <style lang="scss">
-	@use '../../../styles/vars.scss' as *;
-	@use 'sass:map';
-
-	.scanner-wrapper {
+	.scanner-container {
 		max-width: 50em;
-		margin: 0 auto;
+		margin: 0 auto 0 auto;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		min-height: 98%;
 	}
-	.missmatch-warning {
-		z-index: 10;
-		width: calc(100% - 1rem);
-		margin: auto;
-		left: 0;
-		right: 0;
-		box-sizing: border-box;
 
-		padding: 1em;
-		font-size: 1.2rem;
-
-		position: absolute;
-		top: 50%;
-		transform: translateY(-50%);
-		background-color: $background-foreground;
-
-		box-shadow: map-get($shadows, 'medium');
-
-		display: grid;
-		grid-template:
-			'message table' auto
-			'action action' auto;
-
-		border: 2px solid map-get($theme-colors, 'warning');
-		border-radius: $radius-default;
-
-		h3 {
-			margin: 0;
-		}
-
-		.actions {
-			display: flex;
-			justify-content: right;
-			margin-top: 1em;
-			grid-area: action;
-			column-gap: 0.5rem;
-		}
-		.message {
-			grid-area: message;
-		}
-		.table {
-			grid-area: table;
-		}
-	}
 </style>

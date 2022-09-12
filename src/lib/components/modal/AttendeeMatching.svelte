@@ -96,6 +96,8 @@
 		};
 		// Don't need to close model as the check-in page will close it for us
 		goto(`${basePath}/${$currentEventID}/check-in${await encode_url(attendeeProfile)}`);
+		// ... but spa routing won't reload the page if it's already on the checkin page
+		close()
 	}
 </script>
 
