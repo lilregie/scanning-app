@@ -9,6 +9,7 @@
 		selectedEventletCombo,
 		selectedEventletIDs
 	} from '$lib/store';
+	import { gitCommitHash } from '$lib/consts';
 	
 	export let backPath: string;
 	export let url: string;
@@ -19,7 +20,7 @@
 
 <div class="brand">
 	<a href={backPath}>
-		<img src={logo} alt="Lil Regie logo" />
+		<img src={logo} alt="Lil Regie logo" title={gitCommitHash}/>
 	</a>
 </div>
 
