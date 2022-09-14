@@ -17,14 +17,13 @@ export default function checkInInitialize(router: Router) {
         }
         
         let contentType = extractOneHeader(req, "content-type");
-        if (contentType !== "application/x-www-form-urlencoded") {
+        if (contentType !== "application/json") {
             res.status(400);
-            res.json({ "error": "needs to be a urlencoded form" });
+            res.json({ "error": "should have a json body/content type" });
             return;
         }
-        let urlEncodedData = new URLSearchParams(req.body)
-        let vaccinePassHeader = urlEncodedData.get("vaccine_pass");
-        let ticketUuidHeader = urlEncodedData.get("ticket_uuid");
+        let vaccinePassHeader = req.body?.vaccine_pass;
+        let ticketUuidHeader = req.body?.ticket_uuid;
         console.log(ticketUuidHeader, vaccinePassHeader);
 
         if (!uuidValidate(ticketUuidHeader as string) || !vaccinePassHeader) {
