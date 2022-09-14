@@ -4,7 +4,7 @@ import { CheckIn } from "../mockInterfaces/checkIn";
 import { extractOneHeader, getAttendee } from "./utill";
 
 import {faker} from '@faker-js/faker';
-import { parse as uuidParse } from "uuid";
+import { validate as uuidValidate } from "uuid";
 
 
 export default function checkInInitialize(router: Router) {
@@ -16,17 +16,24 @@ export default function checkInInitialize(router: Router) {
             return;
         }
         
-        let ticketIdHeader = extractOneHeader(req, "ticket_uuid");
-        let vaccinePassHeader = extractOneHeader(req, "vaccine_pass");
-        console.log(ticketIdHeader, vaccinePassHeader);
+        let contentType = extractOneHeader(req, "content-type");
+        if (contentType !== "application/x-www-form-urlencoded") {
+            res.status(400);
+            res.json({ "error": "needs to be a urlencoded form" });
+            return;
+        }
+        let urlEncodedData = new URLSearchParams(req.body)
+        let vaccinePassHeader = urlEncodedData.get("vaccine_pass");
+        let ticketUuidHeader = urlEncodedData.get("ticket_uuid");
+        console.log(ticketUuidHeader, vaccinePassHeader);
 
-        if (!uuidParse(ticketIdHeader as string) || !vaccinePassHeader) {
+        if (!uuidValidate(ticketUuidHeader as string) || !vaccinePassHeader) {
             res.status(400);
             res.json({ "error": "missing valid ticket_uuid or vaccine_pass" });
             return;
         }
 
-        let valid = attendee.ticket_uuid === ticketIdHeader;
+        let valid = attendee.ticket_uuid === ticketUuidHeader;
         
         if (!valid) {
             res.status(404);

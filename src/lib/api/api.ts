@@ -110,14 +110,17 @@ export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 		return _eventAttendees;
 	});
 
-	const requestHeaders: HeadersInit = new Headers();
-	requestHeaders.set('vaccine_pass', (covidPass).toString());
-	requestHeaders.set('ticket_uuid', attendee.ticket_uuid);
-	console.log("Checking in with",requestHeaders)
+	const requestFormData = new URLSearchParams();
+	requestFormData.set('vaccine_pass', (covidPass).toString());
+	requestFormData.set('ticket_uuid', attendee.ticket_uuid);
+	
+	const requestHeaders = new Headers();
+	requestHeaders.set("content-type","application/x-www-form-urlencoded")
 	try {
 
 		const checkInData = await request.post({
 				route: `/${get(currentEventID)}/attendances/${attendee.id}/checkin`,
+				body: requestFormData.toString(),
 				headers: requestHeaders
 			}
 		);

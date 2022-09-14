@@ -14,7 +14,7 @@ export namespace request {
 		headers?: Headers;
 	}
 	interface RequestOptionsWithBody extends RequestOptions {
-		body?: object;
+		body?: string | object;
 	}
 	interface FullRequestOptions extends RequestOptionsWithBody {
 		method: "GET" | "POST" | "PUT" | "DELETE";
@@ -68,15 +68,15 @@ export namespace request {
 		merged_headers.set("X-CSRF-Token", storeGet(csrfAPIState) || "");
 		merged_headers.set("X-Request-ID", requestID);
 		merged_headers.set("Accept", "application/json");
-		if (body) {
+		if (body && !merged_headers.has("Content-Type")) {
 			merged_headers.set("Content-Type", "application/json");
 		}
-
+		console.log((typeof body==="string" ? body : JSON.stringify(body)))
 		const params: RequestInit = mergeDeep(
 			{
 				method,
-				body: body && JSON.stringify(body) || null,
-				headers: merged_headers,
+				body: (typeof body==="string" ? body : JSON.stringify(body)) || null,
+				headers: merged_headers
 			} as RequestInit,
 			customParams
 		);

@@ -3,6 +3,7 @@ import cors from 'cors';
 import { apiInitializeWithRouter } from './api';
 import { csrfMiddleware } from './csrf';
 import path from 'path';
+import bodyParser from 'body-parser';
 const router = express.Router()
 
 const API_DELAY_MS = 0;
@@ -22,7 +23,8 @@ if (process.env["HOST_STATIC"]) {
 }
 
 
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false}));
+app.use(bodyParser.json());
 
 // Artificial Delay
 app.use((req, res, next) => {
