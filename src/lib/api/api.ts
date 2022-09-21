@@ -64,7 +64,7 @@ export async function getAttendeesList(eventID: string) {
 }
 
 export async function createCheckIn(attendeeProfile: AttendeeProfile) {
-	let {attendee, covidPass, ticketKey} = attendeeProfile;
+	let {attendee, covidPass, ticketKey, checkInEventlet} = attendeeProfile;
 
 	const event = get(currentEvent);
 	if (!event) {
@@ -75,6 +75,19 @@ export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 	// Required Data
 	if (!attendee) {
 		console.error("Tried to check-in attendee without an attendee selected: ",attendee, attendeeProfile);
+		return
+	}
+	if (!checkInEventlet && !event.standalone) {
+		console.error("Tried to check-in attendee without an attendance selected: ", attendeeProfile);
+		return
+	} else if (!checkInEventlet) {
+		checkInEventlet = event.eventlets[0];
+	}
+
+	// First get attendance
+	let attendance = attendee.attendances.find((x: EventletAttendance)=>x.eventlet_id==checkInEventlet?.id);
+	if (!attendance) {
+		console.error("Tried to check-in attendee without a valid attendance selected: ", attendeeProfile);
 		return
 	}
 
@@ -113,7 +126,7 @@ export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 	try {
 
 		const checkInData = await request.post({
-				route: `/${get(currentEventID)}/attendances/${attendee.id}/checkin`,
+				route: `/${get(currentEventID)}/attendances/${attendance.id}/checkin`,
 				body: {
 					vaccine_pass: covidPass,
 					ticket_uuid: attendee.ticket_uuid

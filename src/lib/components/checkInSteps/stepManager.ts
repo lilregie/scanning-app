@@ -2,11 +2,12 @@ import type { Attendee } from "$lib/attendee";
 import { currentEvent, stepManagerSettings } from "$lib/store";
 import type { SvelteComponent } from "svelte";
 import { get, writable, type Writable } from "svelte/store";
-import type { NZCovidPass, Ticket } from "../scanner/validateScan";
+import type { NZCovidPass } from "../scanner/validateScan";
 
 // Steps (TS doesn't like importing svelte files)
 import ScanVaccinePassSvelte from "./steps/ScanVaccinePass.svelte";
 import ScanBarcodeTicketSvelte from "./steps/ScanBarcodeTicket.svelte";
+import SelectEventletsSvelte from "./steps/SelectEventlets.svelte";
 import ConfirmCheckinSvelte from "./steps/ConfirmCheckin.svelte";
 
 // Icons
@@ -18,12 +19,14 @@ import type { Eventlet } from "$lib/event";
 export enum Steps {
     ScanVaccinePass = "Scan Vaccine Pass",
     ScanTicket = "Scan Ticket",
+    ConfirmEventlets = "Confirm Eventlets",
     ConfirmCheckin = "Confirm Checkin",
 }
 
 export const StepComponents = {
     [Steps.ScanVaccinePass]: ScanVaccinePassSvelte,
     [Steps.ScanTicket]: ScanBarcodeTicketSvelte,
+    [Steps.ConfirmEventlets]: SelectEventletsSvelte,
     [Steps.ConfirmCheckin]: ConfirmCheckinSvelte
 }
 
@@ -40,6 +43,7 @@ type StepIcons = { [key in Steps]: typeof SvelteComponent | null };
 const stepIcons: StepIcons = {
     "Scan Vaccine Pass": ScanVaccinePassICON,
     "Scan Ticket": ScanBarcodeTicketICON,
+    "Confirm Eventlets": SelectEventletsICON,
     "Confirm Checkin": null
 }
 
@@ -61,6 +65,9 @@ export function generateSteps(attendeeProfile: AttendeeProfile, settings: StepMa
         addStep(Steps.ScanVaccinePass, attendeeProfile.covidPass);
     }
 
+    if (!event?.standalone) {
+        addStep(Steps.ConfirmEventlets, false); // always confirm eventlets if enabled
+    }
     console.log("step order",completedSteps, stepOrder);
 
     if (stepOrder.length == 0) {
@@ -104,6 +111,7 @@ export enum StageState {
 export interface AttendeeProfile {
     attendee: Attendee | null,
     covidPass: boolean,
+    checkInEventlet: Eventlet | null
     ticketKey: string | null,
 }
 

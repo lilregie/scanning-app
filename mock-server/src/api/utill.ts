@@ -5,19 +5,21 @@ import { LilRegieEvent } from "../mockInterfaces/event";
 import { ParsedQs } from "qs";
 
 export function getAttendee(req: Request, res: Response): Attendee | null {
-    let attendeeId = parseInt(req.params.attendeeId);
+    let attendanceId = parseInt(req.params.attendanceId);
 
     let event = getEvent(req, res);
     if (event === null) {return null;}
 
-    let matchingAttendees = attendees.get(event.id)?.filter((attendee) => attendee.id === attendeeId);
+    let matchingAttendee = attendees.get(event.id)?.find((attendee) => (
+        attendee.attendances.some((attendance) => attendance.id === attendanceId)
+    ));
 
-    if (matchingAttendees?.length !== 1) {
+    if (!matchingAttendee) {
         res.status(404);
         res.json({ "error": "attendee not found" });
         return null;
     }
-    return matchingAttendees[0];
+    return matchingAttendee;
 }
 
 export function getEvent(req: Request, res: Response): LilRegieEvent | null {

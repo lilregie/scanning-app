@@ -175,7 +175,7 @@
 	{#if actionsAvailable}
 		<div class="action-container">
 			{#if checkedIn}
-				<Button on:click={removeLatestCheckIn} color="warning">Remove Check In</Button>
+				<Button on:click={removeLatestCheckIn} color="warning" disabled title="disabled while we work out some ui issues">Remove Check In</Button>
 			{:else}
 				<Button on:click={checkIn}>Check In</Button>
 			{/if}

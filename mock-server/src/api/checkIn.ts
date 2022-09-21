@@ -8,11 +8,16 @@ import { validate as uuidValidate } from "uuid";
 
 
 export default function checkInInitialize(router: Router) {
-    router.post("/:eventId/attendances/:attendeeId/checkin", (req, res) => {
+    router.post("/:eventId/attendances/:attendanceId/checkin", (req, res) => {
+        console.log(req.params)
         let attendee = getAttendee(req, res);
         if (attendee === null) {
-            res.status(400);
-            res.json({ "error": "attendee not found" });
+            return;
+        }
+        let attendance = attendee.attendances.find((attendance) => attendance.id === parseInt(req.params.attendanceId));
+        if (!attendance) {
+            res.status(404);
+            res.json({ "error": "attendance not found" });
             return;
         }
         
@@ -26,7 +31,7 @@ export default function checkInInitialize(router: Router) {
         let ticketUuidHeader = req.body?.ticket_uuid;
         console.log(ticketUuidHeader, vaccinePassHeader);
 
-        if (!uuidValidate(ticketUuidHeader as string) || !vaccinePassHeader) {
+        if (!uuidValidate(ticketUuidHeader as string) || vaccinePassHeader === undefined) {
             res.status(400);
             res.json({ "error": "missing valid ticket_uuid or vaccine_pass" });
             return;
@@ -44,7 +49,8 @@ export default function checkInInitialize(router: Router) {
         console.log("New CheckIn:",attendee.id);
         
         attendee.checked_in_at = new Date();
-        attendee.vaccine_pass = attendee.vaccine_pass || vaccinePassHeader?.toLowerCase()==="true";
+        attendee.vaccine_pass = vaccinePassHeader || attendee.vaccine_pass;
+        attendance.checked_in_at = attendee.checked_in_at
 
 
         let result: CheckIn = {
@@ -57,7 +63,7 @@ export default function checkInInitialize(router: Router) {
         res.json(result)
     });
 
-    router.delete("/:eventId/attendances/:attendeeId/checkin", (req, res) => {
+    router.delete("/:eventId/attendances/:attendanceId/checkin", (req, res) => {
         let attendee = getAttendee(req, res);
         if (attendee === null) {
             return;
