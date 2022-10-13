@@ -43,7 +43,7 @@
 </script>
 
 <div class="select-container">
-	<h2>Comfirm Eventlet</h2>
+	<h2>Confirm Eventlet</h2>
 	<div class="helper-text">Select the eventlet to check-in the attendee into</div>
 	<EventletSelector
 		startingEventlets={startingEventlet}

@@ -28,7 +28,7 @@
 	let checkList = {};
 	$: {
 		checkList = {
-			'Booking Comfirmed': $attendee?.booking_id,
+			'Booking Confirmed': $attendee?.booking_id,
 			'COVID Pass Verified': $attendee?.vaccine_pass
 		};
 		// jankly adding in `Not` if not checked in

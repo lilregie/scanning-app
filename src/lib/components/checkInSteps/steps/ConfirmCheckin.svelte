@@ -8,9 +8,9 @@
 </script>
 
 <div class="select-container">
-	<h3>Comfirm Checkin for</h3>
+	<h3>Confirm Checkin for</h3>
 	<h2>"{$attendeeProfile.attendee?.first_name} {$attendeeProfile.attendee?.last_name}"</h2>
-	Checkin 
+	Checkin
 </div>
 
 <style lang="scss">
