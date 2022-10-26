@@ -1,21 +1,27 @@
 
 <script lang="ts">
-    export let size: 'tiny' | 'small' | 'medium' | 'large' = 'medium';
-
-    export let textInputValue = "";
+	export let size: 'tiny' | 'small' | 'medium' | 'large' = 'medium';
+	export let textInputValue = "";
 	export let placeholder = "";
 	export let disabled = false;
 	export let expanded: boolean = false;
-
 	export let inputComponent: HTMLInputElement | null = null;
 </script>
 
-<input bind:value={textInputValue} class="{size}" class:expanded {placeholder} disabled={disabled} bind:this={inputComponent}/>
+<input
+	bind:value={textInputValue}
+	class="{size}"
+	class:expanded
+	{placeholder}
+	disabled={disabled}
+	bind:this={inputComponent}
+	type="text"
+/>
 
 <style lang="scss">
 	@use '../styles/vars.scss' as *;
 
-    input {
+	input {
 		border: $border-light solid 1px;
 		border-radius: 0;
 		margin: 1em 0;
@@ -24,6 +30,7 @@
 		font-size: 0.9rem;
 		padding-top: 0.54rem;
 		padding-bottom: 0.54rem;
+
 		&.tiny {
 			font-size: 0.8rem;
 			padding-top: 0.2rem;
@@ -48,5 +55,5 @@
 			margin-left: 0;
 			margin-right: 0;
 		}
-    }
+	}
 </style>

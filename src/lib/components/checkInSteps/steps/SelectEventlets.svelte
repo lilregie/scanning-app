@@ -59,10 +59,12 @@
 		width: 80%;
 		margin: 0 auto;
 		text-align: center;
+
 		h2 {
 			font-size: 2rem;
 			margin: 1rem;
 		}
+
 		.helper-text {
 			margin: 1em;
 		}

@@ -40,16 +40,15 @@ export function findEventletByID(currentEvent: LilRegieEvent | null, id: number)
 		return null
 	}
 
-	return currentEvent.eventlets.find(
-		(eventlet) => eventlet.id === id
-	) || null;
+	return currentEvent.eventlets.find(eventlet => eventlet.id === id) || null;
 }
 
 
 /// Convert a string to title case, so it is "Like This".
 export function titleCase(str: string) {
 	let splitStr = str.toLowerCase().split(/[\s\-,_]+/);
-	for (var i = 0; i < splitStr.length; i++) {
+
+	for (let i = 0; i < splitStr.length; i++) {
 		splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
 	}
 	return splitStr.join(' ');
@@ -68,6 +67,7 @@ export function mergeDeep(target: any, ...sources: any): object {
 		for (const key in source) {
 			if (isObject(source[key])) {
 				if (!target[key]) Object.assign(target, { [key]: {} });
+
 				mergeDeep(target[key], source[key]);
 			} else {
 				Object.assign(target, { [key]: source[key] });

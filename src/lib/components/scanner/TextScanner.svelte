@@ -20,12 +20,11 @@
 	let textContent: string;
 
 	scannerStatus.subscribe(async (status) => {
-        if (status === ScannerStatus.Scanning) {
+		if (status === ScannerStatus.Scanning) {
 			await tick();
-            textBox?.focus();
+			textBox?.focus();
 		}
-
-    })
+	})
 </script>
 
 <form

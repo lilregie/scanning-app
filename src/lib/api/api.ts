@@ -35,7 +35,7 @@ export async function getEventsList() {
 	let result = await request.get({route: '.json'});
 	let events: LilRegieEvent[] = await result.json();
 	events.map((event)=>{
-		return event.eventlets.map((eventlet)=>{
+		return event.eventlets.map((eventlet) => {
 			eventlet.start_at = new Date(eventlet.start_at) || null;
 			eventlet.end_at = new Date(eventlet.end_at) || null;
 			return eventlet;
@@ -60,7 +60,6 @@ export async function getAttendeesList(eventID: string) {
 	} catch {
 		console.log("Failed to get event attendees");
 	}
-
 }
 
 export async function createCheckIn(attendeeProfile: AttendeeProfile) {
