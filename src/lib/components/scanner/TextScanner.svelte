@@ -36,7 +36,7 @@
 	<span class="help-text">You can use a 2D barcode reader to scan tickets and vaccine passes!</span>
 	<TextInput
 		bind:inputComponent={textBox}
-		placeholder="Bardcode text goes here..."
+		placeholder="Barcode text goes here…"
 		size="large"
 		expanded
 		bind:textInputValue={textContent}
@@ -54,6 +54,7 @@
 		padding: 1rem;
 		box-sizing: border-box;
 		overflow: hidden;
+
 		.help-text {
 			opacity: 0.75;
 			// font-style: italic;
