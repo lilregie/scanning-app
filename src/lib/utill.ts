@@ -35,7 +35,7 @@ export function findAttendeeByID(attendees: Attendee[] | null, id: number | null
 	}
 }
 
-export function findEventletByID(currentEvent: LilRegieEvent, id: number): Eventlet | null {
+export function findEventletByID(currentEvent: LilRegieEvent | null, id: number): Eventlet | null {
 	if (id === null || currentEvent === null) {
 		return null
 	}

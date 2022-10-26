@@ -18,7 +18,7 @@
 		}
 	}
 
-	function getStartingEventlet(attendeeProfile: AttendeeProfile): Eventlet {
+	function getStartingEventlet(attendeeProfile: AttendeeProfile): Eventlet | null {
 		console.log(attendeeProfile);
 		if (attendeeProfile?.checkInEventlet) {
 			return attendeeProfile.checkInEventlet;
