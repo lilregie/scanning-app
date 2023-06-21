@@ -4,37 +4,25 @@ import childProcess from 'node:child_process';
 
 let lastCommitHash = '';
 try {
-    lastCommitHash = childProcess
-        .execSync('git rev-parse --short HEAD')
-        .toString()
-        .trim();
+	lastCommitHash = childProcess.execSync('git rev-parse --short HEAD').toString().trim();
 } catch (e) {
-    console.error('Could not get git commit hash: ', e);
+	console.error('Could not get git commit hash: ', e);
 }
-
-
 
 /** @type {import('vite').UserConfig} */
 const config = {
-    plugins: [
-        sveltekit(),
-        svg({
-            type: 'url'
-        })
-    ],
-    optimizeDeps: {
-        include: [
-            "events",
-            "uuid",
-            "visibilityjs",
-            "stampit",
-            "lodash",
-            "dayjs"
-        ]
-    },
-    define: {
-        __COMMIT_HASH__: JSON.stringify(lastCommitHash),
-    }
+	plugins: [
+		sveltekit(),
+		svg({
+			type: 'url'
+		})
+	],
+	optimizeDeps: {
+		include: ['events', 'uuid', 'visibilityjs', 'stampit', 'lodash', 'dayjs']
+	},
+	define: {
+		__COMMIT_HASH__: JSON.stringify(lastCommitHash)
+	}
 };
 
 export default config;
