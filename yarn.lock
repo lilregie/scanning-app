@@ -1745,9 +1745,9 @@
     ts-dedent "^2.0.0"
 
 "@storybook/addon-svelte-csf@^2.0.5":
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/@storybook/addon-svelte-csf/-/addon-svelte-csf-2.0.5.tgz#d4adef070a6adfb74b8c569b6d9837dd9d78cb21"
-  integrity sha512-7Yg3mujRwSCURB6+CUXk6bfbeARMTdax+zt7Nw25MTGz9/zDXC0LTbISvAg+d21Qs8zzDWY/52ww0sG3j1Pj8A==
+  version "2.0.11"
+  resolved "https://registry.yarnpkg.com/@storybook/addon-svelte-csf/-/addon-svelte-csf-2.0.11.tgz#5fcbab74690555cf4c7999757aedc93b7a6bd79d"
+  integrity sha512-sBOqZaXv60uWa0b7jubJ+FQ5JbckgvNsBw+ucd/s3304BeTKG4ZUel+yJEjpt0ebZqty8xWchBZev1htxBVD/Q==
   dependencies:
     ts-dedent "^2.0.0"
 
