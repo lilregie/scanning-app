@@ -21,14 +21,14 @@
 	"devDependencies": {
 		"@babel/core": "^7.22.5",
 		"@faker-js/faker": "^8.0.2",
-		"@poppanator/sveltekit-svg": "1.1.0",
+		"@poppanator/sveltekit-svg": "^3.0.1",
 		"@storybook/addon-actions": "^6.5.9",
 		"@storybook/addon-essentials": "^6.5.9",
 		"@storybook/addon-links": "^6.5.9",
 		"@storybook/addon-svelte-csf": "^2.0.5",
 		"@storybook/svelte": "^6.5.9",
-		"@sveltejs/adapter-static": "1.0.0-next.48",
-		"@sveltejs/kit": "1.0.0-next.405",
+		"@sveltejs/adapter-static": "1.0.0",
+		"@sveltejs/kit": "1.0.0-next.588",
 		"@types/faker": "^6.6.9",
 		"@types/uuid": "^9.0.2",
 		"@typescript-eslint/eslint-plugin": "^5.60.0",
@@ -61,7 +61,7 @@
 		"typescript": "4.9.5",
 		"uuid": "^9.0.0",
 		"visibilityjs": "^2.0.2",
-		"vite": "^3.2.7"
+		"vite": "^4.3.9"
 	},
 	"type": "module",
 	"packageManager": "yarn@1.22.19",

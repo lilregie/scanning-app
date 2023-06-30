@@ -1,9 +1,5 @@
-<script context="module">
-	/** @type {import('@sveltejs/kit').Load} */
-	export const load = async ({ url }) => ({ props: { url: url.pathname } });
-</script>
-
 <script lang="ts">
+	import type { PageData } from './$types';
 	import type { TableRow } from '$lib/components/Table.svelte';
 
 	import AdminLayout from '$lib/components/layouts/AdminLayout.svelte';
@@ -42,10 +38,14 @@ stepManagerSettings
 	import { ScanTypes, type ScanResults } from '$lib/components/scanner/validateScan';
 	import { findEventletByID } from '$lib/utill';
 	import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
-import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
-import { stringify } from 'uuid';
+	import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
+	import { stringify } from 'uuid';
+  import type { PageData } from '@sveltejs/kit/types/internal';
 
-	export let url: string;
+	export let data: PageData;
+
+	let url: string;
+	$: url = data.url;
 
 	let attendeesTableData: [string[], TableRow[]];
 
@@ -192,38 +192,45 @@ import { stringify } from 'uuid';
 </AdminLayout>
 
 <style lang="scss">
-	@use '../../lib/styles/vars.scss' as *;
+	@use '../../../lib/styles/vars.scss' as *;
 
 	.left-bar {
 		text-align: center;
 		height: 100%;
 		position: relative;
+
 		.header-text {
 			h2 {
 				font-size: 2rem;
 				margin: 1rem;
+
 				&:first-child {
 					margin-top: 0;
 				}
 			}
 		}
+
 		.scanner-container {
 			width: 100%;
 			margin-bottom: 2em;
 			position: relative;
 			border-radius: 0.7rem;
+
 			:global#cam-preview {
 				border-radius: 0.7rem;
 			}
 		}
 	}
+
 	.panel-header {
 		display: block;
 		color: $text-dark;
 		margin: 0;
 	}
+
 	.info-panel {
 		height: 100%;
+
 		.empty-attendee-details-container {
 			display: flex;
 			position: relative;
@@ -239,6 +246,7 @@ import { stringify } from 'uuid';
 
 			@media screen and (max-width: $breakpoint-mobile) {
 				padding: 1em;
+
 				p.no-select-instructions {
 					position: absolute;
 					bottom: 0;
@@ -246,11 +254,13 @@ import { stringify } from 'uuid';
 					margin: 1em;
 				}
 			}
+
 			p {
 				margin: 0;
 				font-size: 1.5rem;
 				color: $text-dark;
 			}
+
 			.no-select-instructions {
 				font-size: 2em;
 				opacity: 40%;
@@ -258,29 +268,34 @@ import { stringify } from 'uuid';
 				max-width: 700px;
 				text-align: center;
 			}
+
 			.step-settings-wrapper {
 				width: 15em;
+
 				h3 {
 					text-align: center;
 				}
-
 			}
 		}
 	}
+
 	.search-container :global(input),
 	.table {
 		border-radius: $radius-default;
 	}
+
 	.loading-spinner {
 		display: flex;
 		align-items: center;
 		justify-content: center;
 	}
+
 	.list-panel {
 		@media screen and (max-width: $breakpoint-mobile) {
 			:global(table td:nth-child(2)) {
 				display: none;
 			}
+
 			:global(table th:nth-child(2)) {
 				display: none;
 			}

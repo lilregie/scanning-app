@@ -43,17 +43,17 @@ export const currentEventID: Writable<number | null> = writable(null);
 
 export const allEvents: Writable<LilRegieEvent[]> = writable([]);
 
-export const currentEvent = derived([currentEventID, allEvents], ([_currentEventID, _allEvents]) => {
-	if (_currentEventID !== null && _allEvents.length > 0) {
-		const potentialcurrentEvent = _allEvents.filter((event) => event.id === _currentEventID);
-		if (potentialcurrentEvent.length === 1) {
-			console.log("Found event", _currentEventID);
+export const currentEvent = derived([currentEventID, allEvents], ([$currentEventID, $allEvents]) => {
+	if ($currentEventID !== null && $allEvents.length > 0) {
+		const potentialcurrentEvent = $allEvents.filter((event) => event.id === $currentEventID);
 
+		if (potentialcurrentEvent.length === 1) {
 			// Also need to get people for new chosen event
-			getAttendeesList(_currentEventID.toString());
+			getAttendeesList($currentEventID.toString());
+
 			return potentialcurrentEvent[0];
 		} else {
-			console.log("couldn't find event", _currentEventID, "reset chosen event");
+			console.log("couldn't find event", $currentEventID, "reset chosen event");
 			currentEventID.set(null);
 			return null;
 		}
@@ -113,7 +113,7 @@ export const selectedEventletCombo: Readable<EventletsCombined | null> = derived
 		return {
 			checked_in_count: selectedEventlets.reduce((acc, eventlet) => acc + eventlet.checked_in_count, 0),
 			event_id: _currentEvent.id,
-			
+
 			start_at: getDateSum(selectedEventlets, Math.min),
 			end_at: getDateSum(selectedEventlets, Math.max),
 			name: selectedEventlets.map((eventlet) => eventlet.name),

@@ -1,12 +1,6 @@
-<script lang="ts" context="module">
-	export const load: import('@sveltejs/kit').Load = async ({ url }) => ({
-		props: {
-			url: url.pathname
-		}
-	})
-</script>
-
 <script lang="ts">
+	import type { PageData } from './$types';
+
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import {
@@ -31,7 +25,10 @@
 	import type { AttendeeProfile } from '$lib/components/checkInSteps/stepManager';
 	import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 
-	export let url: string;
+	export let data: PageData;
+
+	let url: string;
+	$: url = data.url;
 
 	const backPath = `${basePath}/${$currentEventID}/edit`;
 
@@ -87,17 +84,18 @@
 </AdminLayout>
 
 <style lang="scss">
-	@use '../../lib/styles/vars.scss' as *;
-	
+	@use '../../../lib/styles/vars.scss' as *;
+
 	.container {
 		height: 100%;
 	}
+
 	.attendee-details {
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
-
 		height: 100%;
+
 		.attendee-details-footer {
 			border-top: $border-light 2px solid;
 		}

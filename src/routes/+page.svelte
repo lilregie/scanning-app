@@ -70,6 +70,4 @@
 			max-width: calc(100% - 2rem);
 		}
 	}
-
-
 </style>

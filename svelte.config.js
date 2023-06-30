@@ -21,7 +21,7 @@ const config = {
 			fallback: process.env['RAILS_ENV'] ? 'layouts/checkin.html.erb' : 'index.html'
 		}),
 		files: {
-			template: process.env['RAILS_ENV'] ? 'src/checkin_rails_layout.html' : 'src/app.html'
+			appTemplate: process.env['RAILS_ENV'] ? 'src/checkin_rails_layout.html' : 'src/app.html'
 		},
 		paths: {
 			base: process.env['ROOT_PATH'] ? process.env['ROOT_PATH'] : '',

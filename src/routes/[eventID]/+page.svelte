@@ -1,8 +1,6 @@
-<script context="module" lang="ts">
-	export const load: import('@sveltejs/kit').Load = async ({ url }) => ({ props: { url: url.pathname } });
-</script>
-
 <script lang="ts">
+	import type { PageData } from './$types';
+
 	import { Circle } from 'svelte-loading-spinners';
 
 	import AdminLayout from '$lib/components/layouts/AdminLayout.svelte';
@@ -16,7 +14,10 @@
 	import EventletManager from '$lib/components/eventlet/GlobalEventletManager.svelte';
 	import StatsView from '$lib/components/StatsView.svelte';
 
-	export let url: string;
+	export let data: PageData;
+
+	let url: string;
+	$: url = data.url;
 
 	let checkInTable: [string[], TableRow[]] = [[], []];
 	eventletAttendees.subscribe((_) => {
