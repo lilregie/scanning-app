@@ -1631,11 +1631,14 @@
     regenerator-runtime "^0.13.7"
     ts-dedent "^2.0.0"
 
-"@storybook/addon-svelte-csf@^2.0.5":
-  version "2.0.11"
-  resolved "https://registry.yarnpkg.com/@storybook/addon-svelte-csf/-/addon-svelte-csf-2.0.11.tgz#5fcbab74690555cf4c7999757aedc93b7a6bd79d"
-  integrity sha512-sBOqZaXv60uWa0b7jubJ+FQ5JbckgvNsBw+ucd/s3304BeTKG4ZUel+yJEjpt0ebZqty8xWchBZev1htxBVD/Q==
+"@storybook/addon-svelte-csf@^3.0.0":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@storybook/addon-svelte-csf/-/addon-svelte-csf-3.0.3.tgz#0f376c9de09ce92d38a44865ab53d6c9101bf08d"
+  integrity sha512-X/AcLB1uZ2CZT68/R3tsRHSBciUv9rLbkzl6fbAN2TqGfdvwBcYjpho0FslLMBzUUhW7XlYgroikDCKnSkHdmg==
   dependencies:
+    "@babel/runtime" "^7.21.0"
+    fs-extra "^11.1.1"
+    magic-string "^0.30.0"
     ts-dedent "^2.0.0"
 
 "@storybook/addon-toolbars@6.5.16":
@@ -5595,6 +5598,15 @@ fs-extra@^10.1.0:
   version "10.1.0"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-10.1.0.tgz#02873cfbc4084dde127eaa5f9905eef2325d1abf"
   integrity sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==
+  dependencies:
+    graceful-fs "^4.2.0"
+    jsonfile "^6.0.1"
+    universalify "^2.0.0"
+
+fs-extra@^11.1.1:
+  version "11.1.1"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-11.1.1.tgz#da69f7c39f3b002378b0954bb6ae7efdc0876e2d"
+  integrity sha512-MGIE4HOvQCeUCzmlHs0vXpih4ysz4wg9qiSAu6cd42lVwPbTM1TjV7RusoyQqMmk/95gdQZX72u+YW+c3eEpFQ==
   dependencies:
     graceful-fs "^4.2.0"
     jsonfile "^6.0.1"
