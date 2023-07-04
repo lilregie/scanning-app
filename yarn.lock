@@ -9719,9 +9719,9 @@ svelte-simple-modal@^1.4.1:
   integrity sha512-D4/Z7LQ6ThawYb7FlAeS/qGbcwVlqzRHn1zZgWPlEK0cp4l2UMcscqel58mp+gTuk4UX9gl516GYXcHFvuyslA==
 
 svelte-steps@^2.3.5:
-  version "2.3.5"
-  resolved "https://registry.yarnpkg.com/svelte-steps/-/svelte-steps-2.3.5.tgz#ef6b24eab6573e800d72f48c1ea3157a92d97305"
-  integrity sha512-d490ClMkS/vOLUX56GjIR60rbRDjJ/eE4NGO31RIdkGruBm/wi9MWfxHG4xQmIM68hbAbV2lSOksoO+SVbtq/g==
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/svelte-steps/-/svelte-steps-2.4.1.tgz#64e055735818e81454e1ca5be8b7b9fe23a8b239"
+  integrity sha512-2Xq2lLcGJf3PaEY46f1w5s+/O+tLl4U2V+Z+sCeoUm/kEPFXeZP/aFr2JVKwdzSlXCT+raz75xqXtnZrPWJ0zA==
 
 svelte2tsx@^0.5.2:
   version "0.5.5"
