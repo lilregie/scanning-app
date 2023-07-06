@@ -1,5 +1,5 @@
 <script lang="ts">
-	import QR from 'modern-svelte-qr-scanner';
+	import QR from '@lilregie/svelte-scanner';
 	import { Circle } from 'svelte-loading-spinners';
 
 	let mediaErrorMessage = '';
