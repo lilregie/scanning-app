@@ -65,7 +65,7 @@
 	"type": "module",
 	"packageManager": "yarn@1.22.19",
 	"dependencies": {
-		"@lilregie/svelte-scanner": "^0.1.0",
+		"@lilregie/svelte-scanner": "^0.2.0",
 		"jsqr": "^1.4.0",
 		"svelte-chartjs": "^1.1.4"
 	}
