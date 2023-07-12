@@ -1,9 +1,19 @@
 <script lang="ts">
 	import { selectedEventletCombo, eventletAttendees } from '$lib/store';
-	import Doughnut from 'svelte-chartjs/src/Doughnut.svelte';
+	import { Doughnut } from 'svelte-chartjs';
 	import type { ChartOptions } from 'chart.js';
 	import { Circle } from 'svelte-loading-spinners';
 	import { fade } from 'svelte/transition';
+	import {
+    Chart as ChartJS,
+    Title,
+    Tooltip,
+    Legend,
+    ArcElement,
+    CategoryScale,
+  } from 'chart.js';
+
+	ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
 	let chartWidth: number;
 	let chartHeight: number;
@@ -19,13 +29,11 @@
 		: null;
 
 	$: checkinChartData = {
-		labels: ['Checked in', 'Not Checked in', availableTickets ? 'Available' : null].filter(
-			(e) => e
-		),
+		labels: ['Checked in', 'Not Checked in', availableTickets ? 'Available' : null].filter(el => el),
 		datasets: [
 			{
 				label: 'Registrations',
-				data: [checkedIn, notCheckedIn, availableTickets],
+				data: [checkedIn, notCheckedIn, availableTickets].filter((el): el is number => typeof el === "number"),
 				backgroundColor: ['#2BA628', '#626262', 'rgba(255,255,255,0.08)'],
 				hoverOffset: 20,
 				borderWidth: 0,

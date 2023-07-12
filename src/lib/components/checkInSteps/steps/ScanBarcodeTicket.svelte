@@ -17,7 +17,6 @@
 	export let memory: Writable<Ticket>;
 	export let stageState: StageState = StageState.Incomplete;
 
-
 	let ticketInfo: Ticket;
 
 	function scan(event: { detail: ScanResults }) {

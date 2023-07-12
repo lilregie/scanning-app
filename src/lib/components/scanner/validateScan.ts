@@ -81,7 +81,7 @@ export async function validateScan(scanText: string, enabledScanTypes: ScanTypes
         let ticketKey = scanText.trim();
         let attendee = getBookingFromTicket(ticketKey);
         if (attendee) {
-            
+
             return {
                 valid: true,
                 data: {
@@ -110,6 +110,7 @@ export async function validateScan(scanText: string, enabledScanTypes: ScanTypes
     }
 
     let violation = `Scan text doesn't match any known format. Looking for ${lookingFor}`;
+
     return {
         valid: false,
         violation

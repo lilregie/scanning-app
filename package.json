@@ -57,7 +57,7 @@
 		"svelte-simple-modal": "^1.6.1",
 		"svelte-steps": "^2.4.1",
 		"tslib": "^2.6.0",
-		"typescript": "4.9.5",
+		"typescript": "^5.1.6",
 		"uuid": "^9.0.0",
 		"visibilityjs": "^2.0.2",
 		"vite": "^4.3.9"
@@ -67,6 +67,6 @@
 	"dependencies": {
 		"@lilregie/svelte-scanner": "^0.2.0",
 		"jsqr": "^1.4.0",
-		"svelte-chartjs": "^1.1.4"
+		"svelte-chartjs": "^3.1.2"
 	}
 }
