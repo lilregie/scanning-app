@@ -547,6 +547,18 @@
   resolved "https://registry.yarnpkg.com/@faker-js/faker/-/faker-8.0.2.tgz#bab698c5d3da9c52744e966e0e3eedb6c8b05c37"
   integrity sha512-Uo3pGspElQW91PCvKSIAXoEgAUlRnH29sX2/p89kg7sP1m2PzCufHINd0FhTXQf6DYGiUlVncdSPa2F9wxed2A==
 
+"@floating-ui/core@^1.1.0", "@floating-ui/core@^1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@floating-ui/core/-/core-1.3.1.tgz#4d795b649cc3b1cbb760d191c80dcb4353c9a366"
+  integrity sha512-Bu+AMaXNjrpjh41znzHqaz3r2Nr8hHuHZT6V2LBKMhyMl0FgKA62PNYbqnfgmzOhoWZj70Zecisbo4H1rotP5g==
+
+"@floating-ui/dom@^1.1.0", "@floating-ui/dom@^1.2.1":
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/@floating-ui/dom/-/dom-1.4.4.tgz#cf859dde33995a4e7b6ded16c98cb73b2ebfffd0"
+  integrity sha512-21hhDEPOiWkGp0Ys4Wi6Neriah7HweToKra626CIK712B5m9qkdz54OP9gVldUg+URnBTpv/j/bi/skmGdstXQ==
+  dependencies:
+    "@floating-ui/core" "^1.3.1"
+
 "@humanwhocodes/config-array@^0.11.10":
   version "0.11.10"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.10.tgz#5a3ffe32cc9306365fb3fd572596cd602d5e12d2"
@@ -673,15 +685,15 @@
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.4.0.tgz#08d6c5e20cf7e4cc02fd181c4b0c225cd31dbb60"
   integrity sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==
 
-"@lilregie/svelte-scanner@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@lilregie/svelte-scanner/-/svelte-scanner-0.2.0.tgz#b8dcaec1dcca73a68d0f4eb58eca88961253fb0a"
-  integrity sha512-7bBN/cm80DwzMud2Hcw9nQmF/VjcdXQdL5Mk5w9kwW0hB5jSfzqhNG8WbFDXn6C33QrsPG9jsQ3STQFjVnYRhw==
+"@lilregie/svelte-scanner@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@lilregie/svelte-scanner/-/svelte-scanner-0.3.0.tgz#ac4942d2293ce25b0583679c4a945864b26aed91"
+  integrity sha512-hr70e5AJwdZ7DCAJ9ISy9LhZ+zd0iFpPi+65VtqA+0jUNBA5txAqSanVB+Pll8H9BANCgCSny7+M9N3gDOWF+g==
   dependencies:
     events "^3.3.0"
     lodash "^4.17.21"
     stampit "^4.3.2"
-    svelte-select "^4.4.7"
+    svelte-select "^5.6.1"
     svelte2tsx "^0.6.16"
     uuid "^9.0.0"
     visibilityjs "^2.0.2"
@@ -4009,6 +4021,14 @@ svelte-dev-helper@^1.1.9:
   resolved "https://registry.yarnpkg.com/svelte-dev-helper/-/svelte-dev-helper-1.1.9.tgz#7d187db5c6cdbbd64d75a32f91b8998bde3273c3"
   integrity sha512-oU+Xv7Dl4kRU2kdFjsoPLfJfnt5hUhsFUZtuzI3Ku/f2iAFZqBoEuXOqK3N9ngD4dxQOmN4OKWPHVi3NeAeAfQ==
 
+svelte-floating-ui@1.2.8:
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/svelte-floating-ui/-/svelte-floating-ui-1.2.8.tgz#1817473a1a26c17de6019da4603111b48ef8e7e8"
+  integrity sha512-8Ifi5CD2Ui7FX7NjJRmutFtXjrB8T/FMNoS2H8P81t5LHK4I9G4NIs007rLWG/nRl7y+zJUXa3tWuTjYXw/O5A==
+  dependencies:
+    "@floating-ui/core" "^1.1.0"
+    "@floating-ui/dom" "^1.1.0"
+
 svelte-hmr@^0.14.2:
   version "0.14.12"
   resolved "https://registry.yarnpkg.com/svelte-hmr/-/svelte-hmr-0.14.12.tgz#a127aec02f1896500b10148b2d4d21ddde39973f"
@@ -4044,10 +4064,13 @@ svelte-preprocess@^5.0.4:
     sorcery "^0.11.0"
     strip-indent "^3.0.0"
 
-svelte-select@^4.4.6, svelte-select@^4.4.7:
-  version "4.4.7"
-  resolved "https://registry.yarnpkg.com/svelte-select/-/svelte-select-4.4.7.tgz#fc85414af070487d68e438f7249c653178860af3"
-  integrity sha512-fIf9Z8rPI6F8naHZ9wjXT0Pv5gLyhdHAFkHFJnCfVVfELE8e82uOoF0xEVQP6Kir+b4Q5yOvNAzZ61WbSU6A0A==
+svelte-select@^5.6.1:
+  version "5.6.1"
+  resolved "https://registry.yarnpkg.com/svelte-select/-/svelte-select-5.6.1.tgz#2626748c92ff3983c75f273d87afba59ffef3b29"
+  integrity sha512-Powj91VAWyaNMSSOQ0E29UMTw/ExWsHEsA83H7yQgfji2S2DhG6Rs5qZHslZ+ihbCPxXel5uEzwLsSqDABkQDw==
+  dependencies:
+    "@floating-ui/dom" "^1.2.1"
+    svelte-floating-ui "1.2.8"
 
 svelte-simple-modal@^1.6.1:
   version "1.6.1"

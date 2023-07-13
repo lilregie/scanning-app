@@ -129,16 +129,16 @@
 	{#key currentlyLoading}
 		<Select
 			items={$allEventlets}
-			isMulti={multiSelect}
+			multiple={multiSelect}
 			placeholder={`Select ${multiSelect ? '' : 'an '}Eventlet${multiSelect ? 's' : ''}...`}
 			bind:value={$selectedValues}
 			on:select={newSelection}
-			isSearchable={false}
-			isWaiting={currentlyLoading}
+			searchable={false}
+			loading={currentlyLoading}
 			{groupBy}
-			listPlacement="bottom"
-			noOptionsMessage={'All eventlets are selected'}
-		/>
+		>
+			<div slot="empty">All eventlets are selected</div>
+		</Select>
 	{/key}
 </div>
 
@@ -152,19 +152,16 @@
 
 		--border: 3px solid white;
 		--background: #{$background-backdrop};
-		--listBackground: #{$background-intermediate-dark};
-		--itemHoverBG: #{$background-intermediate-light};
-		--itemHoverColor: #{$text-light};
-		--borderFocusColor: #{map-get($theme-colors, 'primary')};
-		--multiItemBG: #{$background-foreground};
-		--multiItemActiveBG: #{$background-intermediate-light};
-		--borderRadius: 0.5rem;
-		--placeholderColor: #{$text-dark};
-		--spinnerColor: #{map-get($theme-colors, 'primary')};
-		--listEmptyColor: #{$text-dark};
-		--groupTitleColor: #a7a7a7;
-		--clearSelectFocusColor: #{map-get($theme-colors, 'primary')};
-		--clearSelectHoverColor: #{$text-dark};
+		--list-background: #{$background-intermediate-dark};
+		--item-hover-bg: #{$background-intermediate-light};
+		--item-hover-color: #{$text-light};
+		--border-focus: 3px solid #{map-get($theme-colors, 'primary')};
+		--multi-item-bg: #{$background-foreground};
+		--border-radius: 0.5rem;
+		--placeholder-color: #{$text-dark};
+		--spinner-color: #{map-get($theme-colors, 'primary')};
+		--list-empty-color: #{$text-dark};
+		--group-title-color: #a7a7a7;
 
 		// Libaray missing multiItemColor
 		:global(.multiSelectItem_label) {

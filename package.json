@@ -51,7 +51,7 @@
 		"svelte-loader": "^3.1.9",
 		"svelte-loading-spinners": "^0.3.4",
 		"svelte-preprocess": "^5.0.4",
-		"svelte-select": "^4.4.6",
+		"svelte-select": "^5.6.1",
 		"svelte-simple-modal": "^1.6.1",
 		"svelte-steps": "^2.4.1",
 		"tslib": "^2.6.0",
@@ -63,7 +63,7 @@
 	"type": "module",
 	"packageManager": "yarn@1.22.19",
 	"dependencies": {
-		"@lilregie/svelte-scanner": "^0.2.0",
+		"@lilregie/svelte-scanner": "^0.3.0",
 		"jsqr": "^1.4.0",
 		"svelte-chartjs": "^3.1.2"
 	}
