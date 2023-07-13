@@ -21,7 +21,7 @@
 	"devDependencies": {
 		"@babel/core": "^7.22.6",
 		"@faker-js/faker": "^8.0.2",
-		"@poppanator/sveltekit-svg": "^3.0.1",
+		"@poppanator/sveltekit-svg": "^4.0.0",
 		"@storybook/addon-actions": "^7.0.25",
 		"@storybook/addon-essentials": "^7.0.25",
 		"@storybook/addon-links": "^7.0.25",
