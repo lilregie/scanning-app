@@ -22,7 +22,7 @@
     "start:prod": "HOST_STATIC=../build yarn start"
   },
   "devDependencies": {
-    "@faker-js/faker": "^7.3.0",
+    "@faker-js/faker": "^8.0.0",
     "@types/faker": "^6.6.9",
     "body-parser": "^1.20.0",
     "esbuild": "^0.18.0",
