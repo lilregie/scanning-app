@@ -1,9 +1,9 @@
 <script lang="ts">
-import { apiTimers, errorAPICallbacks } from '$lib/api/statusStores';
-import { apiWarnLongTimeMS } from '$lib/consts';
+	import { apiTimers, errorAPICallbacks } from '$lib/api/statusStores';
+	import { apiWarnLongTimeMS } from '$lib/consts';
 
-import { onDestroy, onMount } from 'svelte';
-import { get } from 'svelte/store';
+	import { onDestroy, onMount } from 'svelte';
+	import { get } from 'svelte/store';
 
 	import NoInternet from './noInternet.svelte';
 	import RequestFail from './requestFail.svelte';
@@ -16,44 +16,44 @@ import { get } from 'svelte/store';
 		Connected
 	}
 
-	let connectionState: ConnectionState = ConnectionState.Connected;
-    let intervalController: NodeJS.Timer = null
+	let connectionState: ConnectionState = ConnectionState.Connected
+	let intervalController: NodeJS.Timer
 
-    function checkConnection() {
-        // Error Pecking Order:
-        // 1. No Internet
-        // 2. Request Failed
-        // 3. Request Timeout
-        
-        if (typeof navigator.onLine === "boolean" && !navigator.onLine) {
-            connectionState = ConnectionState.NoInternet;
-            return;
-        }
+	function checkConnection() {
+		// Error Pecking Order:
+		// 1. No Internet
+		// 2. Request Failed
+		// 3. Request Timeout
 
-        if (get(errorAPICallbacks).length > 0) {
-            connectionState = ConnectionState.RequestFailed;
-            return;
-        }
+		if (typeof navigator.onLine === "boolean" && !navigator.onLine) {
+			connectionState = ConnectionState.NoInternet;
+			return;
+		}
 
-        get(apiTimers).forEach((_timer)=>{
-            if (new Date().getTime() - _timer > apiWarnLongTimeMS) {
-                connectionState = ConnectionState.RequestTimeOut;
-                return;
-            }
-        });
+		if (get(errorAPICallbacks).length > 0) {
+			connectionState = ConnectionState.RequestFailed;
+			return;
+		}
 
-        connectionState = ConnectionState.Connected;
-    }
+		get(apiTimers).forEach((_timer)=>{
+			if (new Date().getTime() - _timer > apiWarnLongTimeMS) {
+				connectionState = ConnectionState.RequestTimeOut;
+				return;
+			}
+		});
 
-    onMount(()=>{
-        intervalController = setInterval(checkConnection,500)
-    })
+		connectionState = ConnectionState.Connected;
+	}
 
-    onDestroy(()=>{
-        if (intervalController) {
-            clearInterval(intervalController)
-        }
-    })
+	onMount(() => {
+		intervalController = setInterval(checkConnection,500)
+	})
+
+	onDestroy(() => {
+		if (intervalController) {
+			clearInterval(intervalController)
+		}
+	})
 </script>
 
 {#if connectionState == ConnectionState.RequestTimeOut}
