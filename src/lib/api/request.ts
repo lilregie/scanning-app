@@ -25,7 +25,7 @@ async function process(options: FullRequestOptions): Promise<Response> {
 		console.log("yes", URL)
 	}
 
-	let requestID = v4();
+	const requestID = v4();
 
 	// apiTimers keeps track of all the requests that are currently running,
 	// so that we can show the user if the request is taking too long
@@ -36,10 +36,11 @@ async function process(options: FullRequestOptions): Promise<Response> {
 
 	let result = null;
 
-	let merged_headers = headers || new Headers();
+	const merged_headers = headers || new Headers();
 	merged_headers.set("X-CSRF-Token", storeGet(csrfAPIState) || "");
 	merged_headers.set("X-Request-ID", requestID);
 	merged_headers.set("Accept", "application/json");
+
 	if (body && !merged_headers.has("Content-Type")) {
 		merged_headers.set("Content-Type", "application/json");
 	}
