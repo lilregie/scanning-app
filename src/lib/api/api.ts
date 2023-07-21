@@ -7,41 +7,43 @@ import { request } from './request';
 import { apiProduction, csrfAPIState, errorAPICallbacks } from './statusStores';
 import type { AttendeeProfile } from '$lib/components/checkInSteps/stepManager';
 
+export function csrfToken() {
+	const metaTag = document.querySelector<HTMLMetaElement>('meta[name=csrf-token]');
+
+	return metaTag?.content;
+}
+
 export async function initializeAPI() {
 	console.log('initializeAPI');
 
 	// Load CSRF token
-	let metaTag = document.querySelector('meta[name=csrf-token]') as HTMLMetaElement;
-	const CSRF_TOKEN = metaTag?.content;
-	csrfAPIState.set(CSRF_TOKEN);
+	const CSRF_TOKEN = csrfToken()
+	csrfAPIState.set(CSRF_TOKEN ?? null);
 
-	if (CSRF_TOKEN==="testing-token") {
+	if (CSRF_TOKEN === "testing-token") {
 		console.warn("API in DEV mode");
 		apiProduction.set(false);
 	} else if (!CSRF_TOKEN) {
-		console.error("Error: API token not found",metaTag);
-		return
+		console.error("Error: API token not found");
 	} else {
 		console.log("API in production mode");
 		apiProduction.set(true);
 	}
-
-	console.log('Loading Events');
-	await getEventsList();
 }
 
 export async function getEventsList() {
-	console.log('Loading Events');
-	let result = await request.get({route: '.json'});
-	let events: LilRegieEvent[] = await result.json();
-	events.map((event)=>{
-		return event.eventlets.map((eventlet) => {
+	const result = await request.get({route: '.json'});
+	const events: LilRegieEvent[] = await result.json();
+
+	events.forEach(event => {
+		return event.eventlets.forEach(eventlet => {
 			eventlet.start_at = new Date(eventlet.start_at) || null;
 			eventlet.end_at = new Date(eventlet.end_at) || null;
+
 			return eventlet;
 		})
 	})
-	console.log("Generated Events", events);
+
 	allEvents.set(events);
 }
 
