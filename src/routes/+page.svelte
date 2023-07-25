@@ -29,8 +29,8 @@
 
 	function choseProject() {
 		if (eventsDropdownChosen !== null) {
-		currentEventID.set(parseInt(eventsDropdownChosen.value));
-			console.log(basePath,eventsDropdownChosen,`${basePath}/${eventsDropdownChosen.value}`)
+			currentEventID.set(parseInt(eventsDropdownChosen.value));
+			console.log(basePath, eventsDropdownChosen, `${basePath}/${eventsDropdownChosen.value}`)
 			goto(`${basePath}/${eventsDropdownChosen.value}`);
 		} else {
 			console.warn('Tried to select event but no event was chosen?');
