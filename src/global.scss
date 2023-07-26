@@ -1,8 +1,12 @@
 body {
-	font-family: 'Open Sans', Roboto, sans-serif, Arial;
+	font: {
+		family: 'Open Sans', Roboto, sans-serif, Arial;
+		size: 16px;
+	}
 	margin: 0;
-	min-height: 100vh;
+	min-height: 100dvh;
 }
+
 #svelte {
 	min-height: 100vh;
 }

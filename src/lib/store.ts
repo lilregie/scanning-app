@@ -1,6 +1,6 @@
 import { derived, get, writable } from 'svelte/store';
 import type { Writable, Readable } from 'svelte/store';
-import type { Eventlet, EventletsCombined, EventletSingle, LilRegieEvent } from '$lib/event';
+import type { Eventlet, EventletsCombined, EventletSingle, EventDetails } from '$lib/event';
 import type { Attendee } from './attendee';
 import { getAttendeesList } from './api/api';
 import { findAttendeeByID } from './utill';
@@ -41,7 +41,7 @@ function useLocalStorage<T>(store: Writable<T>, key: string | (()=>string), defa
 
 export const currentEventID: Writable<number | null> = writable(null);
 
-export const allEvents: Writable<LilRegieEvent[]> = writable([]);
+export const allEvents: Writable<EventDetails[]> = writable([]);
 
 export const currentEvent = derived([currentEventID, allEvents], ([$currentEventID, $allEvents]) => {
 	if ($currentEventID !== null && $allEvents.length > 0) {

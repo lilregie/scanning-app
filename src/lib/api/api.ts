@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 import type { Attendee, EventletAttendance } from '../attendee';
-import type { LilRegieEvent } from '../event';
+import type { EventDetails } from '../event';
 import { allEvents, currentEventID, eventletAttendees, allEventAttendees, currentEvent } from '../store';
 import {findByKey} from "$lib/utill"
 import { request } from './request';
@@ -32,17 +32,8 @@ export async function initializeAPI() {
 }
 
 export async function getEventsList() {
-	const result = await request.get({route: '.json'});
-	const events: LilRegieEvent[] = await result.json();
-
-	events.forEach(event => {
-		return event.eventlets.forEach(eventlet => {
-			eventlet.start_at = new Date(eventlet.start_at) || null;
-			eventlet.end_at = new Date(eventlet.end_at) || null;
-
-			return eventlet;
-		})
-	})
+	const result = await request.get({ route: '.json' });
+	const events: EventDetails[] = await result.json();
 
 	allEvents.set(events);
 }
