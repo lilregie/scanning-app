@@ -20,7 +20,7 @@
 		selectedAttendeeID,
 		currentEventID,
 		currentEvent,
-stepManagerSettings
+		stepManagerSettings
 	} from '$lib/store';
 	import { basePath } from '$lib/consts';
 	import { encode_url } from '$lib/components/checkInSteps/encodeAttendeeProfileURL';
@@ -40,7 +40,6 @@ stepManagerSettings
 	import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
 	import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 	import { stringify } from 'uuid';
-  import type { PageData } from '@sveltejs/kit/types/internal';
 
 	export let data: PageData;
 
@@ -57,7 +56,6 @@ stepManagerSettings
 		if ($eventletAttendees) {
 			attendeesTableData = attendeesTable($eventletAttendees, $attendeesSearchTerm);
 		}
-
 	}
 
 	// $: selectedAttendeeCheckedIn = $selectedAttendee &&  $selectedAttendee.check_ins.length === 0;
@@ -118,7 +116,6 @@ stepManagerSettings
 		rightTop: 'auto',
 		rightBottom: 'auto'
 	}}
-	backPath={`${basePath}/${$currentEventID}`}
 	{url}
 >
 	<div slot="left-bar" class="left-bar">
@@ -192,7 +189,7 @@ stepManagerSettings
 </AdminLayout>
 
 <style lang="scss">
-	@use '../../../lib/styles/vars.scss' as *;
+	@use '../../../../lib/styles/vars.scss' as *;
 
 	.left-bar {
 		text-align: center;

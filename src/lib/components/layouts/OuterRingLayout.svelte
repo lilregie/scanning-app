@@ -9,20 +9,12 @@
 		selectedEventletCombo,
 		selectedEventletIDs
 	} from '$lib/store';
-	import { gitCommitHash } from '$lib/consts';
-	
-	export let backPath: string;
+
 	export let url: string;
 
 	// Transition between pages
 	const pageTransitionDuration = 250;
 </script>
-
-<div class="brand">
-	<a href={backPath}>
-		<img src={logo} alt="Lil Regie logo" title={gitCommitHash}/>
-	</a>
-</div>
 
 <div class="attendee-count-overview stats-container">
 	{#if $eventletAttendees !== null}
@@ -125,7 +117,7 @@
 		text-overflow: ellipsis;
 		height: $line-height;
 		vertical-align: middle;
-		
+
 
 		.stat {
 			margin: 0 1em;

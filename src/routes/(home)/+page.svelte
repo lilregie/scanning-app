@@ -31,7 +31,7 @@
 </div>
 
 <style lang="scss">
-	@use '../lib/styles/vars.scss' as *;
+	@use '../../lib/styles/vars.scss' as *;
 
 	.container {
 		color: #CF2265;
