@@ -4,16 +4,24 @@
 	.page-header {
 		background: map-get($map: $theme-colors, $key: "primary");
 		display: flex;
-		justify-content: center;
 		align-items: center;
 		flex-shrink: 0;
 		padding: 0.75rem;
+
+		&.isLogoOnly {
+			justify-content: center;
+		}
+
+		&.isNav {
+			justify-content: space-between;
+		}
 	}
 </style>
 
-<header class="page-header">
-	<slot>
-		<svg width="75" height="30" viewBox="0 0 75 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+<header class="page-header" class:isLogoOnly={!$$slots.content} class:isNav={!!$$slots.content}>
+	<slot name="content" />
+	<slot name="logo">
+		<svg class="flex-shrink-0" width="75" height="30" viewBox="0 0 75 30" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path fill-rule="evenodd" clip-rule="evenodd" d="M22.0145 0.505676H22.9091C23.3498 0.758216 24.4284 1.15571 24.5989 1.98468C24.7339 2.63986 24.3658 3.67499 24.2014 4.64697C23.4129 9.30656 22.8433 13.2617 22.412 18.2538C22.3193 19.3307 22.4883 23.353 21.6168 23.6772C20.1541 24.2212 18.4706 22.1426 18.8334 20.8181C18.6875 23.2821 16.1541 24.405 14.0616 23.6772C11.2802 22.7094 12.7684 16.6542 13.2665 13.7183C13.5647 11.9605 13.9778 8.19976 15.0558 7.901C16.2277 7.57598 17.6223 8.41929 17.7397 9.08414C17.8679 9.80906 17.2375 11.1571 17.0441 11.9436C16.4703 14.2751 16.1728 15.9087 15.851 18.0569C15.7118 18.9878 15.3305 20.2054 15.9503 21.212C17.5444 21.4103 16.494 18.9493 17.4416 18.5502C18.5145 18.097 19.0146 19.4613 19.0323 20.2258C19.2754 15.2889 20.0455 9.97431 20.8215 5.13997C21.0451 3.74746 21.3238 1.01076 22.0145 0.505676Z" fill="#EDEDED"/>
 			<path fill-rule="evenodd" clip-rule="evenodd" d="M63.866 0.505676H64.8596C65.0692 0.725199 65.4474 0.777382 65.5557 1.09724C65.5609 1.97646 66.3403 2.23319 66.4507 3.06941C66.6907 4.89323 65.072 6.75571 63.369 6.42168C61.0593 5.96894 61.8994 0.912349 63.866 0.505676Z" fill="#EDEDED"/>
 			<path fill-rule="evenodd" clip-rule="evenodd" d="M17.9388 0.900014C18.2254 1.74654 19.0662 2.33939 19.231 3.06947C19.6804 5.05871 18.019 6.84259 16.3481 6.61888C13.9167 6.2937 14.3611 -0.188097 17.9388 0.900014Z" fill="#EDEDED"/>

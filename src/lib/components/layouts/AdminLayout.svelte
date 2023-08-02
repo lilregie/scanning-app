@@ -30,11 +30,10 @@
 		rightBottom: 'auto'
 	};
 
-	export let backPath: string;
 	export let url: string;
 </script>
 
-<OuterRingLayout {backPath} {url}>
+<OuterRingLayout {url}>
 	<div class="panel-container">
 		<div
 			class="left-bar"

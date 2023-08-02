@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { selectedEventletCombo, eventletAttendees } from '$lib/store';
-	import { Doughnut } from 'svelte-chartjs';
+	import { Pie } from 'svelte-chartjs';
 	import type { ChartOptions } from 'chart.js';
 	import { Circle } from 'svelte-loading-spinners';
 	import { fade } from 'svelte/transition';
@@ -15,100 +15,103 @@
 
 	ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
-	let chartWidth: number;
-	let chartHeight: number;
-	$: test = (() => {
-		console.log(chartWidth, chartHeight);
-	})();
-	console.log(test);
+	export let labels: string[] = []
+	export let data: number[]
 
-	$: checkedIn = $eventletAttendees?.filter((e) => e.checked_in_at !== null).length;
-	$: notCheckedIn = $eventletAttendees?.length - checkedIn;
-	$: availableTickets = $selectedEventletCombo?.maximum_attendees
-		? $selectedEventletCombo?.maximum_attendees - $eventletAttendees?.length
-		: null;
+	let checkinChartData: any;
 
 	$: checkinChartData = {
-		labels: ['Checked in', 'Not Checked in', availableTickets ? 'Available' : null].filter(el => el),
+		labels,
 		datasets: [
 			{
-				label: 'Registrations',
-				data: [checkedIn, notCheckedIn, availableTickets].filter((el): el is number => typeof el === "number"),
-				backgroundColor: ['#2BA628', '#626262', 'rgba(255,255,255,0.08)'],
+				data,
+				backgroundColor: ['#2BA628', '#000000', 'rgba(255,255,255,0.08)'],
 				hoverOffset: 20,
 				borderWidth: 0,
-				rotation: 90,
-				borderRadius: 2,
-				cutout: chartHeight > 400 && chartWidth > 1100 ? '120' : '30%'
+				borderRadius: 2
 			}
 		]
 	};
 
 	const chartOptions: ChartOptions = {
-		layout: {
-			padding: chartHeight > 500 && chartWidth > 1200 ? 50 : 20
-		},
+		events: [], // deactivate toggling datasets and showing count badges
 		plugins: {
 			legend: {
-				display: true,
-				position: 'bottom'
-			}
+				display: false,
+			},
+			title: {
+        display: false,
+      }
 		},
 		responsive: true
 	};
-
-	$: showGraph = $eventletAttendees?.length > 0 && chartWidth > 850;
 </script>
 
-<div class="stats-container" bind:clientWidth={chartWidth} bind:clientHeight={chartHeight}>
-	{#if $eventletAttendees !== null}
-		<div class="stats">
-			<h2>{$eventletAttendees?.length} Registrations</h2>
-			{#if availableTickets}
-				<h3>{availableTickets} Available Tickets</h3>
-			{/if}
-			<h3>{checkedIn} Checked In</h3>
+<div class="stats-container">
+	<div class="chart-container">
+		<Pie data={checkinChartData} options={chartOptions} />
+	</div>
+	<h2>Total Check-ins</h2>
+	<dl class="checkin-stats">
+		<div class="checkin-stat isCheckinIn">
+			<dt>{labels[0]}</dt>
+			<dd>{data[0]}</dd>
 		</div>
-		{#if showGraph}
-			<div class="graph-wrapper" transition:fade|local>
-				<Doughnut data={checkinChartData} options={chartOptions} />
-			</div>
-		{/if}
-	{:else}
-		<div class="loading-spinner">
-			<Circle color="grey" size="5" unit="em" />
+		<div class="checkin-stat">
+			<dt>{labels[1]}</dt>
+			<dd>{data[1]}</dd>
 		</div>
-	{/if}
+	</dl>
 </div>
 
 <style lang="scss">
 	@use '../styles/vars.scss' as *;
+
 	.stats-container {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		text-align: center;
 		justify-content: center;
 		align-items: center;
 		width: 100%;
-		color: $text-dark;
 		max-height: 100%;
 		overflow: hidden;
-		.stats {
-			h2,
-			h3 {
-				margin: 0;
-			}
-			h2 {
-				font-size: 2.5em;
-			}
-			h3 {
-				font-size: 1.4em;
-				font-weight: normal;
-			}
-		}
+
 		.graph-wrapper {
 			max-width: 35vh;
 			width: 30em;
+		}
+	}
+
+	.chart-container {
+		display: flex;
+		justify-content: center;
+		max-height: 196px;
+		max-width: 196px;
+	}
+
+	.checkin-stats {
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+		margin: 0;
+	}
+
+	.checkin-stat {
+		display: flex;
+		flex-direction: row-reverse;
+		gap: 0.4em;
+		justify-content: center;
+
+		&.isCheckinIn {
+			color: #3DC393;
+		}
+
+		dd {
+			font: {
+				weight: bold;
+			}
+			margin: 0;
 		}
 	}
 </style>
