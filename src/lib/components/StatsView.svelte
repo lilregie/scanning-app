@@ -1,55 +1,13 @@
 <script lang="ts">
-	import { selectedEventletCombo, eventletAttendees } from '$lib/store';
-	import { Pie } from 'svelte-chartjs';
-	import type { ChartOptions } from 'chart.js';
-	import { Circle } from 'svelte-loading-spinners';
-	import { fade } from 'svelte/transition';
-	import {
-    Chart as ChartJS,
-    Title,
-    Tooltip,
-    Legend,
-    ArcElement,
-    CategoryScale,
-  } from 'chart.js';
-
-	ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
+	import CheckinChart from "./CheckinChart.svelte";
 
 	export let labels: string[] = []
 	export let data: number[]
-
-	let checkinChartData: any;
-
-	$: checkinChartData = {
-		labels,
-		datasets: [
-			{
-				data,
-				backgroundColor: ['#2BA628', '#000000', 'rgba(255,255,255,0.08)'],
-				hoverOffset: 20,
-				borderWidth: 0,
-				borderRadius: 2
-			}
-		]
-	};
-
-	const chartOptions: ChartOptions = {
-		events: [], // deactivate toggling datasets and showing count badges
-		plugins: {
-			legend: {
-				display: false,
-			},
-			title: {
-        display: false,
-      }
-		},
-		responsive: true
-	};
 </script>
 
 <div class="stats-container">
 	<div class="chart-container">
-		<Pie data={checkinChartData} options={chartOptions} />
+		<CheckinChart {data} />
 	</div>
 	<h2>Total Check-ins</h2>
 	<dl class="checkin-stats">

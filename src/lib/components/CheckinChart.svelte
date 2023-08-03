@@ -31,23 +31,12 @@
 		plugins: {
 			legend: {
 				display: false
-			}
+			},
+			title: {
+        display: false,
+      }
 		}
 	};
 </script>
 
-<div class="chart-container">
-	<Pie data={checkinChartData} options={chartOptions} />
-</div>
-
-<style lang="scss">
-	@use '../styles/vars.scss' as *;
-
-	.chart-container {
-		$size: 50px;
-
-		height: $size;
-		width: $size;
-		overflow: hidden;
-	}
-</style>
+<Pie data={checkinChartData} options={chartOptions} />
