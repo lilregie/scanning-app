@@ -60,7 +60,9 @@
 						<div class="space-y-2">
 							<h3 class="eventlet-name">{ eventlet.name }</h3>
 							<div class="eventlet-stats-container">
-								<CheckinChart data={ eventletChartData(eventlet) } />
+								<div class="chart-container">
+									<CheckinChart data={ eventletChartData(eventlet) } />
+								</div>
 								<dl class="eventlet-stats">
 									<div class="eventlet-stat isCheckedIn">
 										<dt>Checked in</dt>
@@ -172,6 +174,14 @@
 			}
 			margin: 0;
 		}
+	}
+
+	.chart-container {
+		$size: 50px;
+
+		height: $size;
+		width: $size;
+		overflow: hidden;
 	}
 
 	.loading-spinner {
