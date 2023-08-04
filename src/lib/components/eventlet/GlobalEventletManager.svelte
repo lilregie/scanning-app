@@ -34,8 +34,8 @@
 </div>
 
 <style lang="scss">
-    @use '../../styles/vars.scss' as *;
-    
+	@use '../../styles/vars.scss' as *;
+
 	.container {
 		display: flex;
 		flex-direction: column;
@@ -43,15 +43,17 @@
 		justify-content: start;
 		height: 100%;
 		width: 100%;
+
 		.header {
 			font-size: 2rem;
 			margin: 1rem;
 			text-align: center;
 		}
 	}
-    @media screen and (max-width: $breakpoint-mobile) {
+
+	@media screen and (max-width: $breakpoint-mobile) {
 		.header {
 			font-size: 1.25rem;
 		}
-    }
+	}
 </style>
