@@ -40,58 +40,58 @@
 		align-items: center;
 		min-height: 100dvh;
 		padding: 1em;
+	}
 
-		h1 {
-			color: $text-light;
-			font-size: 2rem;
-			text-align: center;
+	h1 {
+		color: $text-light;
+		font-size: 2rem;
+		text-align: center;
+	}
+
+	.event-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5em;
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.event-link {
+		border-radius: 10px;
+		border: 1px solid #DFDFDF;
+		background: #FFF;
+		color: map-get($map: $theme-colors, $key: "primary");
+		display: flex;
+		padding: 12px 20px;
+		justify-content: space-between;
+		align-items: center;
+		align-self: stretch;
+		text-decoration: none;
+
+		&:focus,
+		&:hover {
+			border-color: map-get($map: $theme-colors, $key: "primary");
+			outline: 1px solid currentColor;
 		}
+	}
 
-		.event-list {
-			display: flex;
-			flex-direction: column;
-			gap: 0.5em;
-			list-style-type: none;
-			padding: 0;
-			margin: 0;
+	.label {
+		font: {
+			feature-settings: 'clig' off, 'liga' off;
+			size: 16px;
+			style: normal;
+			weight: 700;
 		}
+	}
 
-		.event-link {
-			border-radius: 10px;
-			border: 1px solid #DFDFDF;
-			background: #FFF;
-			color: map-get($map: $theme-colors, $key: "primary");
-			display: flex;
-			padding: 12px 20px;
-			justify-content: space-between;
-			align-items: center;
-			align-self: stretch;
-			text-decoration: none;
+	.label-container {
+		display: flex;
+		gap: 0.75em;
+		align-items: center;
+	}
 
-			&:focus,
-			&:hover {
-				border-color: map-get($map: $theme-colors, $key: "primary");
-				outline: 1px solid currentColor;
-			}
-		}
-
-		.label {
-			font: {
-				feature-settings: 'clig' off, 'liga' off;
-				size: 16px;
-				style: normal;
-				weight: 700;
-			}
-		}
-
-		.label-container {
-			display: flex;
-			gap: 0.75em;
-			align-items: center;
-		}
-
-		.dashboard-icon {
-			flex-shrink: 0;
-		}
+	.dashboard-icon {
+		flex-shrink: 0;
 	}
 </style>
