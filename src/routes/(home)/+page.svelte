@@ -42,12 +42,6 @@
 		padding: 1em;
 	}
 
-	h1 {
-		color: $text-light;
-		font-size: 2rem;
-		text-align: center;
-	}
-
 	.event-list {
 		display: flex;
 		flex-direction: column;

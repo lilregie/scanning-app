@@ -35,7 +35,7 @@
 </script>
 
 {#await data.event}
-	<h1>Loading event details</h1>
+	<p>Loading event details</p>
 	<div class="loading-spinner">
 		<Circle color="grey" size="5" unit="em" />
 	</div>
@@ -47,14 +47,14 @@
 	</div>
 
 	{#if !event.standalone}
-		<section>
+		<section class="space-y-2">
 			<h2 class="section-heading">
 				<svg width="25" height="17" viewBox="0 0 25 17" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 					<path d="M5.5 5.5C5.5 4.76953 6.10156 4.125 6.875 4.125H17.875C18.6055 4.125 19.25 4.76953 19.25 5.5V11C19.25 11.7734 18.6055 12.375 17.875 12.375H6.875C6.10156 12.375 5.5 11.7734 5.5 11V5.5ZM17.1875 6.1875H7.5625V10.3125H17.1875V6.1875ZM24.75 2.75V6.1875C23.5898 6.1875 22.6875 7.13281 22.6875 8.25C22.6875 9.41016 23.5898 10.3125 24.75 10.3125V13.75C24.75 15.2969 23.5039 16.5 22 16.5H2.75C1.20312 16.5 0 15.2969 0 13.75V10.3125C1.11719 10.3125 2.0625 9.41016 2.0625 8.25C2.0625 7.13281 1.11719 6.1875 0 6.1875V2.75C0 1.24609 1.20312 0 2.75 0H22C23.5039 0 24.75 1.24609 24.75 2.75ZM2.0625 4.68359C3.26562 5.41406 4.125 6.74609 4.125 8.25C4.125 9.79688 3.26562 11.1289 2.0625 11.8594V13.75C2.0625 14.1367 2.36328 14.4375 2.75 14.4375H22C22.3438 14.4375 22.6875 14.1367 22.6875 13.75V11.8594C21.4414 11.1289 20.625 9.79688 20.625 8.25C20.625 6.74609 21.4414 5.41406 22.6875 4.68359V2.75C22.6875 2.40625 22.3438 2.0625 22 2.0625H2.75C2.36328 2.0625 2.0625 2.40625 2.0625 2.75V4.68359Z" />
 				</svg>
 				<span>Check-in by Eventlet</span>
 			</h2>
-			<ol class="eventlet-tiles">
+			<ol class="eventlet-tiles space-y-2">
 				{#each event.eventlets as eventlet}
 					<li class="eventlet-tile">
 						<div class="space-y-2">
@@ -113,16 +113,6 @@
 		height: 100%;
 		padding: 1.5rem 1.25rem;
 		margin-bottom: 2rem;
-	}
-
-	.eventlet-tiles {
-		list-style-type: none;
-		margin: 0;
-		padding: 0;
-
-		> * + * {
-			margin-top: 1em;
-		}
 	}
 
 	.eventlet-tile {
@@ -190,11 +180,5 @@
 		align-items: center;
 		flex-grow: 1;
 		margin: 1em auto;
-	}
-
-	.space-y-2 {
-		> * + * {
-			margin-top: 0.5rem;
-		}
 	}
 </style>

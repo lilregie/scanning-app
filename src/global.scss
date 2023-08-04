@@ -1,3 +1,5 @@
+@use './lib/styles/vars.scss' as *;
+
 body {
 	background: #EDEDED;
 	font: {
@@ -8,14 +10,17 @@ body {
 	min-height: 100dvh;
 }
 
+h1 {
+	color: $text-light;
+	font-size: 2rem;
+	text-align: center;
+	margin: 0 0 0.5em;
+}
+
 h2 {
 	font-size: 1.3em;
 }
 
 .container {
-	margin: 1rem;
-}
-
-.flex-shrink-0 {
-	flex-shrink: 0;
+	padding: 1rem;
 }
