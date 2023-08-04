@@ -5,7 +5,6 @@
 		background: map-get($map: $theme-colors, $key: "primary");
 		display: flex;
 		align-items: center;
-		flex-shrink: 0;
 		gap: 1rem;
 		padding: 0.75rem;
 
