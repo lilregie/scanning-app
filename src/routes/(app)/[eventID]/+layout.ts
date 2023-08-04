@@ -2,10 +2,8 @@ import type { LayoutLoad } from './$types';
 import { basePath } from "$lib/consts";
 
 export const load = (({ fetch, params }) => {
-	const eventID = parseInt(params.eventID) || null;
-
 	return {
-		event: fetch(`${basePath}/${eventID}`, {
+		event: fetch(`${basePath}/${params.eventID}`, {
 			headers: {
 				"Accept": "application/json"
 			}
