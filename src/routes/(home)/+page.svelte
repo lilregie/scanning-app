@@ -61,6 +61,7 @@
 		justify-content: space-between;
 		align-items: center;
 		align-self: stretch;
+		gap: 1rem;
 		text-decoration: none;
 
 		&:focus,
