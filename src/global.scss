@@ -24,3 +24,22 @@ h2 {
 .container {
 	padding: 1rem;
 }
+
+.card {
+	border-radius: 10px;
+	border: 1px solid #DFDFDF;
+	background: #FFF;
+	color: map-get($map: $theme-colors, $key: "primary");
+	display: flex;
+	padding: 12px 20px;
+	justify-content: space-between;
+	align-items: center;
+	align-self: stretch;
+	gap: 0.5rem;
+
+	&:focus,
+	&:hover {
+		border-color: map-get($map: $theme-colors, $key: "primary");
+		outline: 1px solid currentColor;
+	}
+}
