@@ -4,11 +4,11 @@
 	import MetaTitle from '$lib/components/MetaTitle.svelte';
 
 	export let data: PageData;
-	let selectedEventletId: string;
-	selectedEventletId = $page.url.searchParams.get('eventlet') ?? '';
 
-	let selectedCheckinStatus: string;
-	selectedCheckinStatus = $page.url.searchParams.get('filter') ?? '';
+	const params = $page.url.searchParams;
+	let selectedEventletId: string = params.get('eventlet') ?? '';
+	let selectedCheckinStatus: string = params.get('filter') ?? '';
+	let q: string = params.get('q') ?? '';
 </script>
 
 {#await data.event}
@@ -24,7 +24,7 @@
 				<select id="eventlet" name="eventlet" class="eventlet-select w-full" bind:value={selectedEventletId}>
 					<option value="">All Eventlets</option>
 					{#each event.eventlets as eventlet}
-						<option value={ eventlet.id }>{ eventlet.name }</option>
+						<option value={ eventlet.id.toString() }>{ eventlet.name }</option>
 					{/each}
 				</select>
 			</div>
@@ -37,7 +37,7 @@
 				name="q"
 				class="lookup flex-grow"
 				placeholder="Name or booking #"
-				value={ $page.url.searchParams.get('q') ?? '' }
+				bind:value={ q }
 			>
 			<button type="submit" class="btn-filter flex-shrink-0 p-3">
 				<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
