@@ -82,7 +82,7 @@
 			</a>
 		</nav>
 	{/await}
-	<main class="container">
+	<main class="container m-auto">
 		<slot />
 	</main>
 </Modal>
