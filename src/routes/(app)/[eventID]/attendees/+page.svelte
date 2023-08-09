@@ -17,11 +17,11 @@
 	<MetaTitle parts={ [event.name, "Attendees"] } />
 	<form action="" class="space-y-4">
 		{#if !event.standalone}
-			<div>
+			<div class="flex flex-col">
 				<label for="eventlet">
 					Show attendees for
 				</label>
-				<select id="eventlet" name="eventlet" class="eventlet-select" bind:value={selectedEventletId}>
+				<select id="eventlet" name="eventlet" class="eventlet-select w-full" bind:value={selectedEventletId}>
 					<option value="">All Eventlets</option>
 					{#each event.eventlets as eventlet}
 						<option value={ eventlet.id }>{ eventlet.name }</option>
