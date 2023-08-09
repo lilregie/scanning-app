@@ -40,6 +40,7 @@
 	import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
 	import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 	import { stringify } from 'uuid';
+	import MetaTitle from '$lib/components/MetaTitle.svelte';
 
 	export let data: PageData;
 
@@ -104,6 +105,10 @@
 	}
 
 </script>
+
+{#await data.event then event}
+	<MetaTitle parts={ [event.name, "Scan"] } />
+{/await}
 
 <AdminLayout
 	cards={{

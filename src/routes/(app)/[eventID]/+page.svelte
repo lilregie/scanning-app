@@ -5,6 +5,7 @@
 	import { Circle } from 'svelte-loading-spinners';
 	import CheckinChart from '$lib/components/CheckinChart.svelte';
 	import StatsView from '$lib/components/StatsView.svelte';
+	import MetaTitle from '$lib/components/MetaTitle.svelte';
 
 	export let data: PageData;
 
@@ -40,6 +41,7 @@
 		<Circle color="grey" size="5" unit="em" />
 	</div>
 {:then event}
+	<MetaTitle parts={ [event.name, "Dashboard"] } />
 	<h1>{ event.name }</h1>
 
 	<div class="latest-check-ins-container">

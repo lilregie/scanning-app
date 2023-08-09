@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types.js';
 	import { page } from '$app/stores';
+	import MetaTitle from '$lib/components/MetaTitle.svelte';
 
 	export let data: PageData;
 	let selectedEventletId: string;
@@ -9,9 +10,11 @@
 	let selectedCheckinStatus: string;
 	selectedCheckinStatus = $page.url.searchParams.get('filter') ?? '';
 </script>
+
 {#await data.event}
 	Loading…
 {:then event}
+	<MetaTitle parts={ [event.name, "Attendees"] } />
 	<form action="" class="space-y-4">
 		{#if !event.standalone}
 			<div>

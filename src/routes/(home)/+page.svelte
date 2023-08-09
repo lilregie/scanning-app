@@ -1,8 +1,11 @@
 <script lang="ts">
+	import MetaTitle from '$lib/components/MetaTitle.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 </script>
+
+<MetaTitle parts={ ["Home"] } />
 
 <main class="container m-auto">
 	{#await data.events}
