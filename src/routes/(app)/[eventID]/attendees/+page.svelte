@@ -23,7 +23,7 @@
 				</label>
 				<select id="eventlet" name="eventlet" class="eventlet-select w-full" bind:value={selectedEventletId}>
 					<option value="">All Eventlets</option>
-					{#each event.eventlets as eventlet}
+					{#each event.eventlets as eventlet (eventlet.id)}
 						<option value={ eventlet.id.toString() }>{ eventlet.name }</option>
 					{/each}
 				</select>
