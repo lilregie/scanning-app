@@ -11,7 +11,7 @@
 		<h1>Choose your event</h1>
 
 		<ol class="event-list">
-			{#each value as event}
+			{#each value as event (event.id)}
 				<li>
 					<a href="/checkin/events/{event.id}" class="event-link">
 						<span class="label-container">
