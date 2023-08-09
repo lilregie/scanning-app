@@ -4,7 +4,7 @@
 	export let data: PageData;
 </script>
 
-<div class="container">
+<main class="container m-auto">
 	{#await data.events}
 		<h1>Loading event data</h1>
 	{:then value}
@@ -28,7 +28,7 @@
 			{/each}
 		</ol>
 	{/await}
-</div>
+</main>
 
 <style lang="scss">
 	@use '../../lib/styles/vars.scss' as *;
