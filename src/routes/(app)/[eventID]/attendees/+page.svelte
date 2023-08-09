@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types.js';
+	import type { EventletSingle } from '$lib/event.js';
 	import { page } from '$app/stores';
 	import MetaTitle from '$lib/components/MetaTitle.svelte';
 
@@ -9,6 +10,12 @@
 	let selectedEventletId: string = params.get('eventlet') ?? '';
 	let selectedCheckinStatus: string = params.get('filter') ?? '';
 	let q: string = params.get('q') ?? '';
+
+	type EventletOption = { id: string, name: string }
+
+	function sortedEventletOptions(eventlets: EventletSingle[]): EventletOption[] {
+		return eventlets.map(e => ({ id: e.id.toString(), name: e.name })).sort((a, b) => a.name.localeCompare(b.name))
+	}
 </script>
 
 {#await data.event}
@@ -23,8 +30,8 @@
 				</label>
 				<select id="eventlet" name="eventlet" class="eventlet-select w-full" bind:value={selectedEventletId}>
 					<option value="">All Eventlets</option>
-					{#each event.eventlets as eventlet (eventlet.id)}
-						<option value={ eventlet.id.toString() }>{ eventlet.name }</option>
+					{#each sortedEventletOptions(event.eventlets) as option (option.id)}
+						<option value={ option.id}>{ option.name }</option>
 					{/each}
 				</select>
 			</div>
