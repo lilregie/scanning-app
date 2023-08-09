@@ -55,7 +55,7 @@
 				<span>Check-in by Eventlet</span>
 			</h2>
 			<ol class="eventlet-tiles space-y-2">
-				{#each event.eventlets as eventlet}
+				{#each event.eventlets as eventlet (eventlet.id)}
 					<li class="eventlet-tile">
 						<div class="space-y-2">
 							<h3 class="eventlet-name">{ eventlet.name }</h3>

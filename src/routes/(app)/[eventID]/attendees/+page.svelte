@@ -62,8 +62,8 @@
 	Loading attendee data
 {:then attendees}
 	<ol class="mt-4 space-y-3">
-		{#each attendees as attendee}
-			{#each attendee.attendances as attendance}
+		{#each attendees as attendee (attendee.id)}
+			{#each attendee.attendances as attendance (attendance.id)}
 				<li class="card">
 					<div>
 						<div class="text-bold">{ attendee.first_name } { attendee.last_name }</div>
