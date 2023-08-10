@@ -26,12 +26,13 @@ export interface Attendee {
 	ticket_sequence: number;
 	vaccine_pass: boolean;
  }
+
  export interface CustomField {
 	name: string;
 	input_type: string;
 	values: string[];
  }
- 
+
  export interface EventletAttendance {
 	id: number;
 	attendee_id: number;
