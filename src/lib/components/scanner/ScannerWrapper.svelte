@@ -154,32 +154,36 @@
 	.qr-container {
 		display: flex;
 		justify-content: center;
+
 		.qr-wrapper {
 			width: 100%;
+
 			.invalid-cross-wrapper {
 				:global(svg) {
 					width: 6em;
 				}
 			}
+		}
 
-			.permission-container {
-				height: var(--fail-response-height);
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				flex-direction: column;
-				color: $text-dark;
-				background-color: $background-backdrop;
-				padding: 0 1em;
-				.permission-header {
-					font-size: 1.25rem;
-					font-weight: bold;
-					margin-bottom: 1rem;
-				}
-				.permission-instructions {
-					margin-bottom: 1rem;
-					font-size: 1rem;
-				}
+		.permission-container {
+			height: var(--fail-response-height);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+			color: $text-dark;
+			background-color: $background-backdrop;
+			padding: 0 1em;
+
+			.permission-header {
+				font-size: 1.25rem;
+				font-weight: bold;
+				margin-bottom: 1rem;
+			}
+
+			.permission-instructions {
+				margin-bottom: 1rem;
+				font-size: 1rem;
 			}
 		}
 	}

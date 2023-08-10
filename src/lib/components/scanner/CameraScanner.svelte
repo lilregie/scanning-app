@@ -29,6 +29,7 @@
 
 	.background {
 		background-color: $background-backdrop;
+
 		.loading,
 		.failedToInitialize {
 			display: flex;
@@ -39,12 +40,14 @@
 			color: $text-dark;
 			border-radius: 2px;
 		}
+
 		.failedToInitialize {
 			.error-header {
 				font-size: 1.5rem;
 				font-weight: bold;
 				margin-bottom: 1rem;
 			}
+
 			.error-text {
 				font-family: 'Courier New', Courier, monospace;
 				background-color: $background-intermediate-dark;

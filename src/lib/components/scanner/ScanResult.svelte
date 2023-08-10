@@ -18,9 +18,11 @@
 	function getTimeLeft(): number {
 		return (Date.now() - timeoutStart) / openTime;
 	}
+
 	let percentTime = tweened(0, {
 		duration: progressBarPoll
 	});
+
 	const close = () => scannerStatus.set(ScannerStatus.Scanning);
 
 	setInterval(() => {
@@ -43,6 +45,7 @@
 			console.log('tried to start timer but modal is open');
 		}
 	}
+
 	function cancelTimer() {
 		if (timeout) {
 			clearTimeout(timeout);
@@ -51,6 +54,7 @@
 			console.log('timer not set');
 		}
 	}
+
 	globalModalState.subscribe((state) => {
 		if (state === null && !timeout) {
 			setTimer();
@@ -99,6 +103,7 @@
 		position: absolute;
 		bottom: 0;
 		left: 0;
+
 		.progress-bar {
 			height: 5px;
 			width: var(--percent-time);
@@ -108,6 +113,7 @@
 			right: 0;
 			z-index: 2;
 		}
+
 		.close-button {
 			position: absolute;
 			top: 16px;
@@ -117,6 +123,7 @@
 			cursor: pointer;
 
 			transition: all 0.2s ease-in-out;
+
 			&:hover {
 				box-shadow: map-get($shadows, 'large');
 			}

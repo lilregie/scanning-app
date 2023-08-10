@@ -34,10 +34,12 @@
 		background: none;
 		cursor: pointer;
 		transition: all 200ms ease-in-out;
+
 		&:hover,
 		&:focus {
 			filter: drop-shadow(0 0 0.5rem map-get($theme-colors, 'danger'));
 		}
+
 		:global(svg) {
 			width: 2rem;
 			height: 2rem;

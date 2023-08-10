@@ -1,5 +1,5 @@
 <script lang="ts">
-import CloseButton from "./CloseButton.svelte";
+	import CloseButton from "./CloseButton.svelte";
 
 	export let expand: boolean = false;
 	export let margin: boolean = true;
@@ -35,6 +35,7 @@ import CloseButton from "./CloseButton.svelte";
 
 <style lang="scss">
 	@use '../styles/vars.scss' as *;
+
 	.card {
 		background: $background-foreground;
 		color: $text-light;
@@ -79,10 +80,12 @@ import CloseButton from "./CloseButton.svelte";
 			// Footer only shows if slot is filled
 			position: relative;
 			background: linear-gradient(to bottom, #fff0 0rem, #fff 2rem);
+
 			.f-contents {
 				z-index: 2;
 				position: relative;
 			}
+
 			.f-underlay {
 				content: ' ';
 				position: absolute;
@@ -97,13 +100,14 @@ import CloseButton from "./CloseButton.svelte";
 		&.expand {
 			flex: 1;
 			height: 100%;
+
 			.contents {
 				flex-grow: 1;
 			}
+
 			&.scroll .contents {
 				overflow: auto;
 			}
 		}
-
 	}
 </style>
