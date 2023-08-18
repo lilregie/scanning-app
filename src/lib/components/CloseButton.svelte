@@ -15,7 +15,7 @@
 <button
 	on:click={close}
 	class="close-button"
-	alt={altText}
+	title={altText}
 	style={`--top-space: ${spacing[0]}; --right-space: ${spacing[1]};`}
 >
 	<InvalidCross />
