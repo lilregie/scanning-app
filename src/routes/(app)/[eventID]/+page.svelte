@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import type { PageData } from './$types';
 	import type { LilRegieEvent, Eventlet } from '$lib/event';
 
@@ -58,28 +59,30 @@
 			</h2>
 			<ol class="eventlet-tiles space-y-2">
 				{#each event.eventlets as eventlet (eventlet.id)}
-					<li class="eventlet-tile">
-						<div class="space-y-2">
-							<h3 class="eventlet-name">{ eventlet.name }</h3>
-							<div class="eventlet-stats-container">
-								<div class="chart-container">
-									<CheckinChart data={ eventletChartData(eventlet) } />
+					<li>
+						<a href="/checkin/events/{$page.params.eventID}/edit?eventlet={eventlet.id}" class="card eventlet-tile">
+							<div class="space-y-2">
+								<h3 class="eventlet-name">{ eventlet.name }</h3>
+								<div class="eventlet-stats-container">
+									<div class="chart-container">
+										<CheckinChart data={ eventletChartData(eventlet) } />
+									</div>
+									<dl class="eventlet-stats">
+										<div class="eventlet-stat isCheckedIn">
+											<dt>Checked in</dt>
+											<dd>{ eventlet.checked_in_count }</dd>
+										</div>
+										<div class="eventlet-stat">
+											<dt>Not Checked in</dt>
+											<dd>{ eventlet.total_attendee_count - eventlet.checked_in_count }</dd>
+										</div>
+									</dl>
 								</div>
-								<dl class="eventlet-stats">
-									<div class="eventlet-stat isCheckedIn">
-										<dt>Checked in</dt>
-										<dd>{ eventlet.checked_in_count }</dd>
-									</div>
-									<div class="eventlet-stat">
-										<dt>Not Checked in</dt>
-										<dd>{ eventlet.total_attendee_count - eventlet.checked_in_count }</dd>
-									</div>
-								</dl>
 							</div>
-						</div>
-						<svg class="flex-shrink-0" width="10" height="15" viewBox="0 0 10 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M2 15C1.71875 15 1.46875 14.9062 1.28125 14.7188C0.875 14.3438 0.875 13.6875 1.28125 13.3125L6.5625 8L1.28125 2.71875C0.875 2.34375 0.875 1.6875 1.28125 1.3125C1.65625 0.90625 2.3125 0.90625 2.6875 1.3125L8.6875 7.3125C9.09375 7.6875 9.09375 8.34375 8.6875 8.71875L2.6875 14.7188C2.5 14.9062 2.25 15 2 15Z" fill="#ABB2B0"/>
-						</svg>
+							<svg class="flex-shrink-0" width="10" height="15" viewBox="0 0 10 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M2 15C1.71875 15 1.46875 14.9062 1.28125 14.7188C0.875 14.3438 0.875 13.6875 1.28125 13.3125L6.5625 8L1.28125 2.71875C0.875 2.34375 0.875 1.6875 1.28125 1.3125C1.65625 0.90625 2.3125 0.90625 2.6875 1.3125L8.6875 7.3125C9.09375 7.6875 9.09375 8.34375 8.6875 8.71875L2.6875 14.7188C2.5 14.9062 2.25 15 2 15Z" fill="#ABB2B0"/>
+							</svg>
+						</a>
 					</li>
 				{/each}
 			</ol>
@@ -118,12 +121,6 @@
 	}
 
 	.eventlet-tile {
-		border-radius: 10px;
-		border: 1px solid #DFDFDF;
-		background: #FFF;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
 		padding: 0.8em 1em 0.9em;
 	}
 
