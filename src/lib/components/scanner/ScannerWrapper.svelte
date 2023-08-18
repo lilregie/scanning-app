@@ -1,16 +1,9 @@
 <script lang="ts">
-	import { ScanTypes } from '$lib/components/scanner/validateScan';
-
-	import { validateScan } from '$lib/components/scanner/validateScan';
+	import { ScanTypes, validateScan } from '$lib/components/scanner/validateScan';
 	import SuccessTick from '$lib/components/SuccessTick.svelte';
-	import { Tabs, TabList, TabPanel, Tab } from '$lib/components/tabs';
-
 	import { get, writable } from 'svelte/store';
-
 	import InvalidCross from '../InvalidCross.svelte';
 	import CameraScanner from './CameraScanner.svelte';
-	import TextScanner from './TextScanner.svelte';
-	import { prefersCameraOrTextScanning } from '$lib/store';
 	import { ScannerStatus } from './scannerStatus';
 	import ScanResult from './ScanResult.svelte';
 	import Button from '../Button.svelte';
@@ -71,57 +64,45 @@
 <svelte:window bind:innerWidth={fullBrowserWidth} />
 
 <div class="qr-container">
-	<!-- Always render QR Scanner we enabled (so we hide it instead of remove it) -->
 	<div
 		class="qr-wrapper"
 		bind:clientWidth={previewWidth}
 		style="--fail-response-height: {previewWidth / previewWidthRatio}px"
 	>
-		<Tabs defualtTab={$prefersCameraOrTextScanning}>
-			<TabList>
-				<Tab id="camera" on:selected={() => prefersCameraOrTextScanning.set('camera')}>Camera</Tab>
-				<Tab id="text" on:selected={() => prefersCameraOrTextScanning.set('text')}>Text</Tab>
-			</TabList>
-			<TabPanel id="camera">
-				{#if permissionForCameraState === 'granted'}
-					<CameraScanner on:scan={handleScan} {previewWidth} />
-				{:else if permissionForCameraState === 'prompt'}
-					<div class="permission-container">
-						<span class="permission-header">To scan, we need to use your camera</span>
-						<span class="permission-instructions"
-							>Select <b>Allow</b> when your browser asks for permissions.</span
-						>
-						<Button color="primary" outline size="small" on:click={promptCameraPermission}
-							>Give Permission</Button
-						>
-					</div>
-				{:else if permissionForCameraState === 'denied'}
-					<div class="permission-container">
-						<span class="permission-header">Camera Permission Denied</span>
-						<span class="permission-instructions"
-							>To use your camera, you will need to grant permission to use your camera with your
-							browser.</span
-						>
-						<Button color="primary" outline size="small" on:click={promptCameraPermission}
-							>Try Continue Anyway</Button
-						>
-					</div>
-				{:else if permissionForCameraState === 'unknown'}
-					<div class="permission-container">
-						<span class="permission-header">Start Camera</span>
-						<span class="permission-instructions"
-							>If prompted, select <b>Allow</b> when your browser asks for permissions.</span
-						>
-						<Button color="primary" outline size="small" on:click={promptCameraPermission}
-							>Start</Button
-						>
-					</div>
-				{/if}
-			</TabPanel>
-			<TabPanel id="text">
-				<TextScanner on:scan={handleScan} {previewWidth} {scannerStatus} />
-			</TabPanel>
-		</Tabs>
+		{#if permissionForCameraState === 'granted'}
+			<CameraScanner on:scan={handleScan} {previewWidth} />
+		{:else if permissionForCameraState === 'prompt'}
+			<div class="permission-container">
+				<span class="permission-header">To scan, we need to use your camera</span>
+				<span class="permission-instructions"
+					>Select <b>Allow</b> when your browser asks for permissions.</span
+				>
+				<Button color="primary" outline size="small" on:click={promptCameraPermission}
+					>Give Permission</Button
+				>
+			</div>
+		{:else if permissionForCameraState === 'denied'}
+			<div class="permission-container">
+				<span class="permission-header">Camera Permission Denied</span>
+				<span class="permission-instructions"
+					>To use your camera, you will need to grant permission to use your camera with your
+					browser.</span
+				>
+				<Button color="primary" outline size="small" on:click={promptCameraPermission}
+					>Try Continue Anyway</Button
+				>
+			</div>
+		{:else if permissionForCameraState === 'unknown'}
+			<div class="permission-container">
+				<span class="permission-header">Start Camera</span>
+				<span class="permission-instructions"
+					>If prompted, select <b>Allow</b> when your browser asks for permissions.</span
+				>
+				<Button color="primary" outline size="small" on:click={promptCameraPermission}
+					>Start</Button
+				>
+			</div>
+		{/if}
 		{#if $scannerStatus === ScannerStatus.SuccessCovidPass}
 			<ScanResult bind:scannerStatus backgroundColour="#2ba628">
 				<div style="width: 30%">
@@ -156,7 +137,9 @@
 		justify-content: center;
 
 		.qr-wrapper {
+			text-align: center;
 			width: 100%;
+			max-width: 50svh;
 
 			.invalid-cross-wrapper {
 				:global(svg) {
