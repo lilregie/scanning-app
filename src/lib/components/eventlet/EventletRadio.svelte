@@ -1,6 +1,4 @@
 <script lang="ts">
-	import type { EventletSingle } from "$lib/event";
-
 	export let eventlet: { id: number | string, name: string, value?: string } | undefined = undefined;
 	export let group: any = undefined;
 </script>
