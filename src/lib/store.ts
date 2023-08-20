@@ -252,9 +252,6 @@ export const checkedInCount: Readable<number> = derived(eventletAttendees, (_eve
 	return _eventletAttendees.filter((attendee) => attendee.checked_in_at !== null).length;
 });
 
-export const prefersCameraOrTextScanning: Writable<string> = writable('camera');
-useLocalStorage(prefersCameraOrTextScanning, 'prefersCameraOrTextScanning');
-
 export const globalModalState: Writable<any> = writable(null);
 
 
