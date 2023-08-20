@@ -1,4 +1,4 @@
-interface SelectorValue {
+export interface SelectorValue {
 	value: number,
 	label: `${string} (${string})`,
 	group: SelectorGroups,
