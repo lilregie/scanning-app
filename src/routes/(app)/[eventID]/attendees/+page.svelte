@@ -1,35 +1,40 @@
 <script lang="ts">
 	import type { PageData } from './$types.js';
-	import type { EventletSingle } from '$lib/event.js';
+	import type { EventletSingle } from '$lib/event'
+	import type { Attendee, EventletAttendance } from '$lib/attendee';
 	import { page } from '$app/stores';
 	import MetaTitle from '$lib/components/MetaTitle.svelte';
+	import { allEventAttendees, filteredAttendees, qParam, selectedEventletId, checkinStatusParam } from '$lib/store.js';
 
 	export let data: PageData;
 
 	const params = $page.url.searchParams;
-	let selectedEventletId: string = params.get('eventlet') ?? '';
-	let selectedCheckinStatus: string = params.get('filter') ?? '';
-	let q: string = params.get('q') ?? '';
+	let eventletParam: string | null = params.get('eventlet');
+	$qParam = params.get('q') ?? '';
+	$: $selectedEventletId = eventletParam ? Number.parseInt(eventletParam) : null
 
 	type EventletOption = { id: string, name: string }
 
 	function sortedEventletOptions(eventlets: EventletSingle[]): EventletOption[] {
 		return eventlets.map(e => ({ id: e.id.toString(), name: e.name })).sort((a, b) => a.name.localeCompare(b.name))
 	}
+
+	$allEventAttendees = data.attendees
 </script>
 
 {#await data.event}
 	Loading…
 {:then event}
 	<MetaTitle parts={ [event.name, "Attendees"] } />
-	<form action="" class="space-y-4">
+
+	<form action="?" method="GET" class="space-y-4">
 		{#if !event.standalone}
 			<div class="flex flex-col">
 				<label for="eventlet">
 					Show attendees for
 				</label>
-				<select id="eventlet" name="eventlet" class="eventlet-select w-full" bind:value={selectedEventletId}>
-					<option value="">All Eventlets</option>
+				<select id="eventlet" name="eventlet" class="eventlet-select w-full" bind:value={eventletParam}>
+					<option value={ null }>All Eventlets</option>
 					{#each sortedEventletOptions(event.eventlets) as option (option.id)}
 						<option value={ option.id}>{ option.name }</option>
 					{/each}
@@ -44,7 +49,7 @@
 				name="q"
 				class="lookup flex-grow"
 				placeholder="Name or booking #"
-				bind:value={ q }
+				bind:value={ $qParam }
 			>
 			<button type="submit" class="btn-filter flex-shrink-0 p-3">
 				<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -53,26 +58,27 @@
 			</button>
 		</div>
 		<div class="text-center space-x-2">
-			<input type="radio" name="filter" id="checked_in_all" value="" hidden bind:group={selectedCheckinStatus}>
+			<input type="radio" name="filter" id="checked_in_all" value="" hidden bind:group={$checkinStatusParam}>
 			<label for="checked_in_all" class="badge">
 				All
 			</label>
-			<input type="radio" name="filter" id="not_checked_in" value="false" hidden bind:group={selectedCheckinStatus}>
+			<input type="radio" name="filter" id="not_checked_in" value="false" hidden bind:group={$checkinStatusParam}>
 			<label for="not_checked_in" class="badge">
 				Not checked in
 			</label>
-			<input type="radio" name="filter" id="checked_in" value="true" hidden bind:group={selectedCheckinStatus}>
+			<input type="radio" name="filter" id="checked_in" value="true" hidden bind:group={$checkinStatusParam}>
 			<label for="checked_in" class="badge">
 				Checked in
 			</label>
 		</div>
 	</form>
 {/await}
+
 {#await data.attendees}
 	Loading attendee data
-{:then attendees}
+{:then}
 	<ol class="mt-4 space-y-3">
-		{#each attendees as attendee (attendee.id)}
+		{#each $filteredAttendees as attendee (attendee.id)}
 			{#each attendee.attendances as attendance (attendance.id)}
 				<li class="card">
 					<div>

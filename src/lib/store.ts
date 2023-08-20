@@ -1,7 +1,7 @@
 import { derived, get, writable } from 'svelte/store';
 import type { Writable, Readable } from 'svelte/store';
 import type { Eventlet, EventletsCombined, EventletSingle, EventDetails } from '$lib/event';
-import type { Attendee } from './attendee';
+import type { Attendee, EventletAttendance } from './attendee';
 import { getAttendeesList } from './api/api';
 import { findAttendeeByID } from './utill';
 
@@ -124,10 +124,10 @@ export const selectedEventletCombo: Readable<EventletsCombined | null> = derived
 	} else {
 		return null
 	}
-
 });
 
 export const allEventAttendees: Writable<Attendee[] | null> = writable(null);
+export const selectedEventletId: Writable<number | null> = writable(null)
 
 export const eventletAttendees: Readable<Attendee[] | null> = derived([selectedEventletCombo, allEventAttendees], ([_selectedEventletCombo, _allEventAttendees]) => {
 	if (_selectedEventletCombo && _allEventAttendees) {
@@ -147,6 +147,89 @@ export const eventletAttendees: Readable<Attendee[] | null> = derived([selectedE
 	}
 })
 
+export const qParam: Writable<string> = writable('')
+export const checkinStatusParam: Writable<string> = writable('')
+
+function filterAttendees(attendees: Attendee[], q: string): Attendee[] {
+	if (q.trim().length == 0) return attendees;
+
+	const terms = q.split(' ').filter(s => s !== '').map(s => s.toLowerCase().normalize("NFKD"))
+	const names = terms.filter(t => /[\p{L}-]+/u.test(t))
+	const numbers = terms.filter(t => /\d+/.test(t))
+
+	return attendees.filter(attendee => {
+		const id = attendee.booking_id.toString()
+		const isIdMatch = (n: string) => isMatch(id, n)
+		const isNameMatch = (s: string) => {
+			return isMatch(attendee.first_name.toLowerCase().normalize("NFKD"), s) ||
+						 isMatch(attendee.last_name.toLowerCase().normalize("NFKD"), s)
+		}
+
+		if (numbers.length > 0 && names.length > 0) {
+			return numbers.some(isIdMatch) && (names.every(isNameMatch) || numbers.some(isNameMatch))
+		} else {
+			return numbers.some(isIdMatch) || terms.every(isNameMatch)
+		}
+	})
+}
+
+function isMatch(string: string, term: string): boolean {
+	return string.indexOf(term) > -1;
+}
+
+function filterByEventlet(attendances: EventletAttendance[], eventlet: string): EventletAttendance[] {
+	if (eventlet === '') return attendances;
+
+	return attendances.filter(a => a.eventlet_id === Number.parseInt(eventlet));
+}
+
+function filterByCheckinStatus(attendances: EventletAttendance[], checkinStatus: string): EventletAttendance[] {
+	if (checkinStatus === '') return attendances;
+
+	const predicate = { "false": false, "true": true }[checkinStatus]
+
+	return attendances.filter(a => !!a.checked_in_at === predicate);
+}
+
+function filterAttendances(attendances: EventletAttendance[], eventlet: string, checkinStatus: string): EventletAttendance[] {
+	return [
+		(attendances: EventletAttendance[]) => filterByEventlet(attendances, eventlet),
+		(attendances: EventletAttendance[]) => filterByCheckinStatus(attendances, checkinStatus)
+	].reduce((accumulator, f) => f(accumulator), attendances)
+}
+
+function attendeeSorter<T extends { first_name: string, last_name: string }>(a: T, b: T) {
+	if (a.first_name === b.first_name) {
+		// order by last name
+		if (a.last_name < b.last_name) return -1
+		if (a.last_name > b.last_name) return 1
+		return 0
+	} else {
+		return a.first_name < b.first_name ? -1 : 1;
+	}
+}
+
+function attendanceSorter<T extends { eventlet_name: string }>(a: T, b: T) {
+	if (a.eventlet_name < b.eventlet_name) return -1
+	if (a.eventlet_name > b.eventlet_name) return 1
+	return 0
+}
+
+export const filteredAttendees: Readable<Attendee[]> = derived([allEventAttendees, qParam, selectedEventletId, checkinStatusParam], ([$attendees, $q, $selectedEventletId, $checkinStatus]) => {
+	if ($attendees === null) return [];
+	// if ($q.trim().length == 0) return $attendees;
+
+	return filterAttendees($attendees, $q).sort(attendeeSorter).map(attendee => {
+		return {
+			...attendee,
+			attendances: filterAttendances(
+				attendee.attendances,
+				($selectedEventletId?.toString() ?? ''),
+				$checkinStatus
+			).sort(attendanceSorter)
+		}
+	})
+})
 
 export const attendeesSearchTerm: Writable<string> = writable('');
 
