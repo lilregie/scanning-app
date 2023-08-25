@@ -22,7 +22,7 @@
 	import { goto } from '$app/navigation';
 	import ScanResult from '$lib/components/scanner/ScanResult.svelte';
 	import { ScanTypes, type ScanResults } from '$lib/components/scanner/validateScan';
-	import { findEventletByID } from '$lib/utill';
+	import { findEventletByID, byNameRank } from '$lib/utill';
 	import AttendeeMatching from '$lib/components/modal/AttendeeMatching.svelte';
 	import StepSettings from '$lib/components/checkInSteps/StepSettings.svelte';
 	import { stringify } from 'uuid';
@@ -82,7 +82,7 @@
 	</div>
 	<div>
 		<h1>Scan ticket and…</h1>
-		<form action="?" class="flex flex-col gap-2">
+		<form class="flex flex-col gap-2">
 			<EventletRadio
 				eventlet={{
 					id: 'show-attendee-details',
@@ -91,7 +91,7 @@
 				}}
 				bind:group={eventletParam}
 			/>
-			{#each event.eventlets as eventlet (eventlet.id)}
+			{#each event.eventlets.sort(byNameRank) as eventlet (eventlet.id)}
 				{#if event.standalone}
 					<EventletRadio bind:group={eventletParam}>
 						<div slot="content">Check attendee in</div>
