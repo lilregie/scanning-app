@@ -7,6 +7,7 @@
 	import CheckinChart from '$lib/components/CheckinChart.svelte';
 	import StatsView from '$lib/components/StatsView.svelte';
 	import MetaTitle from '$lib/components/MetaTitle.svelte';
+	import { byNameRank } from '$lib/utill';
 
 	export let data: PageData;
 
@@ -58,7 +59,7 @@
 				<span>Check-in by Eventlet</span>
 			</h2>
 			<ol class="eventlet-tiles space-y-2">
-				{#each event.eventlets as eventlet (eventlet.id)}
+				{#each event.eventlets.sort(byNameRank) as eventlet (eventlet.id)}
 					<li>
 						<a href="/checkin/events/{$page.params.eventID}/edit?eventlet={eventlet.id}" class="card eventlet-tile">
 							<div class="space-y-2">

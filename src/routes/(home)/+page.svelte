@@ -1,6 +1,7 @@
 <script lang="ts">
-	import MetaTitle from '$lib/components/MetaTitle.svelte';
-	import type { PageData } from './$types';
+	import MetaTitle from '$lib/components/MetaTitle.svelte'
+	import type { PageData } from './$types'
+	import { byNameRank } from '$lib/utill'
 
 	export let data: PageData;
 </script>
@@ -10,11 +11,11 @@
 <main class="container m-auto">
 	{#await data.events}
 		<h1>Loading event data</h1>
-	{:then value}
+	{:then events}
 		<h1>Choose your event</h1>
 
 		<ol class="event-list">
-			{#each value as event (event.id)}
+			{#each events.sort(byNameRank) as event (event.id)}
 				<li>
 					<a href="/checkin/events/{event.id}" class="card event-link">
 						<span class="label-container">

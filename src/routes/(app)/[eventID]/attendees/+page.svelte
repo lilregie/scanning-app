@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { PageData } from './$types.js';
 	import type { EventletSingle } from '$lib/event'
-	import type { Attendee, EventletAttendance } from '$lib/attendee';
 	import { page } from '$app/stores';
 	import MetaTitle from '$lib/components/MetaTitle.svelte';
 	import { allEventAttendees, filteredAttendees, qParam, selectedEventletId, checkinStatusParam } from '$lib/store.js';
+	import { byNameRank } from '$lib/utill.js';
 
 	export let data: PageData;
 
@@ -16,7 +16,7 @@
 	type EventletOption = { id: string, name: string }
 
 	function sortedEventletOptions(eventlets: EventletSingle[]): EventletOption[] {
-		return eventlets.map(e => ({ id: e.id.toString(), name: e.name })).sort((a, b) => a.name.localeCompare(b.name))
+		return eventlets.map(e => ({ id: e.id.toString(), name: e.name })).sort(byNameRank)
 	}
 
 	$allEventAttendees = data.attendees

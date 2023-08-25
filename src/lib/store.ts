@@ -199,20 +199,18 @@ function filterAttendances(attendances: EventletAttendance[], eventlet: string, 
 }
 
 function attendeeSorter<T extends { first_name: string, last_name: string }>(a: T, b: T) {
-	if (a.first_name === b.first_name) {
+	const firstNameRank = a.first_name.localeCompare(b.first_name)
+
+	if (firstNameRank === 0) {
 		// order by last name
-		if (a.last_name < b.last_name) return -1
-		if (a.last_name > b.last_name) return 1
-		return 0
+		return a.last_name.localeCompare(b.last_name)
 	} else {
-		return a.first_name < b.first_name ? -1 : 1;
+		return firstNameRank;
 	}
 }
 
 function attendanceSorter<T extends { eventlet_name: string }>(a: T, b: T) {
-	if (a.eventlet_name < b.eventlet_name) return -1
-	if (a.eventlet_name > b.eventlet_name) return 1
-	return 0
+	return a.eventlet_name.localeCompare(b.eventlet_name)
 }
 
 export const filteredAttendees: Readable<Attendee[]> = derived([allEventAttendees, qParam, selectedEventletId, checkinStatusParam], ([$attendees, $q, $selectedEventletId, $checkinStatus]) => {

@@ -77,3 +77,7 @@ export function mergeDeep(target: any, ...sources: any): object {
 
 	return mergeDeep(target, ...sources);
 }
+
+export function byNameRank<T extends { name: string }>(a: T, b: T): number {
+	return a.name.localeCompare(b.name)
+}
