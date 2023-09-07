@@ -25,6 +25,10 @@
 <style lang="scss">
 	@use '../styles/vars.scss' as *;
 
+	h2 {
+		margin: 0.5em 0;
+	}
+
 	.stats-container {
 		display: flex;
 		flex-direction: column;
@@ -51,7 +55,7 @@
 	.checkin-stats {
 		display: flex;
 		flex-direction: column;
-		gap: 1em;
+		gap: 0.75em;
 		margin: 0;
 	}
 
