@@ -74,33 +74,44 @@
 		{:else if permissionForCameraState === 'prompt'}
 			<div class="permission-container">
 				<span class="permission-header">To scan, we need to use your camera</span>
-				<span class="permission-instructions"
-					>Select <b>Allow</b> when your browser asks for permissions.</span
+				<span class="permission-instructions">
+					Select <b>Allow</b> when your browser asks for permissions.
+				</span>
+				<Button
+					color="primary"
+					size="small"
+					on:click={promptCameraPermission}
 				>
-				<Button color="primary" outline size="small" on:click={promptCameraPermission}
-					>Give Permission</Button
-				>
+					Give Permission
+				</Button>
 			</div>
 		{:else if permissionForCameraState === 'denied'}
 			<div class="permission-container">
 				<span class="permission-header">Camera Permission Denied</span>
-				<span class="permission-instructions"
-					>To use your camera, you will need to grant permission to use your camera with your
-					browser.</span
+				<span class="permission-instructions">
+					You will need to grant permission to use your camera with your browser.
+				</span>
+				<Button
+					color="primary"
+					size="small"
+					on:click={promptCameraPermission}
 				>
-				<Button color="primary" outline size="small" on:click={promptCameraPermission}
-					>Try Continue Anyway</Button
-				>
+					Try Continue Anyway
+				</Button>
 			</div>
 		{:else if permissionForCameraState === 'unknown'}
 			<div class="permission-container">
 				<span class="permission-header">Start Camera</span>
-				<span class="permission-instructions"
-					>If prompted, select <b>Allow</b> when your browser asks for permissions.</span
+				<span class="permission-instructions">
+					If prompted, select <b>Allow</b> when your browser asks for permissions.
+				</span>
+				<Button
+					color="primary"
+					size="small"
+					on:click={promptCameraPermission}
 				>
-				<Button color="primary" outline size="small" on:click={promptCameraPermission}
-					>Start</Button
-				>
+					Start
+				</Button>
 			</div>
 		{/if}
 		{#if $scannerStatus === ScannerStatus.SuccessCovidPass}

@@ -6,22 +6,22 @@
 	export let disabled: boolean = false;
 	export let outline: boolean = false;
 	export let expanded: boolean = false;
-	export let title: string = null;
+	export let title: string | null = null;
 </script>
 
 {#if href}
-	<a on:click class="{color} {size}" class:outline class:expanded disabled={disabled ? true : null} {href} {title}>
+	<a on:click class="{ color } { size }" class:outline class:expanded class:disabled { href } { title }>
 		<slot>Submit</slot>
 	</a>
 {:else}
 	<button
 		on:click
-		class="{color} {size}"
+		class="{ color } { size }"
 		class:outline
-		disabled={disabled ? true : null}
-		type={submit ? 'submit' : ''}
 		class:expanded
-		{title}
+		type={ submit ? 'submit' : undefined }
+		{ disabled }
+		{ title }
 	>
 		<slot>Submit</slot>
 	</button>
@@ -29,6 +29,7 @@
 
 <style lang="scss">
 	@use '../styles/vars.scss' as *;
+
 	button,
 	a {
 		display: inline-block;
@@ -44,9 +45,10 @@
 		line-height: 1;
 		text-align: center;
 		cursor: pointer;
-		-webkit-appearance: none;
+		appearance: none;
 		text-decoration: none;
 		transition: background-color 0.15s ease-out, color 0.25s ease-out;
+
 		&.tiny {
 			font-size: 0.8rem;
 			padding-top: 0.48rem;
@@ -77,47 +79,14 @@
 				background-color: $color;
 				color: #fefefe;
 
-				&:hover,&:focus {
+				&:hover,
+				&:focus {
 					background-color: darken($color, $amount: 10%);
 					color: #fefefe;
 				}
+
 				&:active {
 					background-color: darken($color, $amount: 20%);
-				}
-			}
-		}
-
-		&.outline {
-			border: 1px solid;
-			border-width: 2px;
-
-			&,
-			&:focus,
-			&:hover {
-				background-color: transparent;
-			}
-
-			&:focus,
-			&:hover {
-				border-color: #681133;
-				color: #fff;
-			}
-
-			@each $name, $color in $theme-colors {
-				&.#{$name} {
-					border: 1px solid $color;
-					color: $color;
-					border-width: 2px;
-					&:focus,
-					&:hover {
-						background-color: rgba($color, 0.15);
-						color: currentColor;
-					}
-					&:active {
-						border-color: darken($color, $amount: 20%);
-						background-color: rgba($color, 0.5);
-
-					}
 				}
 			}
 		}
