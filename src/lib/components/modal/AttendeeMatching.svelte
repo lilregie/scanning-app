@@ -95,7 +95,7 @@
 			ticketKey: null,
 		};
 		// Don't need to close model as the check-in page will close it for us
-		goto(`${basePath}/${$currentEventID}/check-in${await encode_url(attendeeProfile)}`);
+		goto(`${basePath}/${$currentEventID}/check-in${encode_url(attendeeProfile)}`);
 		// ... but spa routing won't reload the page if it's already on the checkin page
 		close()
 	}
@@ -151,6 +151,7 @@
 		align-items: center;
 		flex-direction: row;
 		flex-wrap: wrap;
+
 		.covid-pass-badge-wrapper {
 			display: flex;
 			align-items: center;
@@ -159,6 +160,7 @@
 			flex: 1;
 		}
 	}
+
 	.action-container {
 		display: flex;
 		flex-wrap: wrap;
@@ -166,6 +168,7 @@
 		align-items: center;
 		flex-direction: row;
 		padding: 0.5em;
+
 		div {
 			margin: 0.25em;
 		}
