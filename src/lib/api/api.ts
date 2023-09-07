@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import type { Attendee, EventletAttendance } from '../attendee';
 import type { EventDetails } from '../event';
-import { allEvents, currentEventID, eventletAttendees, allEventAttendees, currentEvent } from '../store';
+import { allEvents, currentEventID, allEventAttendees, currentEvent } from '../store';
 import {findByKey} from "$lib/utill"
 import { request } from './request';
 import { apiProduction, csrfAPIState, errorAPICallbacks } from './statusStores';
@@ -116,32 +116,34 @@ export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 	});
 
 	try {
-
 		const checkInData = await request.post({
-				route: `/${get(currentEventID)}/attendances/${attendance.id}/checkin`,
-				body: {
-					vaccine_pass: covidPass,
-					ticket_uuid: attendee.ticket_uuid
-				},
-			}
-		);
+			route: `/${get(currentEventID)}/attendances/${attendance.id}/checkin`,
+			body: {
+				vaccine_pass: covidPass,
+				ticket_uuid: attendee.ticket_uuid
+			},
+		});
 
 		if (checkInData.status !== 200) {
-
 			console.error("Failed to create checkin", checkInData.status, checkInData.text());
 
 			throw new Error("Failed to create checkin");
 		}
 	} catch {
-
 		console.log("Failed to create checkin, server not responding");
 
 		// Undo UI update
-		allEventAttendees.update((_eventAttendees) => {
-			let selectedAttendee = findByKey(_eventAttendees, "id", attendee?.id);
-			selectedAttendee.checked_in_at = startingAttendeeCheckInDate;
-			selectedAttendee.vaccine_pass = startingAttendeeVaccinePass;
-			return _eventAttendees;
+		allEventAttendees.update((eventAttendees) => {
+			if (eventAttendees === null) return null;
+
+			const selectedAttendee = findByKey(eventAttendees, "id", attendee?.id);
+
+			if (selectedAttendee !== undefined) {
+				selectedAttendee.checked_in_at = startingAttendeeCheckInDate;
+				selectedAttendee.vaccine_pass = startingAttendeeVaccinePass;
+			}
+
+			return eventAttendees;
 		})
 		errorAPICallbacks.update((_errorAPICallbacks) => {
 			_errorAPICallbacks.push(() => {
@@ -149,9 +151,7 @@ export async function createCheckIn(attendeeProfile: AttendeeProfile) {
 			})
 			return _errorAPICallbacks
 		})
-
 	}
-
 }
 
 export async function removeLatestCheckIn(attendee: Attendee) {
@@ -166,7 +166,7 @@ export async function removeLatestCheckIn(attendee: Attendee) {
 			return _eventAttendees
 		}
 
-		let selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
+		const selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
 		if (typeof selectedAttendee === "undefined") {
 			console.error("Tried to remove checkin for attendee that is does not exist");
 			return _eventAttendees;
@@ -191,7 +191,7 @@ export async function removeLatestCheckIn(attendee: Attendee) {
 		allEventAttendees.update((_eventAttendees) => {
 			if (!_eventAttendees) { return _eventAttendees }
 
-			let selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
+			const selectedAttendee = findByKey(_eventAttendees, "id", attendee.id);
 			if (typeof selectedAttendee === "undefined") {
 				console.error("Tried to undo remove checkin for attendee that is does not exist");
 				return _eventAttendees;
