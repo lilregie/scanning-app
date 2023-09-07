@@ -33,20 +33,21 @@
 			opacity: 0;
 			width: 0;
 			height: 0;
+
 			@each $name, $color in $theme-colors {
 				&.#{$name} {
-                    &:checked + .slider {
-                        background-color: $color;
-                        box-shadow: 0 0 1px $color;
-                    }
+					&:checked + .slider {
+						background-color: $color;
+						box-shadow: 0 0 1px $color;
+					}
 				}
 			}
-
 
 			&:checked + .slider:before {
 				transform: translateX(calc(1rem * var(--switch-scale)));
 			}
 		}
+
 		.slider {
 			position: absolute;
 			cursor: pointer;
@@ -57,6 +58,7 @@
 			background-color: #ccc;
 			transition: 200ms;
 			border-radius: calc(1.5rem * var(--switch-scale));
+
 			&:before {
 				position: absolute;
 				content: '';
