@@ -38,11 +38,6 @@
 		width: 100%;
 		max-height: 100%;
 		overflow: hidden;
-
-		.graph-wrapper {
-			max-width: 35vh;
-			width: 30em;
-		}
 	}
 
 	.chart-container {
