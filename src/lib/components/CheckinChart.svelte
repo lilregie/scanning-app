@@ -19,7 +19,7 @@
 		datasets: [
 			{
 				data,
-				backgroundColor: ['#2BA628', '#000000'],
+				backgroundColor: ['#3DC393', '#000000'],
 				borderWidth: 0,
 				borderRadius: 2
 			}
