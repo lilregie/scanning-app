@@ -27,7 +27,6 @@
 	let updatingAttendance: EventletAttendance;
 
 	async function updateCheckinStatus(event) {
-		console.log(event)
 		disabled = true
 
 		const data = new FormData(this)
