@@ -31,9 +31,11 @@
 </LayoutHeader>
 
 <Modal
-	styleWindow={{width: "80vw"}}
-	bind:show={$globalModalState}
-	on:closed={() => globalModalState.set(null)}
+	show={ $globalModalState }
+	styleBg={{ "justify-content": "flex-start" }}
+	styleWindowWrap={{ margin: "1.5rem 1rem" }}
+	styleWindow={{ margin: "auto" }}
+	closeOnOuterClick={ false }
 >
 	<ConnectionMaster/>
 	{#await data.event}
