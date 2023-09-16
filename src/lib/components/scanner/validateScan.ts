@@ -1,20 +1,21 @@
-import { verifyPassURIOffline } from "@vaxxnz/nzcp";
-
 import type { VerificationResult } from "@vaxxnz/nzcp";
 import type { Attendee } from "../../attendee";
-import { allEventAttendees } from "../../store";
+import { allEventAttendees } from "$lib/store";
 import { get } from "svelte/store";
 
 import { validate as uuidValidate } from "uuid";
 
-export interface ScanResults {
+export interface ScanSuccess {
 	valid: true;
-	data: NZCovidPass | Ticket;
+	data: Ticket;
 }
 export interface ScanError {
 	valid: false;
+	data?: string,
 	violation: string;
 }
+
+export type ScanResult = ScanSuccess | ScanError
 
 export interface NZCovidPass {
 	type: ScanTypes.CovidPass;
@@ -27,7 +28,7 @@ export interface NZCovidPass {
 export interface Ticket {
 	type: ScanTypes.TicketBarcode;
 	key: string;
-	attendee: Attendee;
+	attendee?: Attendee | null;
 }
 
 export enum ScanTypes {
@@ -35,95 +36,45 @@ export enum ScanTypes {
 	CovidPass = "covid-pass"
 }
 
-export async function validateScan(scanText: string, enabledScanTypes: ScanTypes[]): Promise<ScanResults | ScanError> {
-	if (scanText.startsWith("NZCP:")) {
-		if (!enabledScanTypes.includes(ScanTypes.CovidPass)) {
-			return {
-				valid: false,
-				violation: "Covid Pass scanning is not enabled"
-			}
-		}
+export function validateScan(scanText: string): ScanSuccess | ScanError {
+	const ticketKey = scanText.trim();
 
-		// NZ Covid Pass
-		const passResult = verifyPassURIOffline(scanText)
+	if (!uuidValidate(ticketKey)) {
+		const violation = `QR code invalid. Please scan a valid Lil Regie ticket.`;
 
-		if (passResult.success) {
-			// const relevantPerson = searchPerson()
-			return {
-				valid: true,
-				data: {
-					type: ScanTypes.CovidPass,
-					givenName: passResult.credentialSubject.givenName,
-					lastName: passResult.credentialSubject.familyName,
-					DOB: passResult.credentialSubject.dob,
-					covidPassInfo: passResult
-				}
-			}
-
-		} else {
-			return {
-				valid: false,
-				violation: passResult.violates.description || "Unknown error"
-			}
+		return {
+			valid: false,
+			violation
 		}
 	}
 
-	if (uuidValidate(scanText)) {
-		if (!enabledScanTypes.includes(ScanTypes.TicketBarcode)) {
-			return {
-				valid: false,
-				violation: "Ticket scanning is not enabled"
+	// Search for booking
+	const attendee = getBookingFromTicket(ticketKey);
+	// if (attendee) {
+		return {
+			valid: true,
+			data: {
+				type: ScanTypes.TicketBarcode,
+				key: ticketKey,
+				attendee
 			}
 		}
-		// Ticket Barcode
-
-		// Search for booking
-		const ticketKey = scanText.trim();
-		const attendee = getBookingFromTicket(ticketKey);
-		if (attendee) {
-
-			return {
-				valid: true,
-				data: {
-					type: ScanTypes.TicketBarcode,
-					key: ticketKey,
-					attendee
-				}
-			}
-		} else {
-			return {
-				valid: false,
-				violation: "Ticket not found"
-			}
-		}
-	}
-	// Doesn't match any known format
-	let lookingFor = "";
-	if (enabledScanTypes.includes(ScanTypes.CovidPass) && enabledScanTypes.includes(ScanTypes.TicketBarcode)) {
-		lookingFor = "Covid Pass or Ticket";
-	} else if (enabledScanTypes.includes(ScanTypes.CovidPass)) {
-		lookingFor = "Covid Pass";
-	} else if (enabledScanTypes.includes(ScanTypes.TicketBarcode)) {
-		lookingFor = "Ticket";
-	} else {
-		lookingFor = "nothing (something went wrong)";
-	}
-
-	const violation = `Scan text doesn't match any known format. Looking for ${lookingFor}`;
-
-	return {
-		valid: false,
-		violation
-	}
+	// } else {
+	// 	return {
+	// 		valid: false,
+	// 		violation: "Ticket not found"
+	// 	}
+	// }
 }
 
 function getBookingFromTicket(ticketKey: string): Attendee | null {
 	const eventAttendees = get(allEventAttendees);
 
 	if (!eventAttendees) {
-		console.error("Trying to retrieve booking from ticket, but no event attendees are loaded");
+		console.info("Trying to retrieve booking from ticket, but no event attendees are loaded");
 		return null;
 	}
+
 	return eventAttendees.find((attendee) => (attendee.ticket_uuid === ticketKey)) || null;
 }
 

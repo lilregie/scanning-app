@@ -1,6 +1,5 @@
 export enum ScannerStatus {
-    Scanning,
-    SuccessCovidPass,
-    SuccessTicket,
-    Invalid
+	Scanning,
+	SuccessTicket,
+	Invalid
 }

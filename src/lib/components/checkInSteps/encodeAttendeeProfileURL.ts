@@ -1,5 +1,5 @@
-import { allEventAttendees, currentEvent } from "$lib/store";
-import { findAttendeeByID, findEventletByID } from "$lib/utill";
+import { allEventAttendees } from "$lib/store";
+import { findAttendeeByID } from "$lib/utill";
 import { get } from "svelte/store";
 import { validate } from "uuid";
 import type { AttendeeProfile } from "./stepManager";
@@ -18,9 +18,6 @@ export function encode_url(attendeeProfile: AttendeeProfile): string {
 
 	if (attendeeProfile.attendee) {
 		searchParams.append("attendee_id", attendeeProfile.attendee.id.toString());
-	}
-	if (attendeeProfile.covidPass) {
-		searchParams.append("covid_pass", "true");
 	}
 	if (attendeeProfile.ticketKey) {
 		searchParams.append("ticket_key", attendeeProfile.ticketKey);
@@ -41,9 +38,6 @@ export function decode_url(queryParams: URLSearchParams): AttendeeProfile {
 	if (!isNaN(attendee_id)) {
 		attendeeProfile.attendee = findAttendeeByID(get(allEventAttendees), attendee_id);
 	}
-
-	// Covid Pass Info
-	attendeeProfile.covidPass = queryParams.has("covid_pass");
 
 	// Ticket Eventlet Info
 	let ticket_key = queryParams.get("ticket_key") || "";

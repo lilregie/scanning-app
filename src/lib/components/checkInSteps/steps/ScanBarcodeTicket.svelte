@@ -4,7 +4,7 @@
 	import Scanner from '$lib/components//scanner/ScannerWrapper.svelte';
 
 	import { ScanTypes, type Ticket } from '$lib/components/scanner/validateScan';
-	import type { ScanResults } from '$lib/components/scanner/validateScan';
+	import type { ScanSuccess } from '$lib/components/scanner/validateScan';
 	import { StageState, type AttendeeProfile } from '../stepManager';
 	import type { Writable } from 'svelte/store';
 	import { currentEvent, selectedAttendeeID } from '$lib/store';
@@ -19,8 +19,8 @@
 
 	let ticketInfo: Ticket;
 
-	function scan(event: { detail: ScanResults }) {
-		let data = event.detail as ScanResults;
+	function scan(event: { detail: ScanSuccess }) {
+		let data = event.detail as ScanSuccess;
 		if (!data.valid || data.data.type !== ScanTypes.TicketBarcode) {
 			return;
 		}
