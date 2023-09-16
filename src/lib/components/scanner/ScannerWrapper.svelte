@@ -9,9 +9,7 @@
 	import Button from '../Button.svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	export let enabledScanTypes: ScanTypes[] = [ScanTypes.TicketBarcode, ScanTypes.CovidPass];
-
-	let covidPassFailReason: string = '';
+	let failReason: string = '';
 
 	let scannerStatus = writable(ScannerStatus.Scanning);
 
@@ -19,18 +17,14 @@
 
 	async function handleScan(event: CustomEvent) {
 		if (get(scannerStatus) === ScannerStatus.Scanning) {
-			let validator = await validateScan(event.detail.qrContent, enabledScanTypes);
-			if (validator.valid === true) {
-				const type = validator.data.type;
-				if (type === ScanTypes.CovidPass) {
-					scannerStatus.set(ScannerStatus.SuccessCovidPass);
-				} else if (type === ScanTypes.TicketBarcode) {
-					scannerStatus.set(ScannerStatus.SuccessTicket);
-				}
-				dispatch('scan-complete', validator);
+			let scanResult = validateScan(event.detail.qrContent);
+
+			if (scanResult.valid === true) {
+				scannerStatus.set(ScannerStatus.SuccessTicket);
+				dispatch('scan-complete', scanResult);
 			} else {
 				scannerStatus.set(ScannerStatus.Invalid);
-				covidPassFailReason = validator.violation;
+				failReason = scanResult.violation;
 			}
 		}
 	}
@@ -45,7 +39,7 @@
 			let status = await navigator.permissions.query({ name: 'camera' as PermissionName });
 			permissionForCameraState = status.state;
 		} catch {
-			// API not supported by Safari on both desktop and mobile
+			// 'camera' not supported by Firefox on both desktop and mobile
 			// So we can just assume it's not allowed, as there are no alternative options
 			// https://developer.mozilla.org/en-US/docs/Web/API/Permissions/query#browser_compatibility
 			permissionForCameraState = 'unknown';
@@ -70,7 +64,7 @@
 		style="--fail-response-height: {previewWidth / previewWidthRatio}px"
 	>
 		{#if permissionForCameraState === 'granted'}
-			<CameraScanner on:scan={handleScan} {previewWidth} />
+			<CameraScanner on:scan={handleScan} />
 		{:else if permissionForCameraState === 'prompt'}
 			<div class="permission-container">
 				<span class="permission-header">To scan, we need to use your camera</span>
@@ -114,14 +108,7 @@
 				</Button>
 			</div>
 		{/if}
-		{#if $scannerStatus === ScannerStatus.SuccessCovidPass}
-			<ScanResult bind:scannerStatus backgroundColour="#2ba628">
-				<div style="width: 30%">
-					<SuccessTick />
-				</div>
-				COVID Pass Verified
-			</ScanResult>
-		{:else if $scannerStatus === ScannerStatus.SuccessTicket}
+		{#if $scannerStatus === ScannerStatus.SuccessTicket}
 			<ScanResult bind:scannerStatus backgroundColour="#2ba628">
 				<div style="width: 30%">
 					<SuccessTick />
@@ -133,7 +120,7 @@
 				<div class="invalid-cross-wrapper">
 					<InvalidCross colour="#fff" />
 				</div>
-				{covidPassFailReason}
+				{failReason}
 			</ScanResult>
 		{/if}
 	</div>
@@ -148,9 +135,17 @@
 		justify-content: center;
 
 		.qr-wrapper {
+			aspect-ratio: 1 / 1;
+			background-color: $background-backdrop;
+			border-radius: 10px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			overflow: hidden;
 			text-align: center;
-			width: 100%;
-			max-width: 50svh;
+			width: 480px;
+			max-height: 50dvh;
+			max-width: 100%;
 
 			.invalid-cross-wrapper {
 				:global(svg) {
@@ -166,7 +161,6 @@
 			align-items: center;
 			flex-direction: column;
 			color: $text-dark;
-			background-color: $background-backdrop;
 			padding: 0 1em;
 
 			.permission-header {

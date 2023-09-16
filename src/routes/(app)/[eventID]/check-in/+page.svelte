@@ -70,8 +70,6 @@
 		{#if $selectedAttendee}
 			<AttendeeDetails
 				attendee={selectedAttendee}
-				actionsAvailable={false}
-				direction={'vertical'}
 			/>
 		{:else}
 			No attendee selected...

@@ -1,6 +1,7 @@
 <script lang="ts">
-	export let eventlet: { id: number | string, name: string, value?: string } | undefined = undefined;
-	export let group: any = undefined;
+	export let eventlet: { id: number | string, name: string, value?: string } | undefined = undefined
+	export let group: any = undefined
+	export let disabled: boolean = false
 </script>
 
 <label class="card isLabel">
@@ -9,10 +10,11 @@
 			<input
 				type="radio"
 				name="scan-action"
-				id={ typeof eventlet.id == 'number' ? `check-in-eventlet-${eventlet.id}` : eventlet.id }
+				id={ typeof eventlet.id == 'number' ? `check-in-eventlet-${ eventlet.id }` : eventlet.id }
 				class="appearance-none h-6 w-6 rounded-full control flex-shrink-0"
 				value={ eventlet.value ?? eventlet.id.toString() }
-				bind:group={group}
+				bind:group={ group }
+				{ disabled }
 			>
 		</slot>
 		<slot name="content">
