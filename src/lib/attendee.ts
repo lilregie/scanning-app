@@ -25,15 +25,15 @@ export interface Attendee {
 	// numbering of those tickets/attendances on that booking.
 	ticket_sequence: number;
 	vaccine_pass: boolean;
- }
+}
 
- export interface CustomField {
+export interface CustomField {
 	name: string;
 	input_type: string;
 	values: string[];
- }
+}
 
- export interface EventletAttendance {
+export interface EventletAttendance {
 	id: number;
 	attendee_id: number;
 	eventlet_id: number;
@@ -43,4 +43,4 @@ export interface Attendee {
 	amount_including_tax: string;
 	checked_in_at: Date | null;
 	checkin_user_id: number;
- }
+}
