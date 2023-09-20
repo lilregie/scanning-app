@@ -21,9 +21,10 @@
 		})
 
 		if (response.status === 200) {
-			attendance = await response.json() satisfies EventletAttendance
+			const result = await response.json()
+			attendance = result satisfies EventletAttendance
 
-			applyAction({ status: response.status, type: "success", data: await response.json()})
+			applyAction({ status: response.status, type: "success", data: result })
 		} else if (response.type === "error" || response.status >= 500) {
 			applyAction({ status: response.status, type: "error", error: response.statusText});
 		} else if (response.status >= 400) {
