@@ -37,6 +37,7 @@
 	styleWindow={{ margin: "auto" }}
 	styleContent={{ "padding-top": "3.5rem" }}
 	closeOnOuterClick={ false }
+	on:closed={() => globalModalState.set(null)}
 >
 	<ConnectionMaster/>
 	{#await data.event}
