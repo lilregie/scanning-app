@@ -14,6 +14,9 @@
 	import FullAttendeeDetails from '$lib/components/modal/FullAttendeeDetails.svelte';
 	import { bind } from 'svelte-simple-modal';
 	import { readable } from 'svelte/store';
+	import type { Attendee, EventletAttendance } from '$lib/attendee';
+	import type { Booking } from '$lib/booking';
+	import type { Errors } from '$lib/errors';
 
 	export let data: PageData;
 
@@ -37,6 +40,14 @@
 		})
 	}
 
+	function parseId(idString: string) {
+		if (idString === '') return null
+
+		const id = Number(idString)
+
+		return Number.isNaN(id) ? null : id
+	}
+
 	async function checkinScan(event: CustomEvent<ScanSuccess>) {
 		disabled = true
 		const ticket_uuid = event.detail.data.key;
@@ -52,20 +63,44 @@
 
 			if (response.status === 200) {
 				const result = await response.json()
-				const attendee = result["attendee"] ?? result
+				applyAction({ status: response.status, type: "success", data: result })
+
+				const { attendance, attendee, booking }: {
+					attendance: EventletAttendance,
+					attendee: Attendee,
+					booking: Booking
+				 } = result
+
+				$globalModalState = bind(
+					FullAttendeeDetails,
+					{
+						attendance,
+						attendee: readable(attendee),
+						booking,
+						event: data.event,
+						selectedEventletId: parseId(eventletParam)
+					}
+				)
+			} else if (response.type === "error" || response.status >= 500) {
+				applyAction({ status: response.status, type: "error", error: response.statusText });
+			} else if (response.status >= 400) {
+				const result = await response.json()
+				applyAction({ status: response.status, type: "failure", data: result })
+
+				const booking: Booking = result["booking"]
+				const attendee = booking.attendees.find((a: Attendee) => a.ticket_uuid === ticket_uuid)
+				const errors: Errors = result["errors"]
 
 				$globalModalState = bind(
 					FullAttendeeDetails,
 					{
 						attendee: readable(attendee),
-						event: data.event
+						booking,
+						event: data.event,
+						errors,
+						selectedEventletId: parseId(eventletParam)
 					}
 				)
-				applyAction({ status: response.status, type: "success", data: result })
-			} else if (response.type === "error" || response.status >= 500) {
-				applyAction({ status: response.status, type: "error", error: response.statusText });
-			} else if (response.status >= 400) {
-				applyAction({ status: response.status, type: "failure", data: (await response.json()) })
 			}
 		} catch (error) {
 			console.error(error)
