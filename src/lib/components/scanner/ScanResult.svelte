@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import { ScannerStatus } from './scannerStatus';
 	import { tweened } from 'svelte/motion';
@@ -55,13 +55,15 @@
 		}
 	}
 
-	globalModalState.subscribe((state) => {
+	const unsubscribe = globalModalState.subscribe((state) => {
 		if (state === null && !timeout) {
 			setTimer();
 		} else if (timeout) {
 			cancelTimer();
 		}
 	});
+
+	onDestroy(unsubscribe)
 </script>
 
 <div
