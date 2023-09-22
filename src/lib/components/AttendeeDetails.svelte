@@ -42,7 +42,9 @@
 {/if}
 <div class="complete-container">
 	{#if errors}
-		<Alert { errors } />
+		<div class="mb-3">
+			<Alert { errors } />
+		</div>
 	{/if}
 	{#if attendance}
 		<div class="mb-3">
