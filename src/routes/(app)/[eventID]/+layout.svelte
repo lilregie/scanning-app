@@ -35,6 +35,7 @@
 	styleBg={{ "justify-content": "flex-start" }}
 	styleWindowWrap={{ margin: "1.5rem 1rem" }}
 	styleWindow={{ margin: "auto" }}
+	styleContent={{ "padding-top": "3.5rem" }}
 	closeOnOuterClick={ false }
 >
 	<ConnectionMaster/>
