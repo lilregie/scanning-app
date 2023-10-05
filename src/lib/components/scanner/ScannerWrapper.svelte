@@ -136,7 +136,7 @@
 
 		.qr-wrapper {
 			aspect-ratio: 1 / 1;
-			background-color: $background-backdrop;
+			background: #D9D9D9;
 			border-radius: 10px;
 			display: flex;
 			justify-content: center;
@@ -160,7 +160,7 @@
 			justify-content: center;
 			align-items: center;
 			flex-direction: column;
-			color: $text-dark;
+			color: $text-light;
 			padding: 0 1em;
 
 			.permission-header {
