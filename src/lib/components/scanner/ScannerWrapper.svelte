@@ -118,7 +118,7 @@
 		{:else if $scannerStatus === ScannerStatus.Invalid}
 			<ScanResult bind:scannerStatus backgroundColour="#911d14">
 				<div class="invalid-cross-wrapper">
-					<InvalidCross colour="#fff" />
+					<InvalidCross color="#fff" />
 				</div>
 				{failReason}
 			</ScanResult>

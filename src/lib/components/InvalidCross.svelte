@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { scale } from 'svelte/transition';
 
-	export let colour = '#ffffff';
+	export let color = 'currentColor';
 </script>
 
 <svg
 	xmlns="http://www.w3.org/2000/svg"
-	fill={colour}
+	fill={color}
 	class="bi bi-x-circle"
 	viewBox="0 0 16 16"
 	in:scale|local={{ duration: 500, delay: 100 }}
