@@ -27,6 +27,7 @@
 		"@storybook/addon-links": "^7.0.25",
 		"@storybook/addon-svelte-csf": "^3.0.3",
 		"@storybook/svelte": "^7.0.25",
+		"@svelte-put/noti": "^1.1.0",
 		"@sveltejs/adapter-static": "^2.0.2",
 		"@sveltejs/kit": "^1.21.0",
 		"@types/faker": "^6.6.9",

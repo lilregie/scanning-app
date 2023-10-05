@@ -4,6 +4,8 @@
 	import Modal from 'svelte-simple-modal';
 	import { globalModalState } from '$lib/store';
 	import ConnectionMaster from '$lib/components/connectionInfo/connectionMaster.svelte';
+	import { notiStore } from '$lib/noti-store';
+	import { portal } from '@svelte-put/noti';
 	import LayoutHeader from '$lib/components/layouts/LayoutHeader.svelte';
 
 	import { page } from '$app/stores';
@@ -40,6 +42,10 @@
 	on:closed={() => globalModalState.set(null)}
 >
 	<ConnectionMaster/>
+	<aside
+		class="notifications"
+		use:portal={notiStore}
+	/>
 	{#await data.event}
 		<!-- no loading placeholder -->
 	{:then event}
@@ -130,5 +136,15 @@
 			color: #D02366;
 			border-bottom-color: currentColor;
 		}
+	}
+
+	.notifications {
+		@apply
+			fixed
+			z-10
+			left-0 right-0
+			p-10
+			pointer-events-none
+			flex flex-col-reverse gap-4 items-center justify-end;
 	}
 </style>

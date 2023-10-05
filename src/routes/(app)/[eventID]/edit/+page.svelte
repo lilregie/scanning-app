@@ -17,6 +17,7 @@
 	import type { Attendee, EventletAttendance } from '$lib/attendee';
 	import type { Booking } from '$lib/booking';
 	import type { Errors } from '$lib/errors';
+	import { alert } from '$lib/noti-store';
 
 	export let data: PageData;
 
@@ -88,22 +89,28 @@
 				applyAction({ status: response.status, type: "failure", data: result })
 
 				const booking: Booking = result["booking"]
-				const attendee = booking.attendees.find((a: Attendee) => a.ticket_uuid === ticket_uuid)
-				const errors: Errors = result["errors"]
 
-				$globalModalState = bind(
-					FullAttendeeDetails,
-					{
-						attendee: readable(attendee),
-						booking,
-						event: data.event,
-						errors,
-						selectedEventletId: parseId(eventletParam)
-					}
-				)
+				if (booking) {
+					const attendee = booking.attendees.find((a: Attendee) => a.ticket_uuid === ticket_uuid)
+					const errors: Errors = result["errors"]
+
+					$globalModalState = bind(
+						FullAttendeeDetails,
+						{
+							attendee: readable(attendee),
+							booking,
+							event: data.event,
+							errors,
+							selectedEventletId: parseId(eventletParam)
+						}
+					)
+				} else {
+					const errors: Errors = result["errors"]
+					alert({ errors })
+				}
 			}
 		} catch (error) {
-			console.error(error)
+			alert({ content: "Oof, something went wrong. Please try again in a few minutes. If the problem persists, please get in touch." })
 		}
 
 		disabled = false

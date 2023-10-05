@@ -1348,6 +1348,11 @@
     "@types/express" "^4.7.0"
     file-system-cache "2.3.0"
 
+"@svelte-put/noti@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@svelte-put/noti/-/noti-1.1.0.tgz#62068199df3dd2533e9bdcd3f0764c600da668a1"
+  integrity sha512-NL1xOkuBj+t4WThMYXnwbNVKoa+yJgy7cuxaPEwKNMcl4h/NZivzuGcvSKBM4okGO5z7Ck4aUlS3Wh5VmGDDyg==
+
 "@sveltejs/adapter-static@^2.0.2":
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@sveltejs/adapter-static/-/adapter-static-2.0.3.tgz#616836c30bdce4d673a2e26c0f5ffbd5c1bc7c67"
