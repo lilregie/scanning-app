@@ -30,8 +30,8 @@
 <style lang="scss">
 	@use '../styles/vars.scss' as *;
 
-	button,
-	a {
+	a,
+	button {
 		display: inline-block;
 		box-sizing: border-box;
 		padding: 0.85em 1em;

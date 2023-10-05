@@ -73,7 +73,7 @@
 				</span>
 				<Button
 					color="primary"
-					size="small"
+					size="large"
 					on:click={promptCameraPermission}
 				>
 					Give Permission
@@ -87,7 +87,7 @@
 				</span>
 				<Button
 					color="primary"
-					size="small"
+					size="large"
 					on:click={promptCameraPermission}
 				>
 					Try Continue Anyway
@@ -101,7 +101,7 @@
 				</span>
 				<Button
 					color="primary"
-					size="small"
+					size="large"
 					on:click={promptCameraPermission}
 				>
 					Start
