@@ -69,7 +69,7 @@
 			<div class="permission-container">
 				<span class="permission-header">To scan, we need to use your camera</span>
 				<span class="permission-instructions">
-					Select <b>Allow</b> when your browser asks for permissions.
+					Select <b>Allow</b> when your browser asks for camera permissions.
 				</span>
 				<Button
 					color="primary"
@@ -97,7 +97,7 @@
 			<div class="permission-container">
 				<span class="permission-header">Start Camera</span>
 				<span class="permission-instructions">
-					If prompted, select <b>Allow</b> when your browser asks for permissions.
+					If prompted, select <b>Allow</b> when your browser asks for camera permissions.
 				</span>
 				<Button
 					color="primary"
