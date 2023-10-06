@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import { ScannerStatus } from './scannerStatus';
 	import { tweened } from 'svelte/motion';
