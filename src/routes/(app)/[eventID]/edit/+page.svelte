@@ -130,19 +130,23 @@
 		<h1>Scan ticket and…</h1>
 		<form class="flex flex-col gap-2">
 			<EventletRadio
+				bind:group={ eventletParam }
+				{ disabled }
 				eventlet={{
 					id: 'show-attendee-details',
 					name: 'Show attendee details',
 					value: ''
 				}}
-				bind:group={ eventletParam }
-				{ disabled }
+				showByline={ false }
 			/>
 			{#each event.eventlets.sort(byNameRank) as eventlet (eventlet.id)}
 				{#if event.standalone}
-					<EventletRadio bind:group={ eventletParam } { disabled }>
-						<div slot="content">Check attendee in</div>
-					</EventletRadio>
+					<EventletRadio
+						{ disabled }
+						bind:group={ eventletParam }
+						eventlet={{ ...eventlet, name: "Check attendee in" }}
+						showByline={ false }
+					/>
 				{:else}
 					<EventletRadio {eventlet} bind:group={ eventletParam } { disabled } />
 				{/if}
