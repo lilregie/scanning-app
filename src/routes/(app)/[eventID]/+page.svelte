@@ -21,7 +21,7 @@
 	function eventStats(stats: number[], eventlet: Eventlet): number[] {
 		return [
 			(stats[0] ?? 0) + eventlet.checked_in_count,
-			(stats[1] ?? 0) + eventlet.total_attendee_count
+			(stats[1] ?? 0) + eventlet.total_attendee_count - eventlet.checked_in_count
 		]
 	}
 
