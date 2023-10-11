@@ -61,7 +61,7 @@
 	{#if event.event_type === "registration"}
 		<p class="text-center">Booking #{ $attendee.booking_id }</p>
 	{/if}
-	{#if remainingAttendances.length > 1}
+	{#if remainingAttendances.length > 0}
 		<div>
 			<p class="text-center">Attending:</p>
 			<ol class="other-attendances">
