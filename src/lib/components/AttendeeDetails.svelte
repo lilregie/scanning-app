@@ -35,6 +35,9 @@
 		return attendance.eventlet_id === selectedEventletId
 	})
 	.sort((a, b) => (a.attendance.eventlet_name > b.attendance.eventlet_name ? 1 : -1))
+
+	const isTicketOnly = event.event_type === "ticket_only"
+	const detailType = isTicketOnly ? "ticket" : "attendee"
 </script>
 
 {#if closeable}
@@ -78,8 +81,9 @@
 		<hr class="my-6" />
 		<p class="font-bold text-center text-xl">
 			There { otherAttendees.length === 1 ? "is" : "are" } { otherAttendees.length }
-			other { otherAttendees.length === 1 ? "attendee" : "attendees" } on this
-			booking attending
+			other { detailType }{ otherAttendees.length > 1 ? "s" : "" } on this
+			booking
+			{#if isTicketOnly }attending{/if}
 			{#if selectedEventletId}
 				{ otherAttendances[0]["attendance"].eventlet_name }
 			{/if}
@@ -89,7 +93,13 @@
 				{#each otherAttendances as { attendee, attendance } (attendance.id, attendance.checked_in_at)}
 					<li class="card">
 						<div>
-							<div class="text-bold">{ attendee.first_name } { attendee.last_name }</div>
+							<div class="text-bold">
+								{#if isTicketOnly}
+									{ booking.id }-{ attendee.ticket_sequence.toString().padStart(2, 0) }
+								{:else}
+									{ attendee.first_name } { attendee.last_name }
+								{/if}
+							</div>
 							<div class="text-black">{ attendance.eventlet_name }</div>
 						</div>
 						<CheckinAction { event } { attendance } { attendee } />

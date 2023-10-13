@@ -6,6 +6,7 @@ import { getAttendeesList } from './api/api';
 import { findAttendeeByID } from './utill';
 
 import type { StepManagerSettings } from './components/checkInSteps/stepManager';
+import type { Booking } from './booking';
 
 
 const LOCAL_STORAGE_VERSION = 3;
@@ -228,6 +229,66 @@ export const filteredAttendees: Readable<Attendee[]> = derived([allEventAttendee
 		}
 	})
 })
+
+export const bookings: Writable<Booking[]> = writable([]);
+
+function filterBookings(bookings: Booking[], q: string): Booking[] {
+	if (q.trim().length == 0) return bookings;
+
+	const terms = q.split(' ').filter(s => s !== '').map(s => s.toLowerCase().normalize("NFKD"))
+	const names = terms.filter(t => /[\p{L}-]+/u.test(t))
+	const numbers = terms.filter(t => /\d+/.test(t))
+
+	return bookings.filter(booking => {
+		// remove if no attendances are left after filtering those
+		if (booking.attendees.every(attendee => attendee.attendances[0] === undefined)) {
+			return false
+		}
+
+		const id = booking.id.toString()
+		const isIdMatch = (n: string) => isMatch(id, n)
+		const isNameMatch = (s: string) => {
+			if (booking.billing_first_name) {
+				return isMatch(booking.billing_first_name.toLowerCase().normalize("NFKD"), s)
+			}
+
+			if (booking.billing_last_name) {
+				return isMatch(booking.billing_last_name.toLowerCase().normalize("NFKD"), s)
+			}
+
+			return false
+		}
+
+		if (numbers.length > 0 && names.length > 0) {
+			return numbers.some(isIdMatch) && (names.every(isNameMatch) || numbers.some(isNameMatch))
+		} else {
+			return numbers.some(isIdMatch) || terms.every(isNameMatch)
+		}
+	})
+}
+
+export const filteredBookings: Readable<Booking[]> = derived(
+	[bookings, qParam, selectedEventletId, checkinStatusParam],
+	([$bookings, $q, $selectedEventletId, $checkinStatus]) => {
+		const result = $bookings.map(booking => {
+			return {
+				...booking,
+				attendees: booking.attendees.map(attendee => {
+					return {
+						...attendee,
+						attendances: filterAttendances(
+							attendee.attendances,
+							($selectedEventletId?.toString() ?? ''),
+							$checkinStatus
+						)
+					}
+				})
+			}
+		})
+
+		return filterBookings(result, $q)
+	}
+)
 
 export const attendeesSearchTerm: Writable<string> = writable('');
 
