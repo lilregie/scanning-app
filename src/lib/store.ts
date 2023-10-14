@@ -200,11 +200,11 @@ function filterAttendances(attendances: EventletAttendance[], eventlet: string, 
 }
 
 function attendeeSorter<T extends { first_name: string, last_name: string }>(a: T, b: T) {
-	const firstNameRank = a.first_name.localeCompare(b.first_name)
+	const firstNameRank = a.first_name.toLocaleLowerCase().localeCompare(b.first_name.toLocaleLowerCase())
 
 	if (firstNameRank === 0) {
 		// order by last name
-		return a.last_name.localeCompare(b.last_name)
+		return a.last_name.toLocaleLowerCase().localeCompare(b.last_name.toLocaleLowerCase())
 	} else {
 		return firstNameRank;
 	}
