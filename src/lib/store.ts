@@ -240,11 +240,6 @@ function filterBookings(bookings: Booking[], q: string): Booking[] {
 	const numbers = terms.filter(t => /\d+/.test(t))
 
 	return bookings.filter(booking => {
-		// remove if no attendances are left after filtering those
-		if (booking.attendees.every(attendee => attendee.attendances[0] === undefined)) {
-			return false
-		}
-
 		const id = booking.id.toString()
 		const isIdMatch = (n: string) => isMatch(id, n)
 		const isNameMatch = (s: string) => {
@@ -284,6 +279,13 @@ export const filteredBookings: Readable<Booking[]> = derived(
 					}
 				})
 			}
+		}).filter(booking => {
+			// remove if no attendances are left after filtering those
+			if (booking.attendees.every(attendee => attendee.attendances[0] === undefined)) {
+				return false
+			}
+
+			return true
 		})
 
 		return filterBookings(result, $q)
