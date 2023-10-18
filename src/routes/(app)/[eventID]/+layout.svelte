@@ -109,7 +109,7 @@
 			</div>
 		</nav>
 	{/await}
-	<main class="container m-auto">
+	<main class="m-auto max-w-7xl p-4">
 		<slot />
 	</main>
 </Modal>
