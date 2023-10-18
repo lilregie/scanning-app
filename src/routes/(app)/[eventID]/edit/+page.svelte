@@ -18,6 +18,7 @@
 	import type { Booking } from '$lib/booking';
 	import type { Errors } from '$lib/errors';
 	import { alert } from '$lib/noti-store';
+	import type { LilRegieEvent } from '$lib/event';
 
 	export let data: PageData;
 
@@ -118,6 +119,11 @@
 
 	let eventletParam: string = $page.url.searchParams.get('eventlet') ?? '';
 	let disabled = false
+
+	const isTicketOnly = (event: LilRegieEvent) => event.event_type === "ticket_only"
+	const showDetailsLabel = (event: LilRegieEvent) => {
+		return isTicketOnly(event) ? "Show booking details" : "Show attendee details"
+	}
 </script>
 
 {#await data.event then event}
@@ -133,8 +139,8 @@
 				bind:group={ eventletParam }
 				{ disabled }
 				eventlet={{
-					id: 'show-attendee-details',
-					name: 'Show attendee details',
+					id: 'show-details',
+					name: showDetailsLabel(event),
 					value: ''
 				}}
 				showByline={ false }
