@@ -113,7 +113,7 @@
 				<div style="width: 30%">
 					<SuccessTick />
 				</div>
-				Ticket Verified
+				Ticket scanned
 			</ScanResult>
 		{:else if $scannerStatus === ScannerStatus.Invalid}
 			<ScanResult bind:scannerStatus backgroundColour="#911d14">
