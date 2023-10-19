@@ -45,6 +45,7 @@
 {:then event}
 	<MetaTitle parts={ [event.name, "Dashboard"] } />
 	<h1 class="leading-tight">{ event.name }</h1>
+	<small class="block text-base text-center mb-4">{ event.date_interval }</small>
 
 	<div class="latest-check-ins-container">
 		<StatsView labels={ eventChartLabels(event) } data={ eventChartData(event) }/>

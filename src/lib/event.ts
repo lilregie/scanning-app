@@ -5,6 +5,7 @@ export interface EventDetails {
 	permalink: string;
 	// decides if we should display the eventlet UI elements
 	standalone: boolean;
+	date_interval: string;
 }
 
 export interface LilRegieEvent extends EventDetails {
