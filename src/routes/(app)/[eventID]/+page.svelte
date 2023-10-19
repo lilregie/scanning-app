@@ -44,7 +44,7 @@
 	</div>
 {:then event}
 	<MetaTitle parts={ [event.name, "Dashboard"] } />
-	<h1>{ event.name }</h1>
+	<h1 class="leading-tight">{ event.name }</h1>
 
 	<div class="latest-check-ins-container">
 		<StatsView labels={ eventChartLabels(event) } data={ eventChartData(event) }/>
@@ -96,6 +96,7 @@
 
 	h1,
 	h2 {
+		font-weight: bold;;
 		text-align: center;
 	}
 
