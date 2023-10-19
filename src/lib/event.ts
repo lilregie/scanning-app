@@ -22,6 +22,7 @@ export interface EventletSingle {
 	// users can set a max total number of tickets for this event
 	maximum_attendees: number | null;
 	checked_in_count: number;
+	confirmed_attending_count: number;
 	total_attendee_count: number;
 
 	// when the eventlet itself is running
@@ -40,6 +41,7 @@ export interface EventletsCombined {
 	// users can set a max total number of tickets for this event
 	maximum_attendees: number | null;
 	checked_in_count: number;
+	confirmed_attending_count: number;
 	total_attendee_count: number;
 
 	// when the eventlet itself is running

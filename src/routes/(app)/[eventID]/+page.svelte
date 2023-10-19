@@ -21,7 +21,7 @@
 	function eventStats(stats: number[], eventlet: Eventlet): number[] {
 		return [
 			(stats[0] ?? 0) + eventlet.checked_in_count,
-			(stats[1] ?? 0) + eventlet.total_attendee_count - eventlet.checked_in_count
+			(stats[1] ?? 0) + eventlet.confirmed_attending_count - eventlet.checked_in_count
 		]
 	}
 
@@ -32,7 +32,7 @@
 	function eventletChartData(eventlet: Eventlet): number[] {
 		return [
 			eventlet.checked_in_count,
-			eventlet.total_attendee_count - eventlet.checked_in_count
+			eventlet.confirmed_attending_count - eventlet.checked_in_count
 		]
 	}
 </script>
@@ -75,7 +75,7 @@
 										</div>
 										<div class="eventlet-stat">
 											<dt>Not Checked in</dt>
-											<dd>{ eventlet.total_attendee_count - eventlet.checked_in_count }</dd>
+											<dd>{ eventlet.confirmed_attending_count - eventlet.checked_in_count }</dd>
 										</div>
 									</dl>
 								</div>
