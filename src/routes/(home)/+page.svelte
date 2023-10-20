@@ -9,7 +9,7 @@
 <MetaTitle parts={ ["Home"] } />
 
 <main class="container m-auto">
-	{#await data.events}
+	{#await data.streamed.events}
 		<h1>Loading event data</h1>
 	{:then events}
 		<h1>Choose your event</h1>
