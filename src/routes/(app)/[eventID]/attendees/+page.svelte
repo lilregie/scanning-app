@@ -7,7 +7,7 @@
 	import { byNameRank } from '$lib/utill.js';
 	import { applyAction } from '$app/forms';
 	import { csrfAPIState } from '$lib/api/statusStores.js';
-	import type { EventletAttendance } from '$lib/attendee.js';
+	import type { Attendee, EventletAttendance } from '$lib/attendee.js';
 
 	export let data: PageData;
 
@@ -15,7 +15,7 @@
 	let eventletParam: string | null = params.get('eventlet');
 	$qParam = params.get('q') ?? '';
 	$: $selectedEventletId = eventletParam ? Number.parseInt(eventletParam) : null
-	$allEventAttendees = data.attendees
+	data.streamed.attendees.then((attendees: Attendee[]) => $allEventAttendees = attendees)
 
 	type EventletOption = { id: string, name: string }
 
@@ -108,8 +108,8 @@
 	</form>
 {/await}
 
-{#await data.attendees}
-	Loading attendee data
+{#await data.streamed.attendees}
+	<h2 class="mt-4 text-center">Loading attendee data</h2>
 {:then}
 <ol class="mt-4 space-y-3">
 	{#each $filteredAttendees as attendee (attendee.id)}
