@@ -8,6 +8,7 @@
 	import StatsView from '$lib/components/StatsView.svelte';
 	import MetaTitle from '$lib/components/MetaTitle.svelte';
 	import { byNameRank } from '$lib/utill';
+	import { afterNavigate, invalidate } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -35,6 +36,18 @@
 			eventlet.confirmed_attending_count - eventlet.checked_in_count
 		]
 	}
+
+	afterNavigate((navigationEvent) => {
+		const { from, to, type } = navigationEvent
+		if (type === "enter" || to === null || from === null) return;
+
+		const currendRouteId = $page.route.id
+		// no need to reload on initial load but do so on subsequent page navigation
+		if (from.route.id !== null && from.route.id !== currendRouteId && to.route.id === currendRouteId) {
+			invalidate("app:eventlets")
+		}
+	})
+
 </script>
 
 {#await data.event}

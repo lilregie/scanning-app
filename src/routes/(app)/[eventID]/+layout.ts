@@ -1,7 +1,9 @@
 import type { LayoutLoad } from './$types';
 import { basePath } from "$lib/consts";
 
-export const load = (({ fetch, params }) => {
+export const load = (({ depends, fetch, params }) => {
+	depends('app:eventlets')
+
 	return {
 		event: fetch(`${basePath}/${params.eventID}`, {
 			headers: {
