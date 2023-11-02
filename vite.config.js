@@ -1,3 +1,4 @@
+import { sentrySvelteKit } from "@sentry/sveltekit";
 import { sveltekit } from '@sveltejs/kit/vite';
 import svg from '@poppanator/sveltekit-svg';
 import childProcess from 'node:child_process';
@@ -12,14 +13,22 @@ try {
 /** @type {import('vite').UserConfig} */
 const config = {
 	plugins: [
+		sentrySvelteKit({
+			sourceMapsUploadOptions: {
+				org: "lilregie",
+				project: "checkin-app"
+			}
+		}),
 		sveltekit(),
 		svg({
 			type: 'url'
 		})
 	],
+
 	optimizeDeps: {
 		include: ['events', 'uuid', 'visibilityjs', 'stampit', 'lodash', 'dayjs']
 	},
+
 	define: {
 		__COMMIT_HASH__: JSON.stringify(lastCommitHash)
 	}

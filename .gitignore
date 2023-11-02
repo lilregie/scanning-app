@@ -97,3 +97,5 @@ typings/
 storybook-static
 
 ruby-injection-config.txt
+# Sentry Config File
+.sentryclirc
