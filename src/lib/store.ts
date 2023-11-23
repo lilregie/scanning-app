@@ -230,6 +230,9 @@ export const filteredAttendees: Readable<Attendee[]> = derived([allEventAttendee
 })
 
 export const bookings: Writable<Booking[]> = writable([]);
+const nonEmptyString = (s: string | null | undefined): s is string => {
+	return typeof s === 'string' && s.trim() !== ''
+}
 
 function filterBookings(bookings: Booking[], q: string): Booking[] {
 	if (q.trim().length == 0) return bookings;
@@ -242,15 +245,9 @@ function filterBookings(bookings: Booking[], q: string): Booking[] {
 		const id = booking.id.toString()
 		const isIdMatch = (n: string) => isMatch(id, n)
 		const isNameMatch = (s: string) => {
-			if (booking.billing_first_name) {
-				return isMatch(booking.billing_first_name, s)
-			}
+			const names = [booking.billing_first_name, booking.billing_last_name].filter(nonEmptyString)
 
-			if (booking.billing_last_name) {
-				return isMatch(booking.billing_last_name, s)
-			}
-
-			return false
+			return names.some(name => isMatch(name, s))
 		}
 
 		if (numbers.length > 0 && names.length > 0) {
