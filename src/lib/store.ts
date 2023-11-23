@@ -162,8 +162,7 @@ function filterAttendees(attendees: Attendee[], q: string): Attendee[] {
 		const id = attendee.booking_id.toString()
 		const isIdMatch = (n: string) => isMatch(id, n)
 		const isNameMatch = (s: string) => {
-			return isMatch(attendee.first_name.toLowerCase().normalize("NFKD"), s) ||
-						 isMatch(attendee.last_name.toLowerCase().normalize("NFKD"), s)
+			return isMatch(attendee.first_name, s) || isMatch(attendee.last_name, s)
 		}
 
 		if (numbers.length > 0 && names.length > 0) {
@@ -175,7 +174,7 @@ function filterAttendees(attendees: Attendee[], q: string): Attendee[] {
 }
 
 function isMatch(string: string, term: string): boolean {
-	return string.indexOf(term) > -1;
+	return string.toLowerCase().normalize("NFKD").indexOf(term) > -1;
 }
 
 function filterByEventlet(attendances: EventletAttendance[], eventlet: string): EventletAttendance[] {
@@ -244,11 +243,11 @@ function filterBookings(bookings: Booking[], q: string): Booking[] {
 		const isIdMatch = (n: string) => isMatch(id, n)
 		const isNameMatch = (s: string) => {
 			if (booking.billing_first_name) {
-				return isMatch(booking.billing_first_name.toLowerCase().normalize("NFKD"), s)
+				return isMatch(booking.billing_first_name, s)
 			}
 
 			if (booking.billing_last_name) {
-				return isMatch(booking.billing_last_name.toLowerCase().normalize("NFKD"), s)
+				return isMatch(booking.billing_last_name, s)
 			}
 
 			return false
