@@ -19,6 +19,7 @@
 	import type { Errors } from '$lib/errors';
 	import { alert } from '$lib/noti-store';
 	import type { LilRegieEvent } from '$lib/event';
+	import UnpaidCheckin from '$lib/components/modal/UnpaidCheckin.svelte';
 
 	export let data: PageData;
 
@@ -80,6 +81,20 @@
 						attendee: readable(attendee),
 						booking,
 						event: data.event,
+						selectedEventletId: parseId(eventletParam)
+					}
+				)
+			} else if (response.status == 409) {
+				const result = await response.json()
+				applyAction({ status: response.status, type: "failure", data: result })
+				const errors: Errors = result["errors"]
+
+				$globalModalState = bind(
+					UnpaidCheckin,
+					{
+						errors,
+						event: data.event,
+						ticket_uuid,
 						selectedEventletId: parseId(eventletParam)
 					}
 				)

@@ -19,6 +19,7 @@
 	export let event: LilRegieEvent
 	export let errors: Errors | null = null
 	export let selectedEventletId: number | null = null
+	export let ignoreUnpaid: boolean = !booking.paid
 
 	const remainingAttendances = $attendee.attendances.filter(attendance => {
 		return attendance.eventlet_id !== selectedEventletId
@@ -51,7 +52,7 @@
 	{/if}
 	{#if attendance}
 		<div class="mb-3">
-			<CheckinAction { event } { attendance } attendee={ $attendee } variant="block" />
+			<CheckinAction { event } { attendance } attendee={ $attendee } { ignoreUnpaid } variant="block" />
 		</div>
 	{/if}
 	<h2 class="title">
@@ -64,6 +65,15 @@
 	{#if event.event_type === "registration"}
 		<p class="text-center">Booking #{ $attendee.booking_id }</p>
 	{/if}
+	{#if !attendance && !!booking.cancelled_at}
+		<div class="py-5">
+			<Alert>This booking is cancelled</Alert>
+		</div>
+	{:else if !attendance && !booking.paid}
+		<div class="py-5">
+			<Alert>This booking is unpaid</Alert>
+		</div>
+	{/if}
 	{#if remainingAttendances.length > 0}
 		<div>
 			<p class="text-center">Attending:</p>
@@ -71,7 +81,7 @@
 				{#each remainingAttendances as attendance (attendance.id, attendance.checked_in_at)}
 					<li class="card">
 						<div class="text-black">{ attendance.eventlet_name }</div>
-						<CheckinAction { event } { attendance } attendee={ $attendee } />
+						<CheckinAction { event } { attendance } attendee={ $attendee } { ignoreUnpaid } />
 					</li>
 				{/each}
 			</ol>
@@ -102,7 +112,7 @@
 							</div>
 							<div class="text-black">{ attendance.eventlet_name }</div>
 						</div>
-						<CheckinAction { event } { attendance } { attendee } />
+						<CheckinAction { event } { attendance } { attendee } { ignoreUnpaid } />
 					</li>
 				{/each}
 			</ol>

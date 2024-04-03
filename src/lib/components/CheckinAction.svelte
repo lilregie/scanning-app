@@ -8,6 +8,7 @@
 	export let attendance: EventletAttendance
 	export let attendee: Attendee
 	export let variant: "inline" | "block" = "inline"
+	export let ignoreUnpaid: boolean = false
 
 	let disabled: boolean = !!attendee.cancelled_at
 	let loading: boolean = false
@@ -16,8 +17,13 @@
 		disabled = loading = true
 
 		const data = new FormData(this)
+		data.append('ignore_unpaid', ignoreUnpaid.toString())
+
 		const response = await fetch(this.action, {
 			method: this.method,
+			headers: {
+				"Accept": "application/json",
+			},
 			body: data
 		})
 
