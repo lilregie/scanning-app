@@ -95,7 +95,7 @@
 						<div>
 							<div class="text-bold">
 								{#if isTicketOnly}
-									{ booking.id }-{ attendee.ticket_sequence.toString().padStart(2, 0) }
+									{ booking.id }-{ attendee.ticket_sequence.toString().padStart(2, "0") }
 								{:else}
 									{ attendee.first_name } { attendee.last_name }
 								{/if}
