@@ -1,0 +1,6 @@
+# Custom Dictionary Words
+Checkin
+datetimes
+eventlets
+Eventlets
+Regie
