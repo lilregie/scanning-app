@@ -31,26 +31,34 @@
 		disabled = true
 
 		const data = new FormData(this)
-		const response = await fetch(this.action, {
-			method: this.method,
-			body: data
-		})
+		try {
+			const response = await fetch(this.action, {
+				method: this.method,
+				body: data
+			})
 
-		if (response.status === 200) {
-			const attendance = await response.json() satisfies EventletAttendance
-			const attendeeId = attendance.attendee_id
-			const attendee = $allEventAttendees.find(attendee => attendee.id === attendeeId)
+			if (response.status === 200) {
+				const attendance = await response.json() satisfies EventletAttendance
+				const attendeeId = attendance.attendee_id
+				const attendee = $allEventAttendees.find(attendee => attendee.id === attendeeId)
 
-			if (attendee) {
-				attendee.attendances = [...attendee.attendances.filter(a => a.id !== attendance.id), attendance]
-				$bookings = $bookings // trigger update
+				if (attendee) {
+					attendee.attendances = [...attendee.attendances.filter(a => a.id !== attendance.id), attendance]
+					$bookings = $bookings // trigger update
+				}
+
+				applyAction({ status: response.status, type: "success", data: attendance})
+			} else if (response.type === "error" || response.status >= 500) {
+				applyAction({ status: response.status, type: "error", error: response.statusText});
+			} else if (response.status >= 400) {
+				const result = await response.json()
+				applyAction({ status: response.status, type: "failure", data: result })
+
+				const errors: Errors = result["errors"]
+				alert({ errors })
 			}
-
-			applyAction({ status: response.status, type: "success", data: attendance})
-		} else if (response.type === "error" || response.status >= 500) {
-			applyAction({ status: response.status, type: "error", error: response.statusText});
-		} else if (response.status >= 400) {
-			applyAction({ status: response.status, type: "failure", data: await response.json() })
+		} catch (error) {
+			alert({ content: "Oof, something went wrong. Please try again in a few minutes. If the problem persists, please get in touch." })
 		}
 
 		disabled = false
