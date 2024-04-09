@@ -20,9 +20,6 @@ export interface Attendee {
 	cancelled_at: Date | null;
 	voucher_name: string | null;
 	ticket_uuid: string;
-	// A booking can for more than one person.
-	// The sequence number thus indicates the continuous
-	// numbering of those tickets/attendances on that booking.
 	ticket_sequence: number;
 	vaccine_pass: boolean;
 }
