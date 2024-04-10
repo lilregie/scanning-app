@@ -1,6 +1,6 @@
 import type { Attendee } from "./attendee";
-import normalizeStrings from "normalize-strings"
 import type { Eventlet, LilRegieEvent } from "./event";
+import normalizeStrings from "normalize-strings"
 
 export function newestCheckIns(eventAttendees: Attendee[]): Attendee[] {
 	let checkIns: Attendee[] = [];
@@ -80,4 +80,12 @@ export function mergeDeep(target: any, ...sources: any): object {
 
 export function byNameRank<T extends { name: string }>(a: T, b: T): number {
 	return a.name.localeCompare(b.name)
+}
+
+export function getEventletIdFromFormData(formData: FormData) {
+	const param = formData.get("eventlet_id") ?? ""
+
+	if (typeof param === "string") {
+		return parseInt(param, 10)
+	}
 }

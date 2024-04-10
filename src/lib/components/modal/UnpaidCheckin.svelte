@@ -4,7 +4,7 @@
 	import type { Attendee, EventletAttendance } from '$lib/attendee';
 	import type { Errors } from '$lib/errors';
 	import type { EventletSingle, LilRegieEvent } from '$lib/event';
-	import { globalModalState } from '$lib/store';
+	import { globalModalState, updateAttendanceForAttendee } from '$lib/store';
 	import { bind } from 'svelte-simple-modal';
 	import Alert from '../Alert.svelte';
 	import FullAttendeeDetails from './FullAttendeeDetails.svelte';
@@ -47,6 +47,8 @@
 					attendee: Attendee,
 					booking: Booking
 				} = result
+
+				updateAttendanceForAttendee(attendance)
 
 				$globalModalState = bind(
 					FullAttendeeDetails,

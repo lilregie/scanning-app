@@ -318,3 +318,13 @@ export const stepManagerSettings: Writable<StepManagerSettings> = writable({
 	scanVaccinePass: true
 });
 useLocalStorage(stepManagerSettings, 'stepManagerSettings');
+
+export function updateAttendanceForAttendee(newAttendance: EventletAttendance) {
+	const attendee = get(allEventAttendees)?.find(attendee => attendee.id === newAttendance.attendee_id)
+	const idx = attendee?.attendances.findIndex(attendance => attendance.id === newAttendance.id)
+
+	if (attendee && typeof idx === 'number') {
+		attendee.attendances[idx] = newAttendance
+	}
+	allEventAttendees.set(get(allEventAttendees)) // trigger derivative store updates
+}

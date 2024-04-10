@@ -3,6 +3,7 @@
 	import type { Attendee, EventletAttendance } from "$lib/attendee";
 	import { applyAction } from "$app/forms";
 	import { csrfAPIState } from "$lib/api/statusStores";
+	import { updateAttendanceForAttendee } from "$lib/store";
 
 	export let event: LilRegieEvent
 	export let attendance: EventletAttendance
@@ -30,6 +31,8 @@
 		if (response.status === 200) {
 			const result = await response.json()
 			attendance = result satisfies EventletAttendance
+
+			updateAttendanceForAttendee(attendance)
 
 			applyAction({ status: response.status, type: "success", data: result })
 		} else if (response.type === "error" || response.status >= 500) {

@@ -1,13 +1,17 @@
 <script lang="ts">
 	import type { PageData } from './$types.js';
 	import type { EventletSingle } from '$lib/event'
+	import type { EventletAttendance } from '$lib/attendee.js';
+	import type { Errors } from '$lib/errors.js';
 	import { page } from '$app/stores';
 	import MetaTitle from '$lib/components/MetaTitle.svelte';
-	import { allEventAttendees, bookings, qParam, selectedEventletId, checkinStatusParam, filteredBookings } from '$lib/store.js';
-	import { byNameRank } from '$lib/utill.js';
+	import { allEventAttendees, bookings, qParam, selectedEventletId, checkinStatusParam, filteredBookings, globalModalState } from '$lib/store.js';
+	import { byNameRank, getEventletIdFromFormData } from '$lib/utill.js';
 	import { applyAction } from '$app/forms';
 	import { csrfAPIState } from '$lib/api/statusStores.js';
-	import type { EventletAttendance } from '$lib/attendee.js';
+	import UnpaidCheckin from '$lib/components/modal/UnpaidCheckin.svelte';
+	import { bind } from 'svelte-simple-modal';
+	import { alert } from '$lib/noti-store.js';
 
 	export let data: PageData;
 
@@ -30,11 +34,11 @@
 	async function updateCheckinStatus(event) {
 		disabled = true
 
-		const data = new FormData(this)
+		const formData = new FormData(this)
 		try {
 			const response = await fetch(this.action, {
 				method: this.method,
-				body: data
+				body: formData
 			})
 
 			if (response.status === 200) {
@@ -50,6 +54,20 @@
 				applyAction({ status: response.status, type: "success", data: attendance})
 			} else if (response.type === "error" || response.status >= 500) {
 				applyAction({ status: response.status, type: "error", error: response.statusText});
+			} else if (response.status == 409) {
+				const result = await response.json()
+				applyAction({ status: response.status, type: "failure", data: result })
+				const errors: Errors = result["errors"]
+
+				$globalModalState = bind(
+					UnpaidCheckin,
+					{
+						errors,
+						event: await data.event,
+						ticket_uuid: formData.get("ticket_uuid"),
+						selectedEventletId: getEventletIdFromFormData(formData)
+					}
+				)
 			} else if (response.status >= 400) {
 				const result = await response.json()
 				applyAction({ status: response.status, type: "failure", data: result })
@@ -135,6 +153,7 @@
 								<input type="hidden" name="authenticity_token" value={ $csrfAPIState } hidden />
 								<input type="hidden" name="ticket_uuid" value={ attendee.ticket_uuid } hidden />
 								<input type="hidden" name="attendance_id" value={ attendance.id } hidden />
+								<input type="hidden" name="eventlet_id" value={ attendance.eventlet_id } hidden />
 								{#if !!attendance.checked_in_at}
 									<input type="hidden" name="_method" value="delete" hidden />
 								{/if}
