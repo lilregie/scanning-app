@@ -41,9 +41,9 @@
 		const { from, to, type } = navigationEvent
 		if (type === "enter" || to === null || from === null) return;
 
-		const currendRouteId = $page.route.id
+		const currentRouteId = $page.route.id
 		// no need to reload on initial load but do so on subsequent page navigation
-		if (from.route.id !== null && from.route.id !== currendRouteId && to.route.id === currendRouteId) {
+		if (from.route.id !== null && from.route.id !== currentRouteId && to.route.id === currentRouteId) {
 			invalidate("app:eventlets")
 		}
 	})
