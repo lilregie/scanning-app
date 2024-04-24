@@ -11,6 +11,22 @@
 	import { page } from '$app/stores';
 
 	export let data: LayoutData;
+
+	// Workaround for svelte-simple-modal lack of support for stacked modals,
+	// i.e. modal UnpaidCheckin opens modal FullAttendeeDetails.
+	// note: svelte-simple-modal looses the correct scroll position. This has to
+	// addressed upstream.
+	const enableScroll = () => {
+    document.body.style.position = '';
+    document.body.style.overflow = '';
+    document.body.style.width = '';
+  };
+
+	const modalClosed = () => {
+		console.log("close modal")
+		$globalModalState = null
+		enableScroll()
+	}
 </script>
 
 <LayoutHeader>
@@ -39,7 +55,8 @@
 	styleWindow={{ margin: "auto" }}
 	styleContent={{ "padding-top": "3.5rem" }}
 	closeOnOuterClick={ false }
-	on:closed={() => globalModalState.set(null)}
+	on:closed={modalClosed}
+	on:open={ () => console.log("open modal") }
 >
 	<ConnectionMaster/>
 	<aside
